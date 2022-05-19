@@ -1,0 +1,78 @@
+import { createSlice } from '@reduxjs/toolkit';
+import { SERVICE_URL, requestConfig } from 'config.js';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const initialState = {
+  bookings: [],
+  status: null,
+};
+
+const bookingSlice = createSlice({
+  name: 'booking',
+  initialState,
+  reducers: {
+    setbooking(state, action) {
+      state.bookings = action.payload;
+    },
+
+    addbooking(state, action) {
+      state.items = [action.payload, ...state.items];
+    },
+    updatestatus(state, action) {
+      state.status = action.payload;
+    },
+    resetstatus(state) {
+      state.status = null;
+    },
+  },
+});
+
+export const { setbooking, addbooking, updatestatus, resetstatus } = bookingSlice.actions;
+
+export const getbookings = () => async (dispatch) => {
+  const response = await axios.get(`${SERVICE_URL}/bookings`, requestConfig).catch((err) => {
+    toast.error(err.response.data.message);
+  });
+
+  if (response.status === 200) {
+    dispatch(setbooking(response.data));
+  }
+};
+
+export const getBooking = (data) => async () => {
+  return axios.get(`${SERVICE_URL}/bookings/${data.id}`, requestConfig);
+};
+
+export const updateBooking = (data) => async () => {
+  return axios.post(`${SERVICE_URL}/bookings/${data.id}`, data, requestConfig);
+};
+
+export const deleteBooking = (data) => async () => {
+  return axios.delete(`${SERVICE_URL}/bookings/${data.id}`, requestConfig);
+};
+
+export const checkinBooking = (data) => async () => {
+  return axios.delete(`${SERVICE_URL}/bookings/${data.id}/checkin`, requestConfig);
+};
+
+export const checkoutBooking = (data) => async () => {
+  return axios.delete(`${SERVICE_URL}/bookings/${data.id}/checkout`, requestConfig);
+};
+
+export const addBooking = (data) => async (dispatch) => {
+  const response = await axios.post(`${SERVICE_URL}/bookings`, data, requestConfig).catch((err) => {
+    toast.error(err.response.data.message);
+  });
+
+  if (response.status === 200) {
+    dispatch(addbooking(response.data));
+    toast.success('Booking created');
+    dispatch(updatestatus('success'));
+    dispatch(resetstatus());
+  }
+};
+
+const bookingReducer = bookingSlice.reducer;
+export default bookingReducer;

@@ -60,7 +60,7 @@ const Nav = () => {
       >
         <NavLogo />
         {/* <NavLanguageSwitcher /> */}
-        {/* <NavUserMenu /> */}
+        <NavUserMenu />
         <NavIconMenu />
         <MainMenu />
         <NavMobileButtons />

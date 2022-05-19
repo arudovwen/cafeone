@@ -6,6 +6,8 @@ import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
+import { loginAdmin } from 'auth/authSlice';
+import { useDispatch } from 'react-redux';
 
 const Login = () => {
   const title = 'Login';
@@ -16,7 +18,8 @@ const Login = () => {
     password: Yup.string().min(6, 'Must be at least 6 chars!').required('Password is required'),
   });
   const initialValues = { email: '', password: '' };
-  const onSubmit = (values) => console.log('submit form', values);
+  const dispatch = useDispatch();
+  const onSubmit = (values) => dispatch(loginAdmin(values));
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
@@ -70,11 +73,10 @@ const Login = () => {
               </NavLink>
               {errors.password && touched.password && <div className="d-block invalid-tooltip">{errors.password}</div>}
             </div>
-            <NavLink to="/dashboard">
-              <Button size="lg" type="button" className="block w-100">
-                Login
-              </Button>
-            </NavLink>
+
+            <Button size="lg" type="submit" className="block w-100">
+              Login
+            </Button>
           </form>
         </div>
       </div>

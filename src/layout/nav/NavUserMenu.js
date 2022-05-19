@@ -5,10 +5,11 @@ import { Col, Dropdown, Row } from 'react-bootstrap';
 import { MENU_PLACEMENT } from 'constants.js';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { layoutShowingNavMenu } from 'layout/layoutSlice';
+import { logout } from 'auth/authSlice';
 
-const NavUserMenuContent = () => (
+const NavUserMenuContent = ({ dispatch }) => (
   <div>
-    <Row className="mb-3 ms-0 me-0">
+    {/* <Row className="mb-3 ms-0 me-0">
       <Col xs="12" className="ps-1 mb-2">
         <div className="text-extra-small text-primary">ACCOUNT</div>
       </Col>
@@ -35,8 +36,8 @@ const NavUserMenuContent = () => (
           </li>
         </ul>
       </Col>
-    </Row>
-    <Row className="mb-1 ms-0 me-0">
+    </Row> */}
+    {/* <Row className="mb-1 ms-0 me-0">
       <Col xs="12" className="p-1 mb-2 pt-2">
         <div className="text-extra-small text-primary">APPLICATION</div>
       </Col>
@@ -60,7 +61,7 @@ const NavUserMenuContent = () => (
           </li>
         </ul>
       </Col>
-    </Row>
+    </Row> */}
     <Row className="mb-1 ms-0 me-0">
       <Col xs="12" className="p-1 mb-3 pt-3">
         <div className="separator-light" />
@@ -69,24 +70,14 @@ const NavUserMenuContent = () => (
         <ul className="list-unstyled">
           <li>
             <a href="#/!">
-              <CsLineIcons icon="help" className="me-2" size="17" /> <span className="align-middle">Help</span>
-            </a>
-          </li>
-          <li>
-            <a href="#/!">
-              <CsLineIcons icon="file-text" className="me-2" size="17" /> <span className="align-middle">Docs</span>
+              <CsLineIcons icon="gear" className="me-2" size="17" /> <span className="align-middle">Settings</span>
             </a>
           </li>
         </ul>
       </Col>
       <Col xs="6" className="pe-1 ps-1">
         <ul className="list-unstyled">
-          <li>
-            <a href="#/!">
-              <CsLineIcons icon="gear" className="me-2" size="17" /> <span className="align-middle">Settings</span>
-            </a>
-          </li>
-          <li>
+          <li onClick={() => dispatch(logout())}>
             <a href="#/!">
               <CsLineIcons icon="logout" className="me-2" size="17" /> <span className="align-middle">Logout</span>
             </a>
@@ -111,8 +102,9 @@ const NavUserMenuDropdownToggle = React.memo(
         onClick(e);
       }}
     >
-      <img className="profile" alt={user.name} src={user.thumb} />
-      <div className="name">{user.name}</div>
+      {/* <img className="profile" alt={user.name} src={user.thumb} /> */}
+      {/* <img src="/img/logo/cafeone-white.png" className="profile" alt="logo" /> */}
+      <div className="name cursor-pointer">ADMINISTRATOR</div>
     </a>
   ))
 );
@@ -120,9 +112,10 @@ const NavUserMenuDropdownToggle = React.memo(
 // Dropdown needs access to the DOM of the Menu to measure it
 const NavUserMenuDropdownMenu = React.memo(
   React.forwardRef(({ style, className }, ref) => {
+    const dispatch = useDispatch();
     return (
       <div ref={ref} style={style} className={classNames('dropdown-menu dropdown-menu-end user-menu wide', className)}>
-        <NavUserMenuContent />
+        <NavUserMenuContent dispatch={dispatch} />
       </div>
     );
   })

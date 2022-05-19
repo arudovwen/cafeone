@@ -10,9 +10,14 @@ import settingsReducer from 'settings/settingsSlice';
 import layoutReducer from 'layout/layoutSlice';
 import langReducer from 'lang/langSlice';
 import authReducer from 'auth/authSlice';
+import memberReducer from 'members/memberSlice';
 import menuReducer from 'layout/nav/main-menu/menuSlice';
 import notificationReducer from 'layout/nav/notifications/notificationSlice';
 import scrollspyReducer from 'components/scrollspy/scrollspySlice';
+import bookingReducer from 'bookings/bookingSlice';
+import campaignReducer from 'campaigns/campaignSlice';
+import membershipReducer from 'membership/membershipSlice';
+import branchReducer from 'branches/branchSlice';
 
 // import persist key
 import { REDUX_PERSIST_KEY } from 'config.js';
@@ -33,6 +38,12 @@ const persistedReducer = persistReducer(
     menu: menuReducer,
     notification: notificationReducer,
     scrollspy: scrollspyReducer,
+    members: memberReducer,
+    bookings: bookingReducer,
+    campaigns: campaignReducer,
+    membership: membershipReducer,
+    branches: branchReducer,
+
   })
 );
 const store = configureStore({

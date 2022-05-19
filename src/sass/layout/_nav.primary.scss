@@ -542,7 +542,7 @@ html[data-placement="vertical"] .nav-container.mobile-side-ready {
       display: flex !important;
       flex-direction: column;
       height: auto;
-      min-height: 100px;
+      // min-height: 100px;
       .user {
         flex-direction: column;
         margin-bottom: 5px;

@@ -29,10 +29,7 @@ const MembershipList = () => {
   };
   const [membershipModal, setMembershipModal] = useState(false);
 
-   const options = [
-     { value: 'type', label: 'Type' },
-
-   ];
+  const options = [{ value: 'type', label: 'Type' }];
   const toggleModal = () => {
     setMembershipModal(!membershipModal);
   };
@@ -582,7 +579,7 @@ const MembershipList = () => {
               </div>
               <div className="mb-3">
                 <Form.Label>Description</Form.Label>
-                <Form.Control type="text" defaultValue=""/>
+                <Form.Control type="text" defaultValue="" />
               </div>
             </Form>
           </OverlayScrollbarsComponent>

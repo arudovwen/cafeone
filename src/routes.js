@@ -54,12 +54,14 @@ const routesAndMenuItems = {
       exact: true,
       redirect: true,
       to: `${appRoot}/dashboard`,
+      protected: true,
     },
     {
       path: `${appRoot}/dashboard`,
       component: dashboard,
-      label: 'menu.dashboard',
+      label: 'Dashboard',
       icon: 'shop',
+      protected: true,
     },
 
     {
@@ -69,8 +71,9 @@ const routesAndMenuItems = {
       to: `${appRoot}/users/list`,
       label: 'User Management',
       icon: 'user',
+      protected: true,
       subs: [
-        { path: '/list', label: 'menu.list', component: usermanagement.list },
+        { path: '/list', label: 'List', component: usermanagement.list },
         // { path: '/detail', label: 'menu.detail', component: usermanagement.detail },
       ],
     },
@@ -79,24 +82,28 @@ const routesAndMenuItems = {
       component: branches,
       label: 'Branches',
       icon: 'list',
+      protected: true,
     },
     {
       path: `${appRoot}/membership`,
       component: membership,
       label: 'Membership',
       icon: 'tag',
+      protected: true,
     },
     {
       path: `${appRoot}/bookings`,
       component: bookings,
       label: 'Bookings',
       icon: 'menu-bookmark',
+      protected: true,
     },
     {
       path: `${appRoot}/loyalty`,
       component: loyalty,
       label: 'Loyalty',
       icon: 'gift',
+      protected: true,
     },
 
     {
@@ -104,6 +111,7 @@ const routesAndMenuItems = {
       component: transactions,
       label: 'Transactions',
       icon: 'invoice',
+      protected: true,
     },
 
     // {

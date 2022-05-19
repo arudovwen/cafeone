@@ -1,11 +1,13 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
+import { resetPassword } from 'auth/authSlice';
+import { useDispatch } from 'react-redux';
 
 const ResetPassword = () => {
   const title = 'Reset Password';
@@ -16,8 +18,12 @@ const ResetPassword = () => {
       .required('Password Confirm is required')
       .oneOf([Yup.ref('password'), null], 'Must be same with password!'),
   });
-  const initialValues = { password: '', passwordConfirm: '' };
-  const onSubmit = (values) => console.log('submit form', values);
+  const location = useLocation();
+  const token = new URLSearchParams(location.search).get('resetToken');
+
+  const initialValues = { password: '', passwordConfirm: '', resetToken: token, email: '' };
+  const dispatch = useDispatch();
+  const onSubmit = (values) => dispatch(resetPassword(values));
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
@@ -46,9 +52,9 @@ const ResetPassword = () => {
   const rightSide = (
     <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-50 px-5">
-        <div className="sh-11">
+        <div className="">
           <NavLink to="/">
-            <div className="logo-default" />
+            <img src="/img/logo/cafeone-black.png" alt="logo" className="gray-logo mx-auto" />
           </NavLink>
         </div>
         <div className="mb-5">

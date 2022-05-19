@@ -1,9 +1,8 @@
 import React from 'react';
 import { Row, Col, Dropdown, Card, Badge } from 'react-bootstrap';
-import Rating from 'react-rating';
 import { NavLink } from 'react-router-dom';
 import HtmlHead from 'components/html-head/HtmlHead';
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
+// import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import PerformanceChart from './components/PerformanceChart';
 
@@ -299,7 +298,7 @@ const Dashboard = () => {
                         <NavLink to="/products/detail">Space 1</NavLink>
                       </Col>
                       <Col md="3" className="d-flex align-items-center text-muted text-medium">
-                       Ajah
+                        Ajah
                       </Col>
                       <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
                         4.024 Sales
@@ -347,7 +346,7 @@ const Dashboard = () => {
                         <NavLink to="/products/detail">Space 3</NavLink>
                       </Col>
                       <Col md="3" className="d-flex align-items-center text-muted text-medium">
-                       Yaba
+                        Yaba
                       </Col>
                       <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
                         1.972 Sales

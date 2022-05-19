@@ -48,9 +48,9 @@ const Register = () => {
   const rightSide = (
     <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-50 px-5">
-        <div className="sh-11">
+        <div className="">
           <NavLink to="/">
-            <div className="logo-default" />
+            <img src="/img/logo/cafeone-black.png" alt="logo" className="gray-logo mx-auto" />
           </NavLink>
         </div>
         <div className="mb-5">
