@@ -31,8 +31,8 @@ const memberSlice = createSlice({
 });
 
 export const { setmembers, addmembers, updatestatus, resetstatus } = memberSlice.actions;
-export const getMembers = () => async (dispatch) => {
-  const response = await axios.get(`${SERVICE_URL}/members`, requestConfig).catch((err) => {
+export const getMembers = (page, search) => async (dispatch) => {
+  const response = await axios.get(`${SERVICE_URL}/members?page=${page}&search=${search}&size=15`, requestConfig).catch((err) => {
     toast.error(err.response.data.message);
   });
 
@@ -41,11 +41,15 @@ export const getMembers = () => async (dispatch) => {
   }
 };
 export const getMember = (data) => async () => {
-  return axios.get(`${SERVICE_URL}/members/${data.id}`, requestConfig);
+  return axios.get(`${SERVICE_URL}/members/${data}`, requestConfig);
 };
 
-export const updateMember = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/members/${data.id}`, data, requestConfig);
+export const updateMember = (data) => async (dispatch) => {
+  axios.post(`${SERVICE_URL}/members/${data.id}`, data, requestConfig).then((res) => {
+    toast.success('User updated');
+    dispatch(updatestatus('update'));
+    dispatch(resetstatus());
+  });
 };
 
 export const addMember = (data) => async (dispatch) => {

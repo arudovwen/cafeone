@@ -1,25 +1,34 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Spinner } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { loginAdmin } from 'auth/authSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Login = () => {
   const title = 'Login';
   const description = 'Login Page';
-
+  const [isLoading, setisloading] = React.useState(false);
+  const status = useSelector((state) => state.auth.status);
   const validationSchema = Yup.object().shape({
     email: Yup.string().email().required('Email is required'),
     password: Yup.string().min(6, 'Must be at least 6 chars!').required('Password is required'),
   });
+  React.useEffect(() => {
+    if (status === 'failed') {
+      setisloading(false);
+    }
+  });
   const initialValues = { email: '', password: '' };
   const dispatch = useDispatch();
-  const onSubmit = (values) => dispatch(loginAdmin(values));
+  const onSubmit = (values) => {
+    setisloading(true);
+    dispatch(loginAdmin(values));
+  };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
@@ -75,7 +84,13 @@ const Login = () => {
             </div>
 
             <Button size="lg" type="submit" className="block w-100">
-              Login
+              {!isLoading ? (
+                'Login'
+              ) : (
+                <Spinner animation="border" role="status" size="sm">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              )}
             </Button>
           </form>
         </div>

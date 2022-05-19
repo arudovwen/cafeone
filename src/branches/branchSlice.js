@@ -18,7 +18,7 @@ const branchSlice = createSlice({
     },
 
     addbranch(state, action) {
-      state.items = [action.payload, ...state.items];
+      state.branches = [action.payload, ...state.branches];
     },
     updatestatus(state, action) {
       state.status = action.payload;
@@ -31,8 +31,8 @@ const branchSlice = createSlice({
 
 export const { setbranch, addbranch, updatestatus, resetstatus } = branchSlice.actions;
 
-export const getbranches = () => async (dispatch) => {
-  const response = await axios.get(`${SERVICE_URL}/branches`, requestConfig).catch((err) => {
+export const getBranches = (page, search) => async (dispatch) => {
+  const response = await axios.get(`${SERVICE_URL}/branches?page=${page}&search=${search}&size=15`, requestConfig).catch((err) => {
     toast.error(err.response.data.message);
   });
 
@@ -42,11 +42,17 @@ export const getbranches = () => async (dispatch) => {
 };
 
 export const getBranch = (data) => async () => {
-  return axios.get(`${SERVICE_URL}/branches/${data.id}`, requestConfig);
+  return axios.get(`${SERVICE_URL}/branches/${data}`, requestConfig);
 };
 
-export const updateBranch = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/branches/${data.id}`, data, requestConfig);
+export const updateBranch = (data) => async (dispatch) => {
+  axios.post(`${SERVICE_URL}/branches/${data.id}`, data, requestConfig).then((res) => {
+    if (res.status === 200) {
+      toast.success('Branch updated');
+      dispatch(updatestatus('update'));
+      dispatch(resetstatus());
+    }
+  });
 };
 
 export const deleteBranch = (data) => async () => {
@@ -68,7 +74,7 @@ export const addBranch = (data) => async (dispatch) => {
 
   if (response.status === 200) {
     dispatch(addbranch(response.data));
-    toast.success('User created');
+    toast.success('Branch created');
     dispatch(updatestatus('success'));
     dispatch(resetstatus());
   }
@@ -87,4 +93,3 @@ export const deleteBranchSeat = (data) => async () => {
 const branchReducer = branchSlice.reducer;
 
 export default branchReducer;
-

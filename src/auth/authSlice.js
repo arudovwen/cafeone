@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const initialState = {
   isLogin: JSON.parse(localStorage.getItem('authAdmin')),
   currentUser: JSON.parse(localStorage.getItem('authAdmin')) ? JSON.parse(localStorage.getItem('authAdmin')) : {},
+  status:null
 };
 
 const authSlice = createSlice({
@@ -17,16 +18,26 @@ const authSlice = createSlice({
       state.currentUser = action.payload;
       state.isLogin = true;
     },
+    updatestatus(state, action) {
+      state.status = action.payload;
+    },
+    resetstatus(state) {
+      state.status = null;
+    },
   },
 });
 
-export const { setCurrentUser } = authSlice.actions;
-export const loginAdmin = (data) => async () => {
+export const { setCurrentUser, updatestatus, resetstatus } = authSlice.actions;
+export const loginAdmin = (data) => async (dispatch) => {
   const response = await axios.post(`${SERVICE_URL}/auth/login`, data).catch((err) => {
     toast.error(err.response.data.message);
+    dispatch(updatestatus('failed'));
+     dispatch(resetstatus(null));
   });
   if (response) {
     const authAdmin = response.data;
+     dispatch(updatestatus('success'));
+     dispatch(resetstatus(null));
     localStorage.setItem('authAdmin', JSON.stringify(authAdmin));
     toast.success('Login successful');
     window.location.href = '/dashboard';

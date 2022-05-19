@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -9,7 +9,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { getMembers, addMember, uploadPhoto } from '../../members/memberSlice';
+import { debounce } from 'lodash';
+import moment from 'moment';
+import { getMembers, addMember, uploadPhoto, getMember, updateMember } from '../../members/memberSlice';
 
 const UserManagementList = () => {
   const [userModal, setUserModal] = useState(false);
@@ -40,10 +42,14 @@ const UserManagementList = () => {
     note: '',
     phoneNumber: '',
   };
-
+  const [page, setPage] = useState(1);
+  // const [isShowing, setIsShowing] = useState(1);
+  const [search, setSearch] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [updateData, setUpdateData] = useState({});
   React.useEffect(() => {
-    dispatch(getMembers());
-  }, [dispatch]);
+    dispatch(getMembers(page, search));
+  }, [dispatch, page, search]);
 
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -52,13 +58,24 @@ const UserManagementList = () => {
       setSelectedItems([...selectedItems, item]);
     }
   };
-  const toggleCheckAll = (allSelect) => {
-    if (allSelect) {
-      setSelectedItems(allItems);
+  const toggleCheckAll = () => {
+    if (selectedItems.length !== usersData.length) {
+      const ids = usersData.map((item) => item.id);
+      setSelectedItems(ids);
     } else {
       setSelectedItems([]);
     }
   };
+
+  function nextPage() {
+    if (total / page > page) {
+      setPage(page + 1);
+    }
+  }
+  function prevPage() {
+    if (page === 1) return;
+    setPage(page - 1);
+  }
   const validationSchema = Yup.object().shape({
     email: Yup.string().email().required('Email is required'),
     firstName: Yup.string().required('First name is required'),
@@ -76,11 +93,12 @@ const UserManagementList = () => {
 
   const onSubmit = (values, { resetForm }) => {
     dispatch(addMember(values));
-
     resetForm({ values: '' });
   };
+
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
+
   const handleFile = (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
@@ -89,12 +107,59 @@ const UserManagementList = () => {
       values.photo = res.data.file;
     });
   };
+  const handleUpdateFile = (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    dispatch(uploadPhoto(formData)).then((res) => {
+      updateData.photo = res.data.file;
+    });
+  };
+
+  function deleteUser() {}
+  function editUser(val) {
+    setIsEditing(true);
+    dispatch(getMember(val.id)).then((res) => {
+      const info = res.data;
+      info.birthDate = moment(res.data.birthDate).format('yyyy-MM-DD');
+      setUpdateData(info);
+    });
+    toggleModal();
+  }
+
+  // highlight-starts
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSave = useCallback(
+    debounce((nextValue) => setSearch(nextValue), 1000),
+    [] // will be created only once initially
+  );
+  // highlight-ends
+
+  const handleSearch = (e) => {
+    debouncedSave(e.target.value);
+  };
 
   React.useEffect(() => {
     if (status === 'success') {
       setUserModal(false);
     }
-  }, [status]);
+    if (status === 'update') {
+      dispatch(getMembers(1, ''));
+      setUserModal(false);
+    }
+  }, [status, dispatch]);
+
+  function handleUpdateChange(e) {
+    setUpdateData({
+      ...updateData,
+      [e.target.name]: e.target.value,
+    });
+  }
+  function handleUpdate(e) {
+    e.preventDefault();
+    dispatch(updateMember(updateData));
+   
+  }
 
   return (
     <>
@@ -129,9 +194,7 @@ const UserManagementList = () => {
               <Dropdown align="end">
                 <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
                 <Dropdown.Menu>
-                  <Dropdown.Item>Move</Dropdown.Item>
-                  <Dropdown.Item>Archive</Dropdown.Item>
-                  <Dropdown.Item>Delete</Dropdown.Item>
+                  <Dropdown.Item onClick={() => deleteUser()}>Delete</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -144,7 +207,7 @@ const UserManagementList = () => {
         <Col md="5" lg="4" xxl="4" className="mb-1 d-flex align-items-center">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
-            <Form.Control type="text" placeholder="Search" />
+            <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
             <span className="search-magnifier-icon">
               <CsLineIcons icon="search" />
             </span>
@@ -191,9 +254,9 @@ const UserManagementList = () => {
               </Dropdown.Toggle>
             </OverlayTrigger>
             <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">5 Items</Dropdown.Item>
+              {/* <Dropdown.Item href="#">5 Items</Dropdown.Item>
               <Dropdown.Item href="#">10 Items</Dropdown.Item>
-              <Dropdown.Item href="#">20 Items</Dropdown.Item>
+              <Dropdown.Item href="#">20 Items</Dropdown.Item> */}
             </Dropdown.Menu>
           </Dropdown>
           {/* Length End */}
@@ -202,9 +265,6 @@ const UserManagementList = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
@@ -221,69 +281,79 @@ const UserManagementList = () => {
       {/* List Header End */}
 
       {/* List Items Start */}
-      {usersData.length > 0 &&
-        usersData.map((item, index) => (
-          <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`} key={item.id}>
-            <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-              <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(1)}>
-                <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                  <div className="text-muted text-small d-md-none">Id</div>
-                  <NavLink to="/users/detail" className="text-truncate h-100 d-flex align-items-center">
-                    {index + 1}
-                  </NavLink>
-                </Col>
-                <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                  <div className="text-muted text-small d-md-none">Name</div>
-                  <div className="text-alternate dflex align-items-center">
-                    <img src={item.avatar} alt="avatar" className="avatar avatar-sm mr-2" />
-                    {item.firstName} {item.lastName}
-                  </div>
-                </Col>
-                <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                  <div className="text-muted text-small d-md-none">Email</div>
-                  <div className="text-alternate">
-                    <span>{item.email}</span>
-                  </div>
-                </Col>
-                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                  <div className="text-muted text-small d-md-none">Phone</div>
-                  <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
-                </Col>
-                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                  <div className="text-muted text-small d-md-none">Status</div>
-                  <div>
-                    {item.membershipStatusId ? (
-                      <Badge bg="outline-primary">{item.membershipStatus}</Badge>
-                    ) : (
-                      <Badge bg="outline-secondary">{item.membershipStatus}</Badge>
-                    )}
-                  </div>
-                </Col>
-                <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                  <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(1)} onChange={() => {}} />
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-        ))}
+      {usersData.map((item, index) => (
+        <Card className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`} key={item.id}>
+          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
+            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
+              {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
+                <div className="text-muted text-small d-md-none">Id</div>
+                <NavLink to="/users/detail" className="text-truncate h-100 d-flex align-items-center">
+                  {index + 1}
+                </NavLink>
+              </Col> */}
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+                <div className="text-muted text-small d-md-none">Name</div>
+                <div className="text-alternate dflex align-items-center">
+                  <img src={item.avatar} alt="avatar" className="avatar avatar-sm me-2" />
+                  {item.firstName} {item.lastName}
+                </div>
+              </Col>
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+                <div className="text-muted text-small d-md-none">Email</div>
+                <div className="text-alternate">
+                  <span>{item.email}</span>
+                </div>
+              </Col>
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+                <div className="text-muted text-small d-md-none">Phone</div>
+                <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
+              </Col>
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+                <div className="text-muted text-small d-md-none">Status</div>
+                <div>
+                  {item.membershipStatusId ? (
+                    <Badge bg="outline-primary">{item.membershipStatus}</Badge>
+                  ) : (
+                    <Badge bg="outline-secondary">{item.membershipStatus}</Badge>
+                  )}
+                </div>
+              </Col>
+              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+                <span className="d-flex">
+                  {' '}
+                  <span onClick={() => editUser(item)} className="text-muted me-3">
+                    View
+                  </span>
+                  <span onClick={() => editUser(item)} className="text-muted ">
+                    Edit
+                  </span>
+                </span>
+              </Col>
+              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+      ))}
       {/* Pagination Start */}
-      {usersData.length && (
+      {
         <div className="d-flex justify-content-center mt-5">
           <Pagination>
-            <Pagination.Prev className="shadow" disabled>
+            <Pagination.Prev className="shadow" disabled={page === 1} onClick={() => prevPage()}>
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
-            <Pagination.Item className="shadow" active>
-              1
+            {/* <Pagination.Item className="shadow"  onClick={() = handleActive(page)}>
+              {page}
             </Pagination.Item>
-            <Pagination.Item className="shadow">2</Pagination.Item>
-            <Pagination.Item className="shadow">3</Pagination.Item>
-            <Pagination.Next className="shadow">
+            <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
+            <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={total / page > page}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>
         </div>
-      )}
+      }
       {/* Pagination End */}
 
       {!usersData.length && <div className="text-center p-4 text-muted">No member available</div>}
@@ -295,79 +365,80 @@ const UserManagementList = () => {
         </Modal.Header>
         <Modal.Body>
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <Form.Label>First name</Form.Label>
-                <Form.Control type="text" name="firstName" onChange={handleChange} value={values.firstName} />
-                {errors.firstName && touched.firstName && <div className="d-block invalid-tooltip">{errors.firstName}</div>}
-              </div>
+            {!isEditing ? (
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <Form.Label>First name</Form.Label>
+                  <Form.Control type="text" name="firstName" onChange={handleChange} value={values.firstName} />
+                  {errors.firstName && touched.firstName && <div className="d-block invalid-tooltip">{errors.firstName}</div>}
+                </div>
 
-              <div className="mb-3">
-                <Form.Label>Last name</Form.Label>
-                <Form.Control type="text" id="lastName" name="lastName" onChange={handleChange} value={values.lastName} />
-                {errors.lastName && touched.lastName && <div className="d-block invalid-tooltip">{errors.lastName}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Middle name</Form.Label>
-                <Form.Control type="text" id="middleName" name="middleName" onChange={handleChange} value={values.middleName} />
-                {errors.middleName && touched.middleName && <div className="d-block invalid-tooltip">{errors.middleName}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Photo</Form.Label>
-                <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleFile} />
-              </div>
-              <div className="mb-3">
-                <Form.Label>Gender</Form.Label>
-                <Form.Select type="select" name="gender" onChange={handleChange} value={values.gender} placeholder="Select gender">
-                  <option disabled>Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </Form.Select>
-                {errors.gender && touched.gender && <div className="d-block invalid-tooltip">{errors.gender}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Dob</Form.Label>
-                <input type="date" className="form-control" name="birthDate" onChange={handleChange} value={values.birthDate} />
-                {errors.birthDate && touched.birthDate && <div className="d-block invalid-tooltip">{errors.birthDate}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Address 1</Form.Label>
-                <Form.Control type="text" id="address1" name="address1" onChange={handleChange} value={values.address1} />
-                {errors.address1 && touched.address1 && <div className="d-block invalid-tooltip">{errors.address1}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Address 2</Form.Label>
-                <Form.Control type="text" id="address2" name="address2" onChange={handleChange} value={values.address2} />
-                {errors.address2 && touched.address2 && <div className="d-block invalid-tooltip">{errors.address2}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>City</Form.Label>
-                <Form.Control type="text" id="city" name="city" onChange={handleChange} value={values.city} />
-                {errors.city && touched.city && <div className="d-block invalid-tooltip">{errors.city}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>State</Form.Label>
-                <Form.Control type="text" id="state" name="state" onChange={handleChange} value={values.state} />
-                {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Occupation</Form.Label>
-                <Form.Control type="text" id="occupation" name="occupation" onChange={handleChange} value={values.occupation} />
-                {errors.occupation && touched.occupation && <div className="d-block invalid-tooltip">{errors.occupation}</div>}
-              </div>
+                <div className="mb-3">
+                  <Form.Label>Last name</Form.Label>
+                  <Form.Control type="text" id="lastName" name="lastName" onChange={handleChange} value={values.lastName} />
+                  {errors.lastName && touched.lastName && <div className="d-block invalid-tooltip">{errors.lastName}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Middle name</Form.Label>
+                  <Form.Control type="text" id="middleName" name="middleName" onChange={handleChange} value={values.middleName} />
+                  {errors.middleName && touched.middleName && <div className="d-block invalid-tooltip">{errors.middleName}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Photo</Form.Label>
+                  <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleFile} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Gender</Form.Label>
+                  <Form.Select type="select" name="gender" onChange={handleChange} value={values.gender} placeholder="Select gender">
+                    <option disabled>Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </Form.Select>
+                  {errors.gender && touched.gender && <div className="d-block invalid-tooltip">{errors.gender}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Dob</Form.Label>
+                  <input type="date" className="form-control" name="birthDate" onChange={handleChange} value={values.birthDate} />
+                  {errors.birthDate && touched.birthDate && <div className="d-block invalid-tooltip">{errors.birthDate}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Address 1</Form.Label>
+                  <Form.Control type="text" id="address1" name="address1" onChange={handleChange} value={values.address1} />
+                  {errors.address1 && touched.address1 && <div className="d-block invalid-tooltip">{errors.address1}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Address 2</Form.Label>
+                  <Form.Control type="text" id="address2" name="address2" onChange={handleChange} value={values.address2} />
+                  {errors.address2 && touched.address2 && <div className="d-block invalid-tooltip">{errors.address2}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>City</Form.Label>
+                  <Form.Control type="text" id="city" name="city" onChange={handleChange} value={values.city} />
+                  {errors.city && touched.city && <div className="d-block invalid-tooltip">{errors.city}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>State</Form.Label>
+                  <Form.Control type="text" id="state" name="state" onChange={handleChange} value={values.state} />
+                  {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Occupation</Form.Label>
+                  <Form.Control type="text" id="occupation" name="occupation" onChange={handleChange} value={values.occupation} />
+                  {errors.occupation && touched.occupation && <div className="d-block invalid-tooltip">{errors.occupation}</div>}
+                </div>
 
-              <div className="mb-3">
-                <Form.Label>Phone number</Form.Label>
-                <Form.Control type="text" id="phoneNumber" name="phoneNumber" onChange={handleChange} value={values.phoneNumber} />
-                {errors.phoneNumber && touched.phoneNumber && <div className="d-block invalid-tooltip">{errors.phoneNumber}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
-                {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
-              </div>
-              {/* <div className="mb-3">
+                <div className="mb-3">
+                  <Form.Label>Phone number</Form.Label>
+                  <Form.Control type="text" id="phoneNumber" name="phoneNumber" onChange={handleChange} value={values.phoneNumber} />
+                  {errors.phoneNumber && touched.phoneNumber && <div className="d-block invalid-tooltip">{errors.phoneNumber}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
+                  {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
+                </div>
+                {/* <div className="mb-3">
                 <Form.Label>Twitter handle</Form.Label>
                 <Form.Control type="text" id="twitter" name="twitter" onChange={handleChange} value={values.twitter} />
                 {errors.twitter && touched.twitter && <div className="d-block invalid-tooltip">{errors.twitter}</div>}
@@ -377,12 +448,90 @@ const UserManagementList = () => {
                 <Form.Control type="text" id="note" name="note" onChange={handleChange} value={values.note} />
                 {errors.note && touched.note && <div className="d-block invalid-tooltip">{errors.note}</div>}
               </div> */}
-              <div className="border-0 mt-3 mb-5">
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
-                  <span>Submit</span>
-                </Button>
+                <div className="border-0 mt-3 mb-5">
+                  <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
+                    <span>Submit</span>
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={(e) => handleUpdate(e)}>
+                <div className="mb-3">
+                  <Form.Label>First name</Form.Label>
+                  <Form.Control type="text" name="firstName" onChange={(e) => handleUpdateChange(e)} value={updateData.firstName} />
+                </div>
+
+                <div className="mb-3">
+                  <Form.Label>Last name</Form.Label>
+                  <Form.Control type="text" id="lastName" name="lastName" onChange={(e) => handleUpdateChange(e)} value={updateData.lastName} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Middle name</Form.Label>
+                  <Form.Control type="text" id="middleName" name="middleName" onChange={(e) => handleUpdateChange(e)} value={updateData.middleName} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Photo</Form.Label>
+                  <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleUpdateFile} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Gender</Form.Label>
+                  <Form.Select type="select" name="gender" onChange={(e) => handleUpdateChange(e)} value={updateData.gender} placeholder="Select gender">
+                    <option disabled>Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </Form.Select>
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Dob</Form.Label>
+                  <input type="date" className="form-control" name="birthDate" onChange={(e) => handleUpdateChange(e)} value={updateData.birthDate} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Address 1</Form.Label>
+                  <Form.Control type="text" id="address1" name="address1" onChange={(e) => handleUpdateChange(e)} value={values.address1} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Address 2</Form.Label>
+                  <Form.Control type="text" id="address2" name="address2" onChange={(e) => handleUpdateChange(e)} value={updateData.address2} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>City</Form.Label>
+                  <Form.Control type="text" id="city" name="city" onChange={(e) => handleUpdateChange(e)} value={updateData.city} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>State</Form.Label>
+                  <Form.Control type="text" id="state" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Occupation</Form.Label>
+                  <Form.Control type="text" id="occupation" name="occupation" onChange={(e) => handleUpdateChange(e)} value={updateData.occupation} />
+                </div>
+
+                <div className="mb-3">
+                  <Form.Label>Phone number</Form.Label>
+                  <Form.Control type="text" id="phoneNumber" name="phoneNumber" onChange={(e) => handleUpdateChange(e)} value={updateData.phoneNumber} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" id="email" name="email" onChange={(e) => handleUpdateChange(e)} value={updateData.email} />
+                </div>
+                {/* <div className="mb-3">
+                <Form.Label>Twitter handle</Form.Label>
+                <Form.Control type="text" id="twitter" name="twitter" onChange={handleChange} value={values.twitter} />
+                {errors.twitter && touched.twitter && <div className="d-block invalid-tooltip">{errors.twitter}</div>}
               </div>
-            </form>
+              <div className="mb-3">
+                <Form.Label>Note</Form.Label>
+                <Form.Control type="text" id="note" name="note" onChange={handleChange} value={values.note} />
+                {errors.note && touched.note && <div className="d-block invalid-tooltip">{errors.note}</div>}
+              </div> */}
+                <div className="border-0 mt-3 mb-5">
+                  <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
+                    <span>Update user</span>
+                  </Button>
+                </div>
+              </form>
+            )}
           </OverlayScrollbarsComponent>
         </Modal.Body>
       </Modal>
