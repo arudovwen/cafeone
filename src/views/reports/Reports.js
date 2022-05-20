@@ -13,17 +13,16 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  getMembership,
-
+  getReport,
   // eslint-disable-next-line import/extensions
-} from '../../membership/membershipSlice';
+} from '../../Report/ReportSlice';
 
-const MembershipList = () => {
-  const title = 'Membership List';
-  const description = 'Membership List Page';
-  const [membershipModal, setMembershipModal] = useState(false);
-  const membershipsData = useSelector((state) => state.membership.memberships);
-  const total = useSelector((state) => state.membership.total);
+const ReportList = () => {
+  const title = 'Report';
+  const description = 'Report  Page';
+  const [ReportModal, setReportModal] = useState(false);
+  const ReportsData = useSelector((state) => state.Report.Reports);
+  const total = useSelector((state) => state.Report.total);
 
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
@@ -34,11 +33,11 @@ const MembershipList = () => {
   const [updateData, setUpdateData] = useState({});
 
   React.useEffect(() => {
-    dispatch(getMembership(page, search));
+    dispatch(getReport(page, search));
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (membershipsData.length / page > page) {
+    if (ReportsData.length / page > page) {
       setPage(page + 1);
     }
   }
@@ -48,10 +47,10 @@ const MembershipList = () => {
   }
 
   const toggleModal = () => {
-    setMembershipModal(!membershipModal);
+    setReportModal(!ReportModal);
   };
 
-  function viewMembership(val) {
+  function viewReport(val) {
     setIsAdding(false);
     setIsViewing(true);
     setIsEditing(false);
@@ -133,7 +132,7 @@ const MembershipList = () => {
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                {membershipsData.length} Items
+                {ReportsData.length} Items
               </Dropdown.Toggle>
             </OverlayTrigger>
             <Dropdown.Menu className="shadow dropdown-menu-end">
@@ -171,14 +170,14 @@ const MembershipList = () => {
       {/* List Header End */}
 
       {/* List Items Start */}
-      {membershipsData.length ? (
-        membershipsData.map((item) => (
+      {ReportsData.length ? (
+        ReportsData.map((item) => (
           <Card key={item.id}>
             <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
               <Row className="g-0 h-100 align-content-center cursor-default">
                 {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
                 <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/memberships/detail" className="text-truncate h-100 d-flex align-items-center">
+                <NavLink to="/Reports/detail" className="text-truncate h-100 d-flex align-items-center">
                   {item.id}
                 </NavLink>
               </Col> */}
@@ -196,7 +195,7 @@ const MembershipList = () => {
                 </Col>
                 <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
                   <div className="text-muted text-small d-md-none">Type</div>
-                  <div className="text-alternate">{item.membershipType}</div>
+                  <div className="text-alternate">{item.ReportType}</div>
                 </Col>
 
                 <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
@@ -212,7 +211,7 @@ const MembershipList = () => {
                 <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end order-md-last">
                   <span className="d-flex">
                     {' '}
-                    <span onClick={() => viewMembership(item)} className="text-muted me-3 cursor-pointer">
+                    <span onClick={() => viewReport(item)} className="text-muted me-3 cursor-pointer">
                       View <CsLineIcons icon="eye" style={{ width: '12px', height: '12px' }} />
                     </span>
                   </span>
@@ -228,7 +227,7 @@ const MembershipList = () => {
       {/* List Items End */}
 
       {/* Pagination Start */}
-      {membershipsData.length ? (
+      {ReportsData.length ? (
         <div className="d-flex justify-content-center mt-5">
           <Pagination>
             <Pagination.Prev className="shadow" disabled={page === 1} onClick={() => prevPage()}>
@@ -239,7 +238,7 @@ const MembershipList = () => {
             </Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={membershipsData.length / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={ReportsData.length / page > page}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>
@@ -249,13 +248,13 @@ const MembershipList = () => {
       )}
       {/* Pagination End */}
 
-      {/* Membershipe Detail Modal Start */}
-      <Modal className="modal-right scroll-out-negative" show={membershipModal} onHide={() => setMembershipModal(false)} scrollable dialogClassName="full">
+      {/* Reporte Detail Modal Start */}
+      <Modal className="modal-right scroll-out-negative" show={ReportModal} onHide={() => setReportModal(false)} scrollable dialogClassName="full">
         <Modal.Header closeButton>
           <Modal.Title as="h5">
-            {isAdding && 'Add new membership'}
-            {isEditing && 'Update new membership'}
-            {isViewing && 'Membership Information'}
+            {isAdding && 'Add new Report'}
+            {isEditing && 'Update new Report'}
+            {isViewing && 'Report Information'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -298,9 +297,9 @@ const MembershipList = () => {
           </OverlayScrollbarsComponent>
         </Modal.Body>
       </Modal>
-      {/* Membershipe Detail Modal End */}
+      {/* Reporte Detail Modal End */}
     </>
   );
 };
 
-export default MembershipList;
+export default ReportList;

@@ -13,37 +13,30 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  getBranches,
-  addBranch,
-  getBranch,
-  updateBranch,
-  addBranchSeat,
-  activateBranch,
-  deactivateBranch,
-  deleteBranch,
-  deleteBranchSeat,
-} from '../../branches/branchSlice';
-import { uploadPhoto } from '../../members/memberSlice';
+  getmembershiptypes,
+  addMembershipType,
+  getMembership,
+  updateMembership,
+  activateMembership,
+  deactivateMembership,
+  deleteMembership,
 
-const BranchesList = () => {
-  const title = 'Branches List';
-  const description = 'Branches List Page';
-  const [branchModal, setBranchModal] = useState(false);
-  const branchesData = useSelector((state) => state.branches.branches);
-  const status = useSelector((state) => state.branches.status);
-  const [seatInfo, setSeatInfo] = useState({
-    image: '',
-    description: '',
-    name: '',
-    branchId: '',
-  });
+  // eslint-disable-next-line import/extensions
+} from '../../membership/membershipSlice';
+
+const MembershipTypeList = () => {
+  const title = 'Membership Types';
+  const description = 'Membership Types Page';
+  const [membershipModal, setMembershipModal] = useState(false);
+  const membershipsData = useSelector((state) => state.membership.types);
+  const status = useSelector((state) => state.membership.status);
+
   const initialValues = {
     name: '',
-    location: '',
+    amount: 0,
+    validityPeriod: 0,
+    validityPeriodTypeId: 1,
     description: '',
-    address: '',
-    city: '',
-    state: '',
   };
 
   const dispatch = useDispatch();
@@ -53,11 +46,10 @@ const BranchesList = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
-  const [isAddSeat, setIsAddSeat] = useState(false);
   const [updateData, setUpdateData] = useState({});
-  const [seats, setSeats] = useState([]);
+
   React.useEffect(() => {
-    dispatch(getBranches(page, search));
+    dispatch(getmembershiptypes(page, search));
   }, [dispatch, page, search]);
 
   const [selectedItems, setSelectedItems] = useState([]);
@@ -69,8 +61,8 @@ const BranchesList = () => {
     }
   };
   const toggleCheckAll = () => {
-    if (selectedItems.length !== branchesData.length) {
-      const ids = branchesData.map((item) => item.id);
+    if (selectedItems.length !== membershipsData.length) {
+      const ids = membershipsData.map((item) => item.id);
       setSelectedItems(ids);
     } else {
       setSelectedItems([]);
@@ -78,7 +70,7 @@ const BranchesList = () => {
   };
 
   function nextPage() {
-    if (branchesData.length / page > page) {
+    if (membershipsData.length / page > page) {
       setPage(page + 1);
     }
   }
@@ -87,33 +79,32 @@ const BranchesList = () => {
     setPage(page - 1);
   }
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Branch name is required'),
-    location: Yup.string().required('Location name is required'),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('City is required'),
-    state: Yup.string().required('State is required'),
+    name: Yup.string().required('Name name is required'),
+    amount: Yup.string().required('Amount name is required'),
+    validityPeriod: Yup.string().required('Address is required'),
+    validityPeriodTypeId: Yup.string().required('Field is required'),
     description: Yup.string().required('Description is required'),
   });
 
   const toggleModal = () => {
-    setBranchModal(!branchModal);
+    setMembershipModal(!membershipModal);
   };
 
   const onSubmit = (values, { resetForm }) => {
-    dispatch(addBranch(values));
+    dispatch(addMembershipType(values));
     resetForm({ values: '' });
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
-  function deleteThisBranch(id) {
+  function deleteThisMembership(id) {
     const conf = window.confirm('Are you sure?');
     if (conf) {
-      dispatch(deleteBranch(id)).then((res) => {
+      dispatch(deleteMembership(id)).then((res) => {
         if (res.status === 200) {
-          toast.success('Branch removed');
-          dispatch(getBranches(page, search));
+          toast.success('Membership removed');
+          dispatch(getmembershiptypes(page, search));
           toggleModal();
           setIsAdding(false);
           setIsViewing(false);
@@ -122,41 +113,27 @@ const BranchesList = () => {
       });
     }
   }
-  function deleteThisSeat(id) {
-    const conf = window.confirm('Are you sure?');
-    if (conf) {
-      dispatch(deleteBranchSeat({ seat_id: id, id: updateData.id })).then((res) => {
-        if (res.status === 200) {
-          toast.success('Seat removed');
-          dispatch(getBranches(page, search));
-          toggleModal();
-          setIsAdding(false);
-          setIsViewing(false);
-          setIsEditing(false);
-        }
-      });
-    }
-  }
+
   function toggleStatus(e, id) {
     const value = e.target.checked;
     if (!value) {
-      dispatch(deactivateBranch(id)).then((res) => {
+      dispatch(deactivateMembership(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getBranches(page, search));
+          dispatch(getmembershiptypes(page, search));
         }
       });
     }
     if (value) {
-      dispatch(activateBranch(id)).then((res) => {
+      dispatch(activateMembership(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getBranches(page, search));
+          dispatch(getmembershiptypes(page, search));
         }
       });
     }
   }
-  function addNewBranch(val) {
+  function addNewMembership(val) {
     setIsAdding(true);
     setIsViewing(false);
     setIsEditing(false);
@@ -164,27 +141,20 @@ const BranchesList = () => {
     toggleModal();
   }
 
-  function editBranch(val) {
+  function editMembership(val) {
     setIsAdding(false);
     setIsViewing(false);
     setIsEditing(true);
-    dispatch(getBranch(val.id)).then((res) => {
-      const info = res.data;
 
-      setUpdateData(info);
-    });
+    setUpdateData(val);
   }
 
-  function viewBranch(val) {
+  function viewMembership(val) {
     setIsAdding(false);
     setIsViewing(true);
     setIsEditing(false);
-    dispatch(getBranch(val.id)).then((res) => {
-      const info = res.data;
-      console.log('🚀 ~ file: Branches.js ~ line 158 ~ dispatch ~ info', info);
-      setUpdateData(info);
-      setSeats(info.seats);
-    });
+    setUpdateData(val);
+
     toggleModal();
   }
 
@@ -201,18 +171,17 @@ const BranchesList = () => {
 
   React.useEffect(() => {
     if (status === 'success') {
-      setBranchModal(false);
+      setMembershipModal(false);
     }
     if (status === 'update') {
-      dispatch(getBranches(1, ''));
-      setBranchModal(false);
+      dispatch(getmembershiptypes(1, ''));
+      setMembershipModal(false);
       setUpdateData({
         name: '',
-        location: '',
+        amount: '',
+        validityPeriod: 0,
+        validityPeriodTypeId: 1,
         description: '',
-        address: '',
-        city: '',
-        state: '',
       });
     }
   }, [status, dispatch]);
@@ -225,50 +194,8 @@ const BranchesList = () => {
   }
   function handleUpdate(e) {
     e.preventDefault();
-    dispatch(updateBranch(updateData));
-  }
-
-  const handleFile = (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    dispatch(uploadPhoto(formData)).then((res) => {
-      setSeatInfo({
-        ...seatInfo,
-        image: res.data.file,
-      });
-    });
-  };
-
-  function addNewSeat(id) {
-    setIsAdding(false);
-    setIsViewing(false);
-    setIsEditing(false);
-    setIsAddSeat(true);
-    setSeatInfo({
-      ...seatInfo,
-      branchId: id,
-    });
-  }
-  function handleSeatChange(e) {
-    setSeatInfo({
-      ...seatInfo,
-      [e.target.name]: e.target.value,
-    });
-  }
-  function handleSeatAdd(e) {
-    e.preventDefault();
-    dispatch(addBranchSeat(seatInfo)).then((res) => {
-      if (res.status === 200) {
-        dispatch(dispatch(getBranches(page, search)));
-        toggleModal();
-        setIsAdding(false);
-        setIsViewing(false);
-        setIsEditing(false);
-        setIsAddSeat(false);
-        toast.success('Seat added');
-      }
-    });
+    dispatch(updateMembership(updateData));
+    console.log('🚀 ~ file: Membership.js ~ line 202 ~ handleUpdate ~ updateData', updateData);
   }
 
   return (
@@ -291,7 +218,7 @@ const BranchesList = () => {
       </div>
 
       <Row className="mb-3">
-        <Col md="5" lg="4" xxl="4" className="mb-1 d-flex align-items-center ">
+        <Col md="5" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -303,13 +230,13 @@ const BranchesList = () => {
             </span>
           </div>
 
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewBranch()}>
-            <CsLineIcons icon="plus" /> <span>Add branch</span>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewMembership()}>
+            <CsLineIcons icon="plus" /> <span>Add membership</span>
           </Button>
 
           {/* Search End */}
         </Col>
-        <Col md="7" lg="8" xxl="8" className="mb-1 text-end">
+        <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
           {/* Print Button Start */}
           <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
             <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
@@ -337,7 +264,7 @@ const BranchesList = () => {
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                {branchesData.length} Items
+                {membershipsData.length} Items
               </Dropdown.Toggle>
             </OverlayTrigger>
             <Dropdown.Menu className="shadow dropdown-menu-end">
@@ -356,13 +283,11 @@ const BranchesList = () => {
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
+          <div className="text-muted text-small cursor-pointer sort">AMOUNT</div>
         </Col>
+
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">SEATS</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
@@ -374,13 +299,13 @@ const BranchesList = () => {
       {/* List Header End */}
 
       {/* List Items Start */}
-      {branchesData.map((item) => (
+      {membershipsData.map((item) => (
         <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`} key={item.id}>
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
                 <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/branches/detail" className="text-truncate h-100 d-flex align-items-center">
+                <NavLink to="/memberships/detail" className="text-truncate h-100 d-flex align-items-center">
                   {item.id}
                 </NavLink>
               </Col> */}
@@ -389,24 +314,23 @@ const BranchesList = () => {
                 <div className="text-alternate">{item.name}</div>
               </Col>
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Location</div>
+                <div className="text-muted text-small d-md-none">Amount</div>
                 <div className="text-alternate">
-                  <span>{item.address}</span>
+                  <span>{item.amount}</span>
                 </div>
               </Col>
+
               <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
                 <div className="text-muted text-small d-md-none">Description</div>
                 <div className="text-alternate">{item.description}</div>
               </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Seats</div>
-                <div className="text-alternate">{item.seatCount}</div>
-              </Col>
+
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.statusId ? <Badge bg="outline-primary">{item.status}</Badge> : <Badge bg="outline-warning">{item.status}</Badge>}</div>
               </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+
+              <Col xs="1" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 order-md-last">
                 <Form.Switch
                   className="form-check mt-2 ps-5 ps-md-2"
                   type="checkbox"
@@ -416,10 +340,10 @@ const BranchesList = () => {
                   }}
                 />
               </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end order-md-last">
                 <span className="d-flex">
                   {' '}
-                  <span onClick={() => viewBranch(item)} className="text-muted me-3 cursor-pointer">
+                  <span onClick={() => viewMembership(item)} className="text-muted me-3 cursor-pointer">
                     View <CsLineIcons icon="eye" style={{ width: '12px', height: '12px' }} />
                   </span>
                 </span>
@@ -443,7 +367,7 @@ const BranchesList = () => {
             </Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={branchesData.length / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={membershipsData.length / page > page}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>
@@ -451,14 +375,13 @@ const BranchesList = () => {
       }
       {/* Pagination End */}
 
-      {/* Branche Detail Modal Start */}
-      <Modal className="modal-right scroll-out-negative" show={branchModal} onHide={() => setBranchModal(false)} scrollable dialogClassName="full">
+      {/* Membershipe Detail Modal Start */}
+      <Modal className="modal-right scroll-out-negative" show={membershipModal} onHide={() => setMembershipModal(false)} scrollable dialogClassName="full">
         <Modal.Header closeButton>
           <Modal.Title as="h5">
-            {isAdding && 'Add new branch'}
-            {isEditing && 'Update new branch'}
-            {isViewing && 'Branch Information'}
-            {isAddSeat && 'Add Branch seat'}
+            {isAdding && 'Add new membership'}
+            {isEditing && 'Update new membership'}
+            {isViewing && 'Membership Information'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -466,38 +389,34 @@ const BranchesList = () => {
             {isAdding && (
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <Form.Label>Branch name</Form.Label>
+                  <Form.Label>Name</Form.Label>
                   <Form.Control type="text" name="name" onChange={handleChange} value={values.name} />
                   {errors.name && touched.name && <div className="d-block invalid-tooltip">{errors.name}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Branch location</Form.Label>
-                  <Form.Control type="text" name="location" onChange={handleChange} value={values.location} />
-                  {errors.location && touched.location && <div className="d-block invalid-tooltip">{errors.location}</div>}
+                  <Form.Label>Amount</Form.Label>
+                  <Form.Control type="text" name="amount" onChange={handleChange} value={values.amount} />
+                  {errors.amount && touched.amount && <div className="d-block invalid-tooltip">{errors.amount}</div>}
                 </div>
+                <div className="mb-3">
+                  <Form.Label>Validity Period</Form.Label>
+                  <Form.Control type="text" name="validityPeriod" onChange={handleChange} value={values.validityPeriod} />
+                  {errors.validityPeriod && touched.validityPeriod && <div className="d-block invalid-tooltip">{errors.validityPeriod}</div>}
+                </div>
+
+                <div className="mb-3">
+                  <Form.Label>Period TypeId </Form.Label>
+                  <Form.Control type="text" name="validityPeriodTypeId" onChange={handleChange} value={values.validityPeriodTypeId} />
+                  {errors.validityPeriodTypeId && touched.validityPeriodTypeId && <div className="d-block invalid-tooltip">{errors.validityPeriodTypeId}</div>}
+                </div>
+
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
                   <Form.Control type="text" name="description" onChange={handleChange} value={values.description} />
                   {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Address </Form.Label>
-                  <Form.Control type="text" name="address" onChange={handleChange} value={values.address} />
-                  {errors.address && touched.address && <div className="d-block invalid-tooltip">{errors.address}</div>}
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>City</Form.Label>
-                  <Form.Control type="text" name="city" onChange={handleChange} value={values.city} />
-                  {errors.city && touched.city && <div className="d-block invalid-tooltip">{errors.city}</div>}
-                </div>
-                <div className="mb-3">
-                  <Form.Label>State</Form.Label>
-                  <Form.Control type="text" name="state" onChange={handleChange} value={values.state} />
-                  {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
-                </div>
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
                   <span>Submit</span>
                 </Button>
@@ -506,50 +425,28 @@ const BranchesList = () => {
             {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)}>
                 <div className="mb-3">
-                  <Form.Label>Branch name</Form.Label>
+                  <Form.Label>Name</Form.Label>
                   <Form.Control type="text" name="name" onChange={(e) => handleUpdateChange(e)} value={updateData.name} />
                 </div>
+
                 <div className="mb-3">
-                  <Form.Label>Branch location</Form.Label>
-                  <Form.Control type="text" name="location" onChange={(e) => handleUpdateChange(e)} value={updateData.location} />
+                  <Form.Label>Amount</Form.Label>
+                  <Form.Control type="text" name="amount" onChange={(e) => handleUpdateChange(e)} value={updateData.amount} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Validity Period</Form.Label>
+                  <Form.Control type="text" name="validityPeriod" onChange={(e) => handleUpdateChange(e)} value={updateData.validityPeriod} />
+                </div>
+
+                <div className="mb-3">
+                  <Form.Label>Period TypeId </Form.Label>
+                  <Form.Control type="text" name="validityPeriodTypeId" onChange={(e) => handleUpdateChange(e)} value={updateData.validityPeriodTypeId} />
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
                   <Form.Control type="text" name="description" onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Address </Form.Label>
-                  <Form.Control type="text" name="name" onChange={(e) => handleUpdateChange(e)} value={updateData.address} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>City</Form.Label>
-                  <Form.Control type="text" name="city" onChange={(e) => handleUpdateChange(e)} value={updateData.city} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>State</Form.Label>
-                  <Form.Control type="text" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
-                </div>
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
-              </form>
-            )}
-            {isAddSeat && (
-              <form onSubmit={(e) => handleSeatAdd(e)}>
-                <div className="mb-3">
-                  <Form.Label>Seat name</Form.Label>
-                  <Form.Control type="text" name="name" onChange={(e) => handleSeatChange(e)} value={seatInfo.name} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={(e) => handleSeatChange(e)} value={seatInfo.location} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Image</Form.Label>
-                  <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
-                </div>
-
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
                   <span>Submit</span>
                 </Button>
@@ -558,11 +455,6 @@ const BranchesList = () => {
 
             {isViewing && updateData && (
               <div className="">
-                <div className="text-center d-flex justify-content-end mb-2">
-                  <Button variant="primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewSeat(updateData.id)}>
-                    <CsLineIcons icon="plus" /> <span>Add seat</span>
-                  </Button>
-                </div>
                 <table className="mb-5">
                   <tbody>
                     <tr>
@@ -570,83 +462,45 @@ const BranchesList = () => {
                       <td className=" px-4 py-3 border-bottom">{updateData.name}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Location</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.address}</td>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Description</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.description}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">City</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.city}</td>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Amount</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.amount}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">State</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.state}</td>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Validity period</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.validityPeriod}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Description</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.description}</td>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Period type</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.validityPeriodType}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">status</td>
                       <td className=" px-4 py-3 border-bottom">{updateData.status}</td>
                     </tr>
-                    <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Seats </td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.seatCount}</td>
-                    </tr>
                   </tbody>
                 </table>
                 <div className="text-center">
-                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBranch(updateData)}>
+                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editMembership(updateData)}>
                     <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBranch(updateData.id)}>
+                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisMembership(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
                   </Button>
                 </div>
                 <hr className="my-4" />
-
-                <h5>Seat Information</h5>
-
-                {seats && seats.length ? (
-                  <table className="mb-5 w-100 bg-light">
-                    <thead>
-                      <tr>
-                        <th className="text-small text-muted font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Id</th>
-                        <th className="text-small text-muted  font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Image</th>
-                        <th className="text-small text-muted font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Description</th>
-                        <th className=" text-small text-muted font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {seats &&
-                        seats.map((item) => (
-                          <tr key={item.id} className="border-bottom ">
-                            <td className="px-4 py-3 border-bottom px-3 py-2"> {item.id}</td>
-                            <td className="px-4 py-3 border-bottom px-3 py-2">
-                              <img src={item.id} className="rounded-full" alt="image" style={{ width: '30px', height: '30px' }} />
-                            </td>
-                            <td className=" px-3 py-2 border-bottom">{item.description}</td>
-                            <td className=" px-3 py-2 border-bottom">
-                              <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisSeat(item.id)}>
-                                <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div className="text-center py-2 bg-light rounded px-2">No seats available</div>
-                )}
               </div>
             )}
           </OverlayScrollbarsComponent>
         </Modal.Body>
       </Modal>
-      {/* Branche Detail Modal End */}
+      {/* Membershipe Detail Modal End */}
     </>
   );
 };
 
-export default BranchesList;
+export default MembershipTypeList;

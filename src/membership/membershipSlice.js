@@ -6,7 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
   types: [],
-  memberships:[],
+  memberships: [],
+  total:0,
   status: null,
 };
 
@@ -15,13 +16,14 @@ const membershipSlice = createSlice({
   initialState,
   reducers: {
     setmembership(state, action) {
-      state.memberships = action.payload;
+      state.memberships = action.payload.items;
+       state.total = action.payload.total;
     },
     setmembershiptypes(state, action) {
       state.types = action.payload;
     },
     addmembership(state, action) {
-      state.items = [action.payload, ...state.items];
+      state.types = [action.payload, ...state.types];
     },
     updatestatus(state, action) {
       state.status = action.payload;
@@ -32,7 +34,7 @@ const membershipSlice = createSlice({
   },
 });
 
-export const { setmembership, addmembership, updatestatus, resetstatus } = membershipSlice.actions;
+export const { setmembership, addmembership, updatestatus, resetstatus, setmembershiptypes } = membershipSlice.actions;
 
 export const getmembershiptypes = () => async (dispatch) => {
   const response = await axios.get(`${SERVICE_URL}/membership-types`, requestConfig).catch((err) => {
@@ -40,7 +42,7 @@ export const getmembershiptypes = () => async (dispatch) => {
   });
 
   if (response.status === 200) {
-    dispatch(setmembership(response.data));
+    dispatch(setmembershiptypes(response.data));
   }
 };
 
@@ -48,36 +50,43 @@ export const getMembership = () => async () => {
   return axios.get(`${SERVICE_URL}/memberships`, requestConfig);
 };
 
-export const updateMembership = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/membership-types/${data.id}`, data, requestConfig);
+export const updateMembership = (data) => async (dispatch) => {
+  return axios.post(`${SERVICE_URL}/membership-types/${data.id}`, data, requestConfig).then((res) => {
+    if (res.status === 200) {
+      toast.success('Update successful');
+      dispatch(updatestatus('update'));
+      dispatch(resetstatus());
+    }
+  });
 };
 
 export const deleteMembership = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/membership-types/${data.id}`, requestConfig);
+  return axios.delete(`${SERVICE_URL}/membership-types/${data}`, requestConfig);
 };
 
 export const activateMembership = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/membership-types/${data.id}/activate`, requestConfig);
+  return axios.post(`${SERVICE_URL}/membership-types/${data}/activate`, data, requestConfig);
 };
 
 export const deactivateMembership = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/membership-types/${data.id}/deactivate`, requestConfig);
+  return axios.post(`${SERVICE_URL}/membership-types/${data}/deactivate`, data, requestConfig);
 };
 
-export const addMembership = (data) => async (dispatch) => {
-  const response = await axios.post(`${SERVICE_URL}/membership-types`, data, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(addmembership(response.data));
-    toast.success('User created');
-    dispatch(updatestatus('success'));
-    dispatch(resetstatus());
-  }
+export const addMembershipType = (data) => async (dispatch) => {
+  axios
+    .post(`${SERVICE_URL}/membership-types`, data, requestConfig)
+    .then((res) => {
+      if (res.status === 200) {
+        dispatch(addmembership(res.data));
+        toast.success('Creation successful');
+        dispatch(updatestatus('success'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
-
-
 
 const membershipReducer = membershipSlice.reducer;
 

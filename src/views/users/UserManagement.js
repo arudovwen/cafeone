@@ -46,7 +46,10 @@ const UserManagementList = () => {
   // const [isShowing, setIsShowing] = useState(1);
   const [search, setSearch] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
   const [updateData, setUpdateData] = useState({});
+
   React.useEffect(() => {
     dispatch(getMembers(page, search));
   }, [dispatch, page, search]);
@@ -118,13 +121,31 @@ const UserManagementList = () => {
 
   function deleteUser() {}
   function editUser(val) {
-    setIsEditing(true);
     dispatch(getMember(val.id)).then((res) => {
       const info = res.data;
       info.birthDate = moment(res.data.birthDate).format('yyyy-MM-DD');
       setUpdateData(info);
+      setIsAdding(false);
+      setIsViewing(false);
+      setIsEditing(true);
+      toggleModal();
     });
+  }
+  function addNewUser(val) {
+    setIsAdding(true);
+    setIsViewing(false);
+    setIsEditing(false);
     toggleModal();
+  }
+
+  function viewUser(val) {
+    dispatch(getMember(val.id)).then((res) => {
+      setIsAdding(false);
+      setIsViewing(true);
+      setIsEditing(false);
+      setUpdateData(res.data);
+      toggleModal();
+    });
   }
 
   // highlight-starts
@@ -158,7 +179,6 @@ const UserManagementList = () => {
   function handleUpdate(e) {
     e.preventDefault();
     dispatch(updateMember(updateData));
-   
   }
 
   return (
@@ -204,7 +224,7 @@ const UserManagementList = () => {
       </div>
 
       <Row className="mb-3 justify-content-between">
-        <Col md="5" lg="4" xxl="4" className="mb-1 d-flex align-items-center">
+        <Col md="5" lg="6" xxl="6" className="mb-1 d-flex align-items-center">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -216,7 +236,7 @@ const UserManagementList = () => {
             </span>
           </div>
 
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => toggleModal()}>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewUser()}>
             <CsLineIcons icon="plus" /> <span>Add User</span>
           </Button>
 
@@ -281,10 +301,10 @@ const UserManagementList = () => {
       {/* List Header End */}
 
       {/* List Items Start */}
-      {usersData.map((item, index) => (
-        <Card className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`} key={item.id}>
+      {usersData.map((item) => (
+        <Card key={item.id}>
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
+            <Row className="g-0 h-100 align-content-center cursor-default">
               {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
                 <div className="text-muted text-small d-md-none">Id</div>
                 <NavLink to="/users/detail" className="text-truncate h-100 d-flex align-items-center">
@@ -321,16 +341,10 @@ const UserManagementList = () => {
               <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
                 <span className="d-flex">
                   {' '}
-                  <span onClick={() => editUser(item)} className="text-muted me-3">
+                  <span onClick={() => viewUser(item)} className="text-muted me-3">
                     View
                   </span>
-                  <span onClick={() => editUser(item)} className="text-muted ">
-                    Edit
-                  </span>
                 </span>
-              </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
               </Col>
             </Row>
           </Card.Body>
@@ -361,11 +375,16 @@ const UserManagementList = () => {
       {/* User Detail Modal Start */}
       <Modal className="modal-right scroll-out-negative" show={userModal} onHide={() => setUserModal(false)} scrollable dialogClassName="full">
         <Modal.Header closeButton>
-          <Modal.Title as="h5">Add new user</Modal.Title>
+          <Modal.Title as="h5">
+            {' '}
+            {isAdding && 'Add new user'}
+            {isEditing && 'Update new user'}
+            {isViewing && 'User Information'}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
-            {!isEditing ? (
+            {isAdding && (
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <Form.Label>First name</Form.Label>
@@ -454,7 +473,8 @@ const UserManagementList = () => {
                   </Button>
                 </div>
               </form>
-            ) : (
+            )}
+            {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)}>
                 <div className="mb-3">
                   <Form.Label>First name</Form.Label>
@@ -531,6 +551,80 @@ const UserManagementList = () => {
                   </Button>
                 </div>
               </form>
+            )}
+
+            {isViewing && updateData && (
+              <div className="">
+                <img src={updateData.avatar} alt="avatar" className="rounded-circle mx-auto mb-3" style={{ width: '60px', height: '60px' }} />
+                <table className="mb-5">
+                  <tbody>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom px-4 py-3 border-bottom text-uppercase"> Name</td>
+                      <td className=" px-4 py-3 border-bottom">
+                        {updateData.firstName} {updateData.middleName} {updateData.lastName}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Email</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.email}</td>
+                    </tr>
+
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Phone</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.phoneNumber}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Address 1</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.address1}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Address 2</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.address2}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">DOB</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.birthDate}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">City</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.city}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">State</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.state}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Occupation</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.occupation}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Membership status</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.membershipStatus}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Membership start date</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.membershipStartDate}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Membership expiry date</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.membershipExpiryDate}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Note</td>
+                      <td className=" px-4 py-3 border-bottom">{updateData.note}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div className="text-center">
+                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editUser(updateData)}>
+                    <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
+                  </Button>
+                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteUser(updateData.id)}>
+                    <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
+                  </Button>
+                </div>
+                <hr className="my-4" />
+              </div>
             )}
           </OverlayScrollbarsComponent>
         </Modal.Body>

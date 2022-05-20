@@ -18,6 +18,7 @@ import bookingReducer from 'bookings/bookingSlice';
 import campaignReducer from 'campaigns/campaignSlice';
 import membershipReducer from 'membership/membershipSlice';
 import branchReducer from 'branches/branchSlice';
+import transactionReducer from 'transactions/transactionSlice';
 
 // import persist key
 import { REDUX_PERSIST_KEY } from 'config.js';
@@ -43,7 +44,7 @@ const persistedReducer = persistReducer(
     campaigns: campaignReducer,
     membership: membershipReducer,
     branches: branchReducer,
-
+    transactions: transactionReducer,
   })
 );
 const store = configureStore({

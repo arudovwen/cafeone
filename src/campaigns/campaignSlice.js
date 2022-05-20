@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
+  items: [],
+  total: [],
   campaigns: [],
   status: null,
 };
@@ -14,7 +16,7 @@ const campaignSlice = createSlice({
   initialState,
   reducers: {
     setcampaign(state, action) {
-      state.campaigns = action.payload;
+      state.items = action.payload.items;
     },
 
     addcampaign(state, action) {
@@ -31,7 +33,7 @@ const campaignSlice = createSlice({
 
 export const { setcampaign, addcampaign, updatestatus, resetstatus } = campaignSlice.actions;
 
-export const getcampaigns = () => async (dispatch) => {
+export const getCampaigns = () => async (dispatch) => {
   const response = await axios.get(`${SERVICE_URL}/campaigns`, requestConfig).catch((err) => {
     toast.error(err.response.data.message);
   });
@@ -42,36 +44,50 @@ export const getcampaigns = () => async (dispatch) => {
 };
 
 export const getCampaign = (data) => async () => {
-  return axios.get(`${SERVICE_URL}/campaigns/${data.id}`, requestConfig);
+  return axios.get(`${SERVICE_URL}/campaigns/${data}`, requestConfig);
 };
 
-export const updateCampaign = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/campaigns/${data.id}`, data, requestConfig);
+export const updateCampaign = (data) => async (dispatch) => {
+  axios
+    .post(`${SERVICE_URL}/campaigns/${data.id}`, data, requestConfig)
+    .then((res) => {
+      if (res.status === 200) {
+        toast.success('Campaign updated');
+        dispatch(updatestatus('update'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
 
 export const deleteCampaign = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/campaigns/${data.id}`, requestConfig);
+  return axios.delete(`${SERVICE_URL}/campaigns/${data}`, requestConfig);
 };
 
 export const activateCampaign = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/campaigns/${data.id}/activate`, requestConfig);
+  return axios.post(`${SERVICE_URL}/campaigns/${data}/activate`, data, requestConfig);
 };
 
 export const deactivateCampaign = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/campaigns/${data.id}/deactivate`, requestConfig);
+  return axios.post(`${SERVICE_URL}/campaigns/${data}/deactivate`, data, requestConfig);
 };
 
 export const addCampaign = (data) => async (dispatch) => {
-  const response = await axios.post(`${SERVICE_URL}/campaigns`, data, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(addcampaign(response.data));
-    toast.success('User created');
-    dispatch(updatestatus('success'));
-    dispatch(resetstatus());
-  }
+  axios
+    .post(`${SERVICE_URL}/campaigns`, data, requestConfig)
+    .then((res) => {
+      if (res.status === 200) {
+        dispatch(addcampaign(res.data));
+        toast.success('Campaign created');
+        dispatch(updatestatus('success'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
 
 const campaignReducer = campaignSlice.reducer;

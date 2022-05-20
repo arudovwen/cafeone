@@ -12,8 +12,10 @@ const branches = lazy(() => import('views/branches/Branches'));
 const bookings = lazy(() => import('views/bookings/Bookings'));
 const transactions = lazy(() => import('views/transactions/Transactions'));
 const loyalty = lazy(() => import('views/loyalty/Loyalty'));
-const membership = lazy(() => import('views/membership/Membership'));
-
+const membership = {
+  types: lazy(() => import('views/membership/MembershipType')),
+  list: lazy(() => import('views/membership/Membership')),
+};
 
 // const products = {
 //   list: lazy(() => import('views/products/list/ProductsList')),
@@ -77,6 +79,7 @@ const routesAndMenuItems = {
         // { path: '/detail', label: 'menu.detail', component: usermanagement.detail },
       ],
     },
+
     {
       path: `${appRoot}/branches`,
       component: branches,
@@ -90,7 +93,12 @@ const routesAndMenuItems = {
       label: 'Membership',
       icon: 'tag',
       protected: true,
+      subs: [
+        { path: '/list', label: 'List', component: membership.list },
+        { path: '/types', label: 'Types', component: membership.types },
+      ],
     },
+
     {
       path: `${appRoot}/bookings`,
       component: bookings,
@@ -101,7 +109,7 @@ const routesAndMenuItems = {
     {
       path: `${appRoot}/loyalty`,
       component: loyalty,
-      label: 'Loyalty',
+      label: 'Campaigns',
       icon: 'gift',
       protected: true,
     },

@@ -56,15 +56,15 @@ export const updateBranch = (data) => async (dispatch) => {
 };
 
 export const deleteBranch = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/branches/${data.id}`, requestConfig);
+  return axios.delete(`${SERVICE_URL}/branches/${data}`, requestConfig);
 };
 
 export const activateBranch = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/branches/${data.id}/activate`, requestConfig);
+  return axios.post(`${SERVICE_URL}/branches/${data}/activate`,data, requestConfig);
 };
 
 export const deactivateBranch = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/branches/${data.id}/deactivate`, requestConfig);
+  return axios.post(`${SERVICE_URL}/branches/${data}/deactivate`,data, requestConfig);
 };
 
 export const addBranch = (data) => async (dispatch) => {
@@ -81,13 +81,14 @@ export const addBranch = (data) => async (dispatch) => {
 };
 
 export const addBranchSeat = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/branches/${data.id}/seats`, data, requestConfig);
+
+  return axios.post(`${SERVICE_URL}/branches/${data.branchId}/seats`, data, requestConfig);
 };
 export const updateBranchSeat = (data) => async () => {
   return axios.post(`${SERVICE_URL}/branches/${data.id}/seats/${data.seat_id}`, data, requestConfig);
 };
 export const deleteBranchSeat = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/branches/${data.id}/seats/${data.seat_id}`, data, requestConfig);
+  return axios.delete(`${SERVICE_URL}/branches/${data.id}/seats/${data.seat_id}`, requestConfig);
 };
 
 const branchReducer = branchSlice.reducer;

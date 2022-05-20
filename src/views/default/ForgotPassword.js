@@ -17,8 +17,12 @@ const ForgotPassword = () => {
     email: Yup.string().email().required('Email is required'),
   });
   const initialValues = { email: '', returnPath: 'http://localhost:3000/reset-password' };
-    const dispatch = useDispatch();
-  const onSubmit = (values) => dispatch(forgetPassword(values));
+
+  const dispatch = useDispatch();
+  const onSubmit = (values, { resetForm }) => {
+    dispatch(forgetPassword(values));
+    resetForm({ values: '' });
+  };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
@@ -46,7 +50,7 @@ const ForgotPassword = () => {
   );
 
   const rightSide = (
-    <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
+    <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border text-center">
       <div className="sw-lg-50 px-5">
         <div className="">
           <NavLink to="/">
