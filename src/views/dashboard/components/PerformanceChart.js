@@ -80,7 +80,7 @@ const PerformanceChart = () => {
       labels: ['Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5', 'Type 6'],
       datasets: [
         {
-          label: 'Membership Types / Subcribers',
+          label: 'Membership Types / Subscribers',
           icon: 'burger',
           borderColor: themeValues.primary,
           backgroundColor: `rgba(${themeValues.primaryrgb},0.1)`,

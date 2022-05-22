@@ -11,7 +11,14 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { debounce } from 'lodash';
 import moment from 'moment';
-import { getMembers, addMember, uploadPhoto, getMember, updateMember } from '../../members/memberSlice';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {
+  getmembershiptypes,
+  // eslint-disable-next-line import/extensions
+} from '../../membership/membershipSlice';
+
+import { getMembers, addMember, uploadPhoto, getMember, updateMember, subscribeMember } from '../../members/memberSlice';
 
 const UserManagementList = () => {
   const [userModal, setUserModal] = useState(false);
@@ -25,6 +32,8 @@ const UserManagementList = () => {
   const usersData = useSelector((state) => state.members.items);
   const total = useSelector((state) => state.members.total);
   const status = useSelector((state) => state.members.status);
+  const membershipsData = useSelector((state) => state.membership.types);
+
   const initialValues = {
     email: '',
     firstName: '',
@@ -49,9 +58,14 @@ const UserManagementList = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [updateData, setUpdateData] = useState({});
-
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscriptionData, setSubscriptionData] = useState({
+    membershipTypeId: 0,
+    campaignCode: '',
+  });
   React.useEffect(() => {
     dispatch(getMembers(page, search));
+    dispatch(getmembershiptypes(page, search, 50));
   }, [dispatch, page, search]);
 
   const checkItem = (item) => {
@@ -94,9 +108,8 @@ const UserManagementList = () => {
     setUserModal(!userModal);
   };
 
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = (values) => {
     dispatch(addMember(values));
-    resetForm({ values: '' });
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -127,6 +140,7 @@ const UserManagementList = () => {
       setUpdateData(info);
       setIsAdding(false);
       setIsViewing(false);
+      setIsSubscribing(false);
       setIsEditing(true);
       toggleModal();
     });
@@ -141,8 +155,10 @@ const UserManagementList = () => {
   function viewUser(val) {
     dispatch(getMember(val.id)).then((res) => {
       setIsAdding(false);
-      setIsViewing(true);
+
       setIsEditing(false);
+      setIsSubscribing(false);
+      setIsViewing(true);
       setUpdateData(res.data);
       toggleModal();
     });
@@ -160,16 +176,6 @@ const UserManagementList = () => {
     debouncedSave(e.target.value);
   };
 
-  React.useEffect(() => {
-    if (status === 'success') {
-      setUserModal(false);
-    }
-    if (status === 'update') {
-      dispatch(getMembers(1, ''));
-      setUserModal(false);
-    }
-  }, [status, dispatch]);
-
   function handleUpdateChange(e) {
     setUpdateData({
       ...updateData,
@@ -180,6 +186,68 @@ const UserManagementList = () => {
     e.preventDefault();
     dispatch(updateMember(updateData));
   }
+
+  function subscribeUser() {
+    setIsAdding(false);
+    setIsViewing(false);
+    setIsEditing(false);
+    setIsSubscribing(true);
+  }
+
+  function handlSubscription(e) {
+    setSubscriptionData({
+      ...subscriptionData,
+      [e.target.name]: e.target.value,
+    });
+  }
+  function subscribeNow(e) {
+    e.preventDefault();
+    const data = {
+      ...subscriptionData,
+      id: updateData.id,
+    };
+    dispatch(subscribeMember(data))
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(getMember(updateData.id)).then((resp) => {
+            setIsAdding(false);
+            setIsSubscribing(false);
+            setIsEditing(false);
+            setIsViewing(true);
+            setUpdateData(resp.data);
+            toast.success('Subscription successful');
+          });
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
+  }
+  React.useEffect(() => {
+    if (status === 'success') {
+      values.email = '';
+      values.firstName = '';
+      values.lastName = '';
+      values.address1 = '';
+      values.address2 = '';
+      values.city = '';
+      values.state = '';
+      values.middleName = '';
+      values.birthDate = '';
+      values.occupation = '';
+      values.photo = '';
+      values.gender = 'male';
+      values.twitter = '';
+      values.note = '';
+      values.phoneNumber = '';
+
+      setUserModal(false);
+    }
+    if (status === 'update') {
+      dispatch(getMembers(1, ''));
+      setUserModal(false);
+    }
+  }, [status, dispatch]);
 
   return (
     <>
@@ -302,19 +370,18 @@ const UserManagementList = () => {
 
       {/* List Items Start */}
       {usersData.map((item) => (
-        <Card key={item.id}>
+        <Card key={item.id} className="mb-2">
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/users/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {index + 1}
-                </NavLink>
-              </Col> */}
               <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
                 <div className="text-muted text-small d-md-none">Name</div>
                 <div className="text-alternate dflex align-items-center">
-                  <img src={item.avatar} alt="avatar" className="avatar avatar-sm me-2" />
+                  <img
+                    src={`${process.env.REACT_APP_URL}/${item.avatar}`}
+                    alt="avatar"
+                    className="avatar avatar-sm me-2 rounded"
+                    style={{ width: '30px', height: '30px' }}
+                  />
                   {item.firstName} {item.lastName}
                 </div>
               </Col>
@@ -341,7 +408,7 @@ const UserManagementList = () => {
               <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
                 <span className="d-flex">
                   {' '}
-                  <span onClick={() => viewUser(item)} className="text-muted me-3">
+                  <span onClick={() => viewUser(item)} className="text-muted me-3 cursor-pointer">
                     View
                   </span>
                 </span>
@@ -351,23 +418,21 @@ const UserManagementList = () => {
         </Card>
       ))}
       {/* Pagination Start */}
-      {
+      {total ? (
         <div className="d-flex justify-content-center mt-5">
           <Pagination>
             <Pagination.Prev className="shadow" disabled={page === 1} onClick={() => prevPage()}>
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
-            {/* <Pagination.Item className="shadow"  onClick={() = handleActive(page)}>
-              {page}
-            </Pagination.Item>
-            <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
-            <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
+
             <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={total / page > page}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>
         </div>
-      }
+      ) : (
+        ''
+      )}
       {/* Pagination End */}
 
       {!usersData.length && <div className="text-center p-4 text-muted">No member available</div>}
@@ -555,63 +620,77 @@ const UserManagementList = () => {
 
             {isViewing && updateData && (
               <div className="">
-                <img src={updateData.avatar} alt="avatar" className="rounded-circle mx-auto mb-3" style={{ width: '60px', height: '60px' }} />
+                <div className="d-flex justify-content-between align-items-end  mb-3">
+                  <img
+                    src={`${process.env.REACT_APP_URL}/${updateData.avatar}`}
+                    alt="avatar"
+                    className="rounded-circle"
+                    style={{ width: '80px', height: '80px' }}
+                  />
+                  {!updateData.membershipStatusId ? (
+                    <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => subscribeUser(updateData.id)}>
+                      <span className="">Subscribe</span>
+                    </Button>
+                  ) : (
+                    ''
+                  )}
+                </div>
                 <table className="mb-5">
                   <tbody>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom px-4 py-3 border-bottom text-uppercase"> Name</td>
-                      <td className=" px-4 py-3 border-bottom">
+                      <td className="font-weight-bold border-bottom  py-2 px-1 border-bottom text-uppercase text-muted"> Name</td>
+                      <td className=" py-2 px-1 border-bottom">
                         {updateData.firstName} {updateData.middleName} {updateData.lastName}
                       </td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Email</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.email}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Email</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.email}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Phone</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.phoneNumber}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Phone</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.phoneNumber}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Address 1</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.address1}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Address 1</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.address1}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Address 2</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.address2}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Address 2</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.address2}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">DOB</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.birthDate}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">DOB</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.birthDate}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">City</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.city}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">City</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.city}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">State</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.state}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">State</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.state}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Occupation</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.occupation}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Occupation</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.occupation}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Membership status</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.membershipStatus}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership status</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.membershipStatus}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Membership start date</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.membershipStartDate}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership start date</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.membershipStartDate}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Membership expiry date</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.membershipExpiryDate}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership expiry date</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.membershipExpiryDate}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Note</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.note}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Note</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.note}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -625,6 +704,38 @@ const UserManagementList = () => {
                 </div>
                 <hr className="my-4" />
               </div>
+            )}
+            {isSubscribing && (
+              <form onSubmit={(e) => subscribeNow(e)}>
+                <div className="mb-3">
+                  <Form.Label>Membership type</Form.Label>
+                  <Form.Select
+                    type="text"
+                    id="membershipTypeId"
+                    name="membershipTypeId"
+                    onChange={(e) => handlSubscription(e)}
+                    value={subscriptionData.membershipTypeId}
+                  >
+                    <option value={0} disabled>
+                      Select membership type
+                    </option>
+                    {membershipsData.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Campaign</Form.Label>
+                  <Form.Control type="text" name="campaignCode" onChange={(e) => handlSubscription(e)} value={subscriptionData.campaignCode} />
+                </div>
+                <div className="border-0 mt-3 mb-5">
+                  <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
+                    <span>Subscribe user</span>
+                  </Button>
+                </div>
+              </form>
             )}
           </OverlayScrollbarsComponent>
         </Modal.Body>

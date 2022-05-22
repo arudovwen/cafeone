@@ -31,15 +31,17 @@ const memberSlice = createSlice({
 });
 
 export const { setmembers, addmembers, updatestatus, resetstatus } = memberSlice.actions;
-export const getMembers = (page, search) => async (dispatch) => {
-  const response = await axios.get(`${SERVICE_URL}/members?page=${page}&search=${search}&size=15`, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
+export const getMembers =
+  (page, search, size = 15) =>
+  async (dispatch) => {
+    const response = await axios.get(`${SERVICE_URL}/members?page=${page}&search=${search}&size=${size}`, requestConfig).catch((err) => {
+      toast.error(err.response.data.message);
+    });
 
-  if (response.status === 200) {
-    dispatch(setmembers(response.data));
-  }
-};
+    if (response.status === 200) {
+      dispatch(setmembers(response.data));
+    }
+  };
 export const getMember = (data) => async () => {
   return axios.get(`${SERVICE_URL}/members/${data}`, requestConfig);
 };
@@ -53,20 +55,23 @@ export const updateMember = (data) => async (dispatch) => {
 };
 
 export const addMember = (data) => async (dispatch) => {
-  const response = await axios.post(`${SERVICE_URL}/members`, data, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(addmembers(response.data));
-    toast.success('User created');
-    dispatch(updatestatus('success'));
-    dispatch(resetstatus());
-  }
+  axios
+    .post(`${SERVICE_URL}/members`, data, requestConfig)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(addmembers(response.data));
+        toast.success('User created');
+        dispatch(updatestatus('success'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
 
 export const subscribeMember = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/members/${data.id}`, data, requestConfig);
+  return axios.post(`${SERVICE_URL}/members/${data.id}/subscribe`, data, requestConfig);
 };
 
 export const uploadPhoto = (data) => async () => {

@@ -3,12 +3,23 @@ import { Row, Col, Dropdown, Card, Badge } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import HtmlHead from 'components/html-head/HtmlHead';
 // import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
+import { SERVICE_URL, requestConfig } from 'config.js';
+import axios from 'axios';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import PerformanceChart from './components/PerformanceChart';
 
 const Dashboard = () => {
   const title = 'Dashboard';
   const description = 'Ecommerce Dashboard Page';
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+    axios.get(`${SERVICE_URL}/reports`, requestConfig).then((res) => {
+      if (res.status === 200) {
+        setData(res.data);
+      }
+    });
+  }, []);
 
   return (
     <>
@@ -46,7 +57,7 @@ const Dashboard = () => {
                 <CsLineIcons icon="dollar" className="text-primary" />
               </div>
               <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">BOOKINGS</div>
-              <div className="text-primary cta-4">20</div>
+              <div className="text-primary cta-4">{data.summary && data.summary.booking}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -56,8 +67,8 @@ const Dashboard = () => {
               <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
                 <CsLineIcons icon="database" className="text-primary" />
               </div>
-              <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">SPACES</div>
-              <div className="text-primary cta-4">16</div>
+              <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">BRANCHES</div>
+              <div className="text-primary cta-4">{data.summary && data.summary.branches}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -68,7 +79,7 @@ const Dashboard = () => {
                 <CsLineIcons icon="server" className="text-primary" />
               </div>
               <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">CAMPAIGNS</div>
-              <div className="text-primary cta-4">463</div>
+              <div className="text-primary cta-4">{data.summary && data.summary.campaigns}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -78,33 +89,11 @@ const Dashboard = () => {
               <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
                 <CsLineIcons icon="user" className="text-primary" />
               </div>
-              <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">USERS</div>
-              <div className="text-primary cta-4">17</div>
+              <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">MEMBERS</div>
+              <div className="text-primary cta-4">{data.summary && data.summary.members}</div>
             </Card.Body>
           </Card>
         </Col>
-        {/* <Col xs="6" md="4" lg="2">
-          <Card className="h-100 hover-scale-up cursor-pointer">
-            <Card.Body className="d-flex flex-column align-items-center">
-              <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
-                <CsLineIcons icon="arrow-top-left" className="text-primary" />
-              </div>
-              <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">RETURNS</div>
-              <div className="text-primary cta-4">2</div>
-            </Card.Body>
-          </Card>
-        </Col> */}
-        {/* <Col xs="6" md="4" lg="2">
-          <Card className="h-100 hover-scale-up cursor-pointer">
-            <Card.Body className="d-flex flex-column align-items-center">
-              <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
-                <CsLineIcons icon="message" className="text-primary" />
-              </div>
-              <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">COMMENTS</div>
-              <div className="text-primary cta-4">5</div>
-            </Card.Body>
-          </Card>
-        </Col> */}
       </Row>
       {/* Stats End */}
 
@@ -283,217 +272,37 @@ const Dashboard = () => {
         {/* Top Selling Items Start */}
         <Col>
           <h2 className="small-title">Top Booked Spaces</h2>
-          <div className="mb-n2">
-            <Card className="mb-2">
-              <Row className="g-0 sh-14 sh-md-10">
-                <Col className="col-auto">
-                  <NavLink to="/products/detail">
-                    <img src="/img/product/small/space.jpeg" alt="alternate text" className="card-img card-img-horizontal sw-11" />
-                  </NavLink>
-                </Col>
-                <Col>
-                  <Card.Body className="pt-0 pb-0 h-100">
-                    <Row className="g-0 h-100 align-content-center">
-                      <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                        <NavLink to="/products/detail">Space 1</NavLink>
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center text-muted text-medium">
-                        Ajah
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
-                        4.024 Sales
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
-            <Card className="mb-2">
-              <Row className="g-0 sh-14 sh-md-10">
-                <Col className="col-auto">
-                  <NavLink to="/products/detail">
-                    <img src="/img/product/small/space.jpeg" alt="alternate text" className="card-img card-img-horizontal sw-11" />
-                  </NavLink>
-                </Col>
-                <Col>
-                  <Card.Body className="pt-0 pb-0 h-100">
-                    <Row className="g-0 h-100 align-content-center">
-                      <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                        <NavLink to="/products/detail">Space 2</NavLink>
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center text-muted text-medium">
-                        Ikoyi
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
-                        2.701 Sales
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
-            <Card className="mb-2">
-              <Row className="g-0 sh-14 sh-md-10">
-                <Col className="col-auto">
-                  <NavLink to="/products/detail">
-                    <img src="/img/product/small/space.jpeg" alt="alternate text" className="card-img card-img-horizontal sw-11" />
-                  </NavLink>
-                </Col>
-                <Col>
-                  <Card.Body className="pt-0 pb-0 h-100">
-                    <Row className="g-0 h-100 align-content-center">
-                      <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                        <NavLink to="/products/detail">Space 3</NavLink>
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center text-muted text-medium">
-                        Yaba
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
-                        1.972 Sales
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
-            <Card className="mb-2">
-              <Row className="g-0 sh-14 sh-md-10">
-                <Col className="col-auto">
-                  <NavLink to="/products/detail">
-                    <img src="/img/product/small/space.jpeg" alt="alternate text" className="card-img card-img-horizontal sw-11" />
-                  </NavLink>
-                </Col>
-                <Col>
-                  <Card.Body className="pt-0 pb-0 h-100">
-                    <Row className="g-0 h-100 align-content-center">
-                      <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                        <NavLink to="/products/detail">Space 4</NavLink>
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center text-muted text-medium">
-                        Lekki
-                      </Col>
-                      <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
-                        1.543 Sales
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Col>
-              </Row>
-            </Card>
+          <div className="mb-2">
+            {data.seatUsage &&
+              data.seatUsage.map((item) => (
+                <Card className="mb-2" key={item.id}>
+                  <Row className="g-0 sh-14 sh-md-10">
+                    <Col className="col-auto">
+                      <NavLink to="#">
+                        <img src={`${process.env.REACT_APP_URL}/${item.photo}`} alt="alternate text" className="card-img card-img-horizontal sw-11" />
+                      </NavLink>
+                    </Col>
+                    <Col>
+                      <Card.Body className="pt-0 pb-0 h-100">
+                        <Row className="g-0 h-100 align-content-center">
+                          <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
+                            <NavLink to="/products/detail">{item.name}</NavLink>
+                          </Col>
+                          <Col md="3" className="d-flex align-items-center text-muted text-medium">
+                            {item.branch}
+                          </Col>
+                          <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
+                            {item.bookings} bookings
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Col>
+                  </Row>
+                </Card>
+              ))}
           </div>
         </Col>
         {/* Top Selling Items End */}
-
-        {/* Top Search Terms Start */}
-        {/* <Col xl="6">
-          <h2 className="small-title">Top Search Terms</h2>
-          <Card className="sh-35 h-xl-100-card">
-            <Card.Body className="h-100 scroll-out">
-              <OverlayScrollbarsComponent
-                options={{ scrollbars: { autoHide: 'leave' }, overflowBehavior: { x: 'hidden', y: 'scroll' } }}
-                className="h-100 mb-n2"
-              >
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Whole wheat bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">847</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>White bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">753</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Sourdough bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">721</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Melonpan bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">693</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Gluten free bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">431</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>sliced whole wheat bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">381</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Packaged Zopf bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">310</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Barm cake</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">301</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Pita bread</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">288</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Taftan cake</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">219</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Breadstick</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">184</Badge>
-                  </div>
-                </div>
-                <div className="d-flex flex-row align-items-center justify-content-between mb-2">
-                  <div className="d-flex flex-column">
-                    <div>Steirer brot</div>
-                  </div>
-                  <div className="d-flex">
-                    <Badge bg="outline-secondary">175</Badge>
-                  </div>
-                </div>
-              </OverlayScrollbarsComponent>
-            </Card.Body>
-          </Card>
-        </Col> */}
-        {/* Top Search Terms End */}
       </Row>
     </>
   );

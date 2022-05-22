@@ -172,7 +172,7 @@ const ReportList = () => {
       {/* List Items Start */}
       {ReportsData.length ? (
         ReportsData.map((item) => (
-          <Card key={item.id}>
+          <Card key={item.id} className="mb-2">
             <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
               <Row className="g-0 h-100 align-content-center cursor-default">
                 {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
@@ -247,6 +247,7 @@ const ReportList = () => {
         ''
       )}
       {/* Pagination End */}
+      {!ReportsData.length && <div className="text-center p-4 text-muted">No report available</div>}
 
       {/* Reporte Detail Modal Start */}
       <Modal className="modal-right scroll-out-negative" show={ReportModal} onHide={() => setReportModal(false)} scrollable dialogClassName="full">
@@ -264,29 +265,29 @@ const ReportList = () => {
                 <table className="mb-5">
                   <tbody>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom px-4 py-3 border-bottom text-uppercase"> Name</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.name}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Name</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.name}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Description</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.description}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Amount</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.amount}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Amount</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.amount}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Validity period</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.validityPeriod}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Validity period</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.validityPeriod}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Period type</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.validityPeriodType}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Period type</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.validityPeriodType}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">status</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.status}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>

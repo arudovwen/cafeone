@@ -260,7 +260,7 @@ const BranchesList = () => {
     e.preventDefault();
     dispatch(addBranchSeat(seatInfo)).then((res) => {
       if (res.status === 200) {
-        dispatch(dispatch(getBranches(page, search)));
+        dispatch(getBranches(page, search));
         toggleModal();
         setIsAdding(false);
         setIsViewing(false);
@@ -375,7 +375,7 @@ const BranchesList = () => {
 
       {/* List Items Start */}
       {branchesData.map((item) => (
-        <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`} key={item.id}>
+        <Card className="mb-2" key={item.id}>
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
@@ -432,7 +432,7 @@ const BranchesList = () => {
       {/* List Items End */}
 
       {/* Pagination Start */}
-      {
+      {branchesData.length ? (
         <div className="d-flex justify-content-center mt-5">
           <Pagination>
             <Pagination.Prev className="shadow" disabled={page === 1} onClick={() => prevPage()}>
@@ -448,9 +448,11 @@ const BranchesList = () => {
             </Pagination.Next>
           </Pagination>
         </div>
-      }
+      ) : (
+        ''
+      )}
       {/* Pagination End */}
-
+      {!branchesData.length && <div className="text-center p-4 text-muted">No data available</div>}
       {/* Branche Detail Modal Start */}
       <Modal className="modal-right scroll-out-negative" show={branchModal} onHide={() => setBranchModal(false)} scrollable dialogClassName="full">
         <Modal.Header closeButton>
@@ -516,7 +518,7 @@ const BranchesList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Address </Form.Label>
@@ -543,7 +545,7 @@ const BranchesList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={(e) => handleSeatChange(e)} value={seatInfo.location} />
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleSeatChange(e)} value={seatInfo.location} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Image</Form.Label>
@@ -566,33 +568,33 @@ const BranchesList = () => {
                 <table className="mb-5">
                   <tbody>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom px-4 py-3 border-bottom text-uppercase"> Name</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.name}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Name</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.name}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Location</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.address}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Location</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.address}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">City</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.city}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">City</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.city}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">State</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.state}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">State</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.state}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Description</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.description}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">status</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.status}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Seats </td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.seatCount}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Seats </td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.seatCount}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -612,22 +614,30 @@ const BranchesList = () => {
                   <table className="mb-5 w-100 bg-light">
                     <thead>
                       <tr>
-                        <th className="text-small text-muted font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Id</th>
-                        <th className="text-small text-muted  font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Image</th>
-                        <th className="text-small text-muted font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Description</th>
-                        <th className=" text-small text-muted font-weight-bold  px-4 py-3 border-bottom px-3 py-2 border-bottom text-uppercase">Action</th>
+                        <th className="text-small text-muted font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
+                          Id
+                        </th>
+                        <th className="text-small text-muted  font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
+                          Image
+                        </th>
+                        <th className="text-small text-muted font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
+                          Description
+                        </th>
+                        <th className=" text-small text-muted font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {seats &&
                         seats.map((item) => (
                           <tr key={item.id} className="border-bottom ">
-                            <td className="px-4 py-3 border-bottom px-3 py-2"> {item.id}</td>
-                            <td className="px-4 py-3 border-bottom px-3 py-2">
+                            <td className="px-4 py-3 border-bottom py-2"> {item.id}</td>
+                            <td className="px-4 py-3 border-bottom py-2">
                               <img src={item.id} className="rounded-full" alt="image" style={{ width: '30px', height: '30px' }} />
                             </td>
-                            <td className=" px-3 py-2 border-bottom">{item.description}</td>
-                            <td className=" px-3 py-2 border-bottom">
+                            <td className=" py-2 px-1 border-bottom">{item.description}</td>
+                            <td className=" py-2 px-1 border-bottom">
                               <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisSeat(item.id)}>
                                 <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
                               </Button>
@@ -637,7 +647,7 @@ const BranchesList = () => {
                     </tbody>
                   </table>
                 ) : (
-                  <div className="text-center py-2 bg-light rounded px-2">No seats available</div>
+                  <div className="text-center py-2 px-1 bg-light rounded px-2">No seats available</div>
                 )}
               </div>
             )}

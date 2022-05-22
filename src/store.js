@@ -19,6 +19,7 @@ import campaignReducer from 'campaigns/campaignSlice';
 import membershipReducer from 'membership/membershipSlice';
 import branchReducer from 'branches/branchSlice';
 import transactionReducer from 'transactions/transactionSlice';
+import adminReducer from 'admin/adminSlice';
 
 // import persist key
 import { REDUX_PERSIST_KEY } from 'config.js';
@@ -40,6 +41,7 @@ const persistedReducer = persistReducer(
     notification: notificationReducer,
     scrollspy: scrollspyReducer,
     members: memberReducer,
+    admins: adminReducer,
     bookings: bookingReducer,
     campaigns: campaignReducer,
     membership: membershipReducer,

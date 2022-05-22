@@ -102,7 +102,7 @@ const Detail = () => {
         <Card.Body>
           <Row className="g-5">
             <Col xl="7" className="position-relative">
-              <span className="badge rounded-pill bg-primary me-1 position-absolute e-n1 t-3 z-index-1 py-2 px-3">20% OFF</span>
+              <span className="badge rounded-pill bg-primary me-1 position-absolute e-n1 t-3 z-index-1 py-2 px-1 px-3">20% OFF</span>
               <GlideGallery>
                 <GlideGallery.LargeItems>
                   {galleyItems.map((item, index) => (

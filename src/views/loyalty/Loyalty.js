@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -11,7 +12,11 @@ import { useFormik } from 'formik';
 import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import SelectSearch from 'react-select-search';
+import Fuse from 'fuse.js';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 import {
   addCampaign,
   getCampaign,
@@ -31,17 +36,18 @@ const CampaignTypeList = () => {
   const [campaignModal, setCampaignModal] = useState(false);
   const campaignsData = useSelector((state) => state.campaigns.items);
   const status = useSelector((state) => state.campaigns.status);
-  const [members, setMembers] = useState([]);
   const initialValues = {
     code: '',
     description: '',
-    value: 0,
-    totalUsage: 0,
-    usagePerUser: 0,
+    value: '',
+    totalUsage: '',
+    usagePerUser: '',
     startDate: '',
     expiryDate: '',
     members: [],
   };
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
@@ -51,28 +57,17 @@ const CampaignTypeList = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [updateData, setUpdateData] = useState({});
+  const [members, setmembers] = useState([]);
 
   React.useEffect(() => {
     dispatch(getCampaigns(page, search));
-    dispatch(getMembers());
+    dispatch(getMembers(page, search, 50));
   }, [dispatch, page, search]);
-
-  const [selectedItems, setSelectedItems] = useState([]);
-  const checkItem = (item) => {
-    if (selectedItems.includes(item)) {
-      setSelectedItems(selectedItems.filter((x) => x !== item));
-    } else {
-      setSelectedItems([...selectedItems, item]);
-    }
-  };
-  const toggleCheckAll = () => {
-    if (selectedItems.length !== campaignsData.length) {
-      const ids = campaignsData.map((item) => item.id);
-      setSelectedItems(ids);
-    } else {
-      setSelectedItems([]);
-    }
-  };
+  const usersData = useSelector((state) => state.members.items).map((item) => {
+    const fullname = `${item.firstName} ${item.lastName}`;
+    const data = { value: item.id, name: fullname };
+    return data;
+  });
 
   function nextPage() {
     if (campaignsData.length / page > page) {
@@ -139,7 +134,7 @@ const CampaignTypeList = () => {
       });
     }
   }
-  function addNewCampaign(val) {
+  function addNewCampaign() {
     setIsAdding(true);
     setIsViewing(false);
     setIsEditing(false);
@@ -153,15 +148,29 @@ const CampaignTypeList = () => {
     setIsEditing(true);
 
     setUpdateData(val);
+    setStartDate(new Date(val.startDate));
+    setEndDate(new Date(val.expiryDate));
+    values.member = [...val.members.map((item) => item.userId)];
+
+    const fullmembers = val.members.map((item) => {
+      const user = usersData.find((v) => Number(v.value) === Number(item.userId));
+
+      return {
+        name: user.name,
+        id: user.value,
+      };
+    });
+
+    setmembers(fullmembers);
   }
 
   function viewCampaign(val) {
     dispatch(getCampaign(val.id)).then((res) => {
       setIsAdding(false);
-      setIsViewing(true);
       setIsEditing(false);
       res.data.members = res.data.users;
       setUpdateData(res.data);
+      setIsViewing(true);
     });
 
     toggleModal();
@@ -173,6 +182,35 @@ const CampaignTypeList = () => {
     debounce((nextValue) => setSearch(nextValue), 1000),
     []
   );
+  // eslint-disable-next-line no-shadow
+  function fuzzySearch(options) {
+    const fuse = new Fuse(options, {
+      keys: ['name', 'groupName', 'items.name'],
+      threshold: 0.3,
+    });
+
+    return (value) => {
+      if (!value.length) {
+        return options;
+      }
+
+      return fuse.search(value).map(({ item }) => item);
+    };
+  }
+
+  function addMember(val) {
+    if (values.members.includes(val)) return;
+
+    values.members.push(val);
+    const user = usersData.find((item) => Number(item.value) === Number(val));
+
+    const userarr = [user, ...members];
+    setmembers(userarr);
+  }
+  function removeMember(id, index) {
+    values.members.splice(index, 1);
+    setmembers(members.filter((item) => item.value !== id));
+  }
   // highlight-ends
   const handleSearch = (e) => {
     debouncedSave(e.target.value);
@@ -205,6 +243,13 @@ const CampaignTypeList = () => {
     e.preventDefault();
     dispatch(updateCampaign(updateData));
   }
+
+  React.useEffect(() => {
+    values.startDate = startDate;
+    values.expiryDate = endDate;
+    updateData.startDate = startDate;
+    updateData.expiryDate = endDate;
+  }, [startDate, endDate]);
 
   return (
     <>
@@ -311,7 +356,7 @@ const CampaignTypeList = () => {
 
       {/* List Items Start */}
       {campaignsData.map((item) => (
-        <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`} key={item.id}>
+        <Card key={item.id} className="mb-2">
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
@@ -327,13 +372,13 @@ const CampaignTypeList = () => {
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
                 <div className="text-muted text-small d-md-none">Start Date</div>
                 <div className="text-alternate">
-                  <span>{item.startDate}</span>
+                  <span>{moment(item.startDate).format('ll')}</span>
                 </div>
               </Col>
 
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
                 <div className="text-muted text-small d-md-none">End date</div>
-                <div className="text-alternate">{item.expiryDate}</div>
+                <div className="text-alternate">{moment(item.expiryDate).format('ll')}</div>
               </Col>
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
                 <div className="text-muted text-small d-md-none">Total usage</div>
@@ -349,7 +394,7 @@ const CampaignTypeList = () => {
                 <Form.Switch
                   className="form-check mt-2 ps-5 ps-md-2"
                   type="checkbox"
-                  checked={item.statusId}
+                  checked={item.isActive}
                   onChange={(e) => {
                     toggleStatus(e, item.id);
                   }}
@@ -371,25 +416,23 @@ const CampaignTypeList = () => {
       {/* List Items End */}
 
       {/* Pagination Start */}
-      {
+      {campaignsData.length ? (
         <div className="d-flex justify-content-center mt-5">
           <Pagination>
             <Pagination.Prev className="shadow" disabled={page === 1} onClick={() => prevPage()}>
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
-            {/* <Pagination.Item className="shadow"  onClick={() = handleActive(page)}>
-              {page}
-            </Pagination.Item>
-            <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
-            <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
+
             <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={campaignsData.length / page > page}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>
         </div>
-      }
+      ) : (
+        ''
+      )}
       {/* Pagination End */}
-
+      {!campaignsData.length && <div className="text-center p-4 text-muted">No data available</div>}
       {/* Campaigne Detail Modal Start */}
       <Modal className="modal-right scroll-out-negative" show={campaignModal} onHide={() => setCampaignModal(false)} scrollable dialogClassName="full">
         <Modal.Header closeButton>
@@ -427,32 +470,61 @@ const CampaignTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Start date </Form.Label>
-                  <input type="date" name="startDate" className="form-control" onChange={handleChange} value={values.startDate} />
+                  <Form.Label>Duration</Form.Label>
+
+                  <div className="d-flex justify-content-between align-items-center">
+                    <DatePicker
+                      className="border rounded px-2 py-1 text-muted"
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                    />
+
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      className="border rounded px-2 py-1 text-muted"
+                    />
+                  </div>
                   {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>End date </Form.Label>
-                  <input type="date" name="expiryDate" className="form-control" onChange={handleChange} value={values.expiryDate} />
-                  {errors.usagePerUser && touched.expiryDateexpiryDate && <div className="d-block invalid-tooltip">{errors.expiryDate}</div>}
-                </div>
-
-                <div className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={handleChange} value={values.description} />
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={handleChange} value={values.description} />
                   {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
                 </div>
 
                 <div>
                   <h6>Select members</h6>
-                  <Row>
-                    <Col xs={6}>
-                      <label className="d-flex align-items-center">
-                        <input type="checkbox" className="form-check-input me-1" name="members" />
-                      </label>
-                      John doe
-                    </Col>
+                  <SelectSearch
+                    filterOptions={() => fuzzySearch(usersData)}
+                    options={usersData}
+                    search
+                    name="members"
+                    onChange={(e) => addMember(e)}
+                    placeholder="Select campaign members"
+                  />
+                  <Row className="border rounded p-2 mt-3">
+                    {members.length
+                      ? members.map((item, index) => (
+                          <Col xs="12" key={item.value}>
+                            <p className="py-1 px-2 mb-0  d-flex justify-content-between">
+                              {' '}
+                              <span> {item.name}</span>{' '}
+                              <span className="cursor-pointer" onClick={() => removeMember(item.value, index)}>
+                                x
+                              </span>
+                            </p>
+                          </Col>
+                        ))
+                      : ''}
                   </Row>
                 </div>
 
@@ -483,29 +555,59 @@ const CampaignTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Start date </Form.Label>
-                  <input type="date" name="startDate" className="form-control" onChange={(e) => handleUpdateChange(e)} value={updateData.startDate} />
-                </div>
+                  <Form.Label>Duration</Form.Label>
 
-                <div className="mb-3">
-                  <Form.Label>End date </Form.Label>
-                  <input type="date" name="expiryDate" className="form-control" onChange={(e) => handleUpdateChange(e)} value={updateData.expiryDate} />
+                  <div className="d-flex justify-content-between align-items-center">
+                    <DatePicker
+                      className="border rounded px-2 py-1 text-muted"
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                    />
+
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      className="border rounded px-2 py-1 text-muted"
+                    />
+                  </div>
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
                 </div>
 
                 <div>
                   <h6>Select members</h6>
-                  <Row>
-                    <Col xs={6}>
-                      <label className="d-flex align-items-center">
-                        <input type="checkbox" className="form-check-input me-1" name="members" />
-                      </label>
-                      John doe
-                    </Col>
+                  <SelectSearch
+                    options={usersData}
+                    filterOptions={() => fuzzySearch(usersData)}
+                    search
+                    name="members"
+                    onChange={(e) => addMember(e)}
+                    placeholder="Select campaign members"
+                  />
+                  <Row className="border rounded p-2 mt-3">
+                    {members.length
+                      ? members.map((item, index) => (
+                          <Col xs="12" key={index}>
+                            <p className="py-1 px-2 mb-0 d-flex justify-content-between">
+                              {' '}
+                              <span> {item.name}</span>{' '}
+                              <span className="cursor-pointer" onClick={() => removeMember(item.value, index)}>
+                                x
+                              </span>
+                            </p>
+                          </Col>
+                        ))
+                      : ''}
                   </Row>
                 </div>
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
@@ -519,37 +621,37 @@ const CampaignTypeList = () => {
                 <table className="mb-5">
                   <tbody>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom px-4 py-3 border-bottom text-uppercase"> Code</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.code}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Code</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.code}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Description</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.description}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Todal usage</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.totalUsage}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Todal usage</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.totalUsage}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Usage per user</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.usagePerUser}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Usage per user</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.usagePerUser}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Start date </td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.startDate}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('ll')}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Expiry date</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.expiryDate}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Expiry date</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.expiryDate).format('ll')}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Value</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.value}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Value</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.value}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">status</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.isActive ? 'Active' : 'Inactive'}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.isActive ? 'Active' : 'Inactive'}</td>
                     </tr>
                   </tbody>
                 </table>

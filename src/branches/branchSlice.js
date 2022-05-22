@@ -60,28 +60,30 @@ export const deleteBranch = (data) => async () => {
 };
 
 export const activateBranch = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/branches/${data}/activate`,data, requestConfig);
+  return axios.post(`${SERVICE_URL}/branches/${data}/activate`, data, requestConfig);
 };
 
 export const deactivateBranch = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/branches/${data}/deactivate`,data, requestConfig);
+  return axios.post(`${SERVICE_URL}/branches/${data}/deactivate`, data, requestConfig);
 };
 
 export const addBranch = (data) => async (dispatch) => {
-  const response = await axios.post(`${SERVICE_URL}/branches`, data, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(addbranch(response.data));
-    toast.success('Branch created');
-    dispatch(updatestatus('success'));
-    dispatch(resetstatus());
-  }
+ axios
+    .post(`${SERVICE_URL}/branches`, data, requestConfig)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(addbranch(response.data));
+        toast.success('Branch created');
+        dispatch(updatestatus('success'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
 
 export const addBranchSeat = (data) => async () => {
-
   return axios.post(`${SERVICE_URL}/branches/${data.branchId}/seats`, data, requestConfig);
 };
 export const updateBranchSeat = (data) => async () => {

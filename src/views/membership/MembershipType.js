@@ -15,7 +15,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   getmembershiptypes,
   addMembershipType,
-  getMembership,
   updateMembership,
   activateMembership,
   deactivateMembership,
@@ -33,8 +32,8 @@ const MembershipTypeList = () => {
 
   const initialValues = {
     name: '',
-    amount: 0,
-    validityPeriod: 0,
+    amount: '',
+    validityPeriod: '',
     validityPeriodTypeId: 1,
     description: '',
   };
@@ -300,7 +299,7 @@ const MembershipTypeList = () => {
 
       {/* List Items Start */}
       {membershipsData.map((item) => (
-        <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`} key={item.id}>
+        <Card className="mb-2" key={item.id}>
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
@@ -356,7 +355,7 @@ const MembershipTypeList = () => {
       {/* List Items End */}
 
       {/* Pagination Start */}
-      {
+      {membershipsData.length ? (
         <div className="d-flex justify-content-center mt-5">
           <Pagination>
             <Pagination.Prev className="shadow" disabled={page === 1} onClick={() => prevPage()}>
@@ -372,8 +371,11 @@ const MembershipTypeList = () => {
             </Pagination.Next>
           </Pagination>
         </div>
-      }
+      ) : (
+        ''
+      )}
       {/* Pagination End */}
+      {!membershipsData.length && <div className="text-center p-4 text-muted">No data available</div>}
 
       {/* Membershipe Detail Modal Start */}
       <Modal className="modal-right scroll-out-negative" show={membershipModal} onHide={() => setMembershipModal(false)} scrollable dialogClassName="full">
@@ -407,13 +409,23 @@ const MembershipTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Period TypeId </Form.Label>
-                  <Form.Control type="text" name="validityPeriodTypeId" onChange={handleChange} value={values.validityPeriodTypeId} />
+                  <Form.Select
+                    type="text"
+                    name="validityPeriodTypeId"
+                    onChange={handleChange}
+                    value={values.validityPeriodTypeId}
+                    placeholder="Select validity period"
+                  >
+                    <option value="1">Monthly</option>
+                    <option value="2">Quartely</option>
+                    <option value="3">Yearly</option>
+                  </Form.Select>
                   {errors.validityPeriodTypeId && touched.validityPeriodTypeId && <div className="d-block invalid-tooltip">{errors.validityPeriodTypeId}</div>}
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={handleChange} value={values.description} />
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={handleChange} value={values.description} />
                   {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
                 </div>
 
@@ -435,7 +447,18 @@ const MembershipTypeList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Validity Period</Form.Label>
-                  <Form.Control type="text" name="validityPeriod" onChange={(e) => handleUpdateChange(e)} value={updateData.validityPeriod} />
+
+                  <Form.Select
+                    type="text"
+                    name="validityPeriodTypeId"
+                    onChange={(e) => handleUpdateChange(e)}
+                    value={updateData.validityPeriod}
+                    placeholder="Select validity period"
+                  >
+                    <option value="1">Monthly</option>
+                    <option value="2">Quartely</option>
+                    <option value="3">Yearly</option>
+                  </Form.Select>
                 </div>
 
                 <div className="mb-3">
@@ -445,7 +468,7 @@ const MembershipTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
                 </div>
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
                   <span>Submit</span>
@@ -458,29 +481,29 @@ const MembershipTypeList = () => {
                 <table className="mb-5">
                   <tbody>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom px-4 py-3 border-bottom text-uppercase"> Name</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.name}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Name</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.name}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Description</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.description}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Amount</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.amount}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Amount</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.amount}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Validity period</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.validityPeriod}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Validity period</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.validityPeriod}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">Period type</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.validityPeriodType}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Period type</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.validityPeriodType}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  px-4 py-3 border-bottom text-uppercase">status</td>
-                      <td className=" px-4 py-3 border-bottom">{updateData.status}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>

@@ -5,7 +5,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
-  bookings: [],
+  items: [],
+  total: 0,
   status: null,
 };
 
@@ -31,7 +32,7 @@ const bookingSlice = createSlice({
 
 export const { setbooking, addbooking, updatestatus, resetstatus } = bookingSlice.actions;
 
-export const getbookings = () => async (dispatch) => {
+export const getBookings = () => async (dispatch) => {
   const response = await axios.get(`${SERVICE_URL}/bookings`, requestConfig).catch((err) => {
     toast.error(err.response.data.message);
   });
@@ -62,16 +63,19 @@ export const checkoutBooking = (data) => async () => {
 };
 
 export const addBooking = (data) => async (dispatch) => {
-  const response = await axios.post(`${SERVICE_URL}/bookings`, data, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(addbooking(response.data));
-    toast.success('Booking created');
-    dispatch(updatestatus('success'));
-    dispatch(resetstatus());
-  }
+  axios
+    .post(`${SERVICE_URL}/bookings`, data, requestConfig)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(addbooking(response.data));
+        toast.success('Booking created');
+        dispatch(updatestatus('success'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
 
 const bookingReducer = bookingSlice.reducer;

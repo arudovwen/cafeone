@@ -5,8 +5,8 @@ import { DEFAULT_PATHS } from 'config.js';
 
 const dashboard = lazy(() => import('views/dashboard/Dashboard'));
 const usermanagement = {
-  list: lazy(() => import('views/users/UserManagement')),
-  detail: lazy(() => import('views/customers/detail/CustomersDetail')),
+  members: lazy(() => import('views/users/UserManagement')),
+  admins: lazy(() => import('views/admins/Admins')),
 };
 const branches = lazy(() => import('views/branches/Branches'));
 const bookings = lazy(() => import('views/bookings/Bookings'));
@@ -75,7 +75,8 @@ const routesAndMenuItems = {
       icon: 'user',
       protected: true,
       subs: [
-        { path: '/list', label: 'List', component: usermanagement.list },
+        { path: '/members', label: 'Members', component: usermanagement.members },
+        { path: '/admins', label: 'Admins', component: usermanagement.admins },
         // { path: '/detail', label: 'menu.detail', component: usermanagement.detail },
       ],
     },
