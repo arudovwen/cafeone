@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-underscore-dangle,no-unused-vars */
 import React, { useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
@@ -5,10 +6,19 @@ import { useSelector } from 'react-redux';
 import ReactDOM from 'react-dom';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 
-const PerformanceChart = () => {
+const PerformanceChart = ({ statData }) => {
   const { themeValues } = useSelector((state) => state.settings);
   const chartContainer = useRef(null);
   const tooltipRef = useRef(null);
+  const [types, setTypes] = React.useState(statData.map((item) => item.type));
+  const [counts, setCounts] = React.useState(statData.map((item) => item.membershipCount));
+
+  React.useEffect(() => {
+    if (!statData.length) return;
+
+    setTypes(statData.map((item) => item.type));
+    setCounts(statData.map((item) => item.membershipCount));
+  }, [statData]);
 
   const ExternalTooltip = React.useCallback(({ chart, tooltip }) => {
     let color = '';
@@ -77,14 +87,14 @@ const PerformanceChart = () => {
 
   const data = React.useMemo(() => {
     return {
-      labels: ['Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5', 'Type 6'],
+      labels: types,
       datasets: [
         {
           label: 'Membership Types / Subscribers',
           icon: 'burger',
           borderColor: themeValues.primary,
           backgroundColor: `rgba(${themeValues.primaryrgb},0.1)`,
-          data: [41, 12, 53, 24, 66, 35],
+          data: counts,
         },
       ],
     };

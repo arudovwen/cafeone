@@ -1,15 +1,15 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
+// import * as Yup from 'yup';
+// import { useFormik } from 'formik';
 import { debounce } from 'lodash';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
@@ -23,7 +23,7 @@ const MembershipList = () => {
   const description = 'Membership List Page';
   const [membershipModal, setMembershipModal] = useState(false);
   const membershipsData = useSelector((state) => state.membership.memberships);
-  const total = useSelector((state) => state.membership.total);
+  // const total = useSelector((state) => state.membership.total);
 
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
@@ -106,14 +106,6 @@ const MembershipList = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
-          {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>

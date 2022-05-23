@@ -140,8 +140,5 @@ const enMessages = {
   'menu.shipping': 'Shipping',
   'menu.discount': 'Discount',
   'menu.general': 'General',
-
-
-
 };
 export default enMessages;

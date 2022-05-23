@@ -17,12 +17,15 @@ import Fuse from 'fuse.js';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
+import CsvDownloader from 'react-csv-downloader';
 import {
   addBooking,
   getBooking,
   getBookings,
   updateBooking,
   deleteBooking,
+  checkinBooking,
+  checkoutBooking,
 
   // eslint-disable-next-line import/extensions
 } from '../../bookings/bookingSlice';
@@ -40,6 +43,7 @@ const BookingTypeList = () => {
       name: item.name,
     };
   });
+  const [datas, setDatas] = useState([]);
   const [seatData, setSeatData] = React.useState([]);
   const membersData = useSelector((state) => state.members.items).map((item) => {
     const fullname = `${item.firstName} ${item.lastName}`;
@@ -99,7 +103,7 @@ const BookingTypeList = () => {
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
-  const { handleSubmit, handleChange, values, touched, errors } = formik;
+  const { handleSubmit, values, touched, errors } = formik;
 
   // Retrieve seats
   React.useEffect(() => {
@@ -148,14 +152,13 @@ const BookingTypeList = () => {
   }
 
   function viewBooking(val) {
-    dispatch(getBooking(val.id)).then((res) => {
+    dispatch(getBooking(val.bookingId)).then((res) => {
       setIsAdding(false);
       setIsEditing(false);
       setUpdateData(res.data);
       setIsViewing(true);
+      toggleModal();
     });
-
-    toggleModal();
   }
 
   // highlight-starts
@@ -242,8 +245,82 @@ const BookingTypeList = () => {
   function setSeat(val) {
     values.seatId = val;
   }
-  function handleChecking(data) {}
+  function handleChecking(data) {
+    if (!data.checkInTime) {
+      dispatch(checkinBooking(data.bookingId)).then((res) => {
+        if (res.status === 200) {
+          toast.success('Checked in successful');
+        }
+      });
+    } else {
+      dispatch(checkoutBooking(data.bookingId)).then((res) => {
+        if (res.status === 200) {
+          toast.success('Checked out successful');
+        }
+      });
+    }
+  }
 
+  React.useEffect(() => {
+    const newdata = bookingsData.map((item) => {
+      return {
+        cell1: item.bookingId,
+        cell2: item.memberId,
+        cell3: item.name,
+        cell4: item.branch,
+        cell5: item.fromTime,
+        cell6: item.toTime,
+        cell7: item.seat,
+        cell8: item.clockInTime,
+        cell9: item.clockOutTime,
+        cell10: item.status,
+      };
+    });
+    setDatas(newdata);
+  }, [bookingsData]);
+
+  const columns = [
+    {
+      id: 'cell1',
+      displayName: 'BOOKINGID',
+    },
+    {
+      id: 'cell2',
+      displayName: 'MEMBERID',
+    },
+    {
+      id: 'cell3',
+      displayName: 'NAME',
+    },
+    {
+      id: 'cell4',
+      displayName: 'BRANCH',
+    },
+    {
+      id: 'cell5',
+      displayName: 'FROM-TIME',
+    },
+    {
+      id: 'cell6',
+      displayName: 'TO-TIME',
+    },
+    {
+      id: 'cell7',
+      displayName: 'SEAT',
+    },
+    {
+      id: 'cell8',
+      displayName: 'CLOCK-IN-TIME',
+    },
+    {
+      id: 'cell9',
+      displayName: 'CLOCK-OUT-TIME',
+    },
+    {
+      id: 'cell10',
+      displayName: 'STATUS',
+    },
+  ];
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -283,26 +360,15 @@ const BookingTypeList = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
-          {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsLineIcons icon="download" />
+                <CsvDownloader filename="bookings" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  <CsLineIcons icon="download" />
+                </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -326,25 +392,28 @@ const BookingTypeList = () => {
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DookingId</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">MemberId</div>
+          <div className="text-muted text-small cursor-pointer sort">BookingId</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Name</div>
         </Col>
 
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">fromTime</div>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">FromTime</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">ToTime</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">toTime</div>
+          <div className="text-muted text-small cursor-pointer sort">Branch</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">Seat</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Status</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
       </Row>
@@ -352,50 +421,47 @@ const BookingTypeList = () => {
 
       {/* List Items Start */}
       {bookingsData.map((item) => (
-        <Card key={item.id} className="mb-2">
+        <Card key={item.bookingId} className="mb-2">
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/bookings/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col> */}
               <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
                 <div className="text-muted text-small d-md-none">bookingId</div>
                 <div className="text-alternate">{item.bookingId}</div>
               </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">memberId</div>
-                <div className="text-alternate">{item.memberId}</div>
-              </Col>
-
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
                 <div className="text-muted text-small d-md-none">name</div>
                 <div className="text-alternate">{item.name}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
                 <div className="text-muted text-small d-md-none">fromTime</div>
                 <div className="text-alternate">
                   <span>{moment(item.fromTime).format('ll')}</span>
                 </div>
               </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                 <div className="text-muted text-small d-md-none">toTime</div>
                 <div className="text-alternate">{moment(item.toTime).format('ll')}</div>
               </Col>
-
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+                <div className="text-muted text-small d-md-none">Branch</div>
+                <div>{item.branch}</div>
+              </Col>
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+                <div className="text-muted text-small d-md-none">Seat</div>
+                <div>{item.seat}</div>
+              </Col>
+
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
-                <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
+                <div>{item.status ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
 
               <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end order-md-last">
                 <span className="d-flex">
                   {' '}
                   <span onClick={() => viewBooking(item)} className="text-muted me-3 cursor-pointer">
-                    View <CsLineIcons icon="eye" style={{ width: '12px', height: '12px' }} />
+                    View <CsLineIcons icon="eye" style={{ width: '11px', height: '11px' }} />
                   </span>
                 </span>
               </Col>
@@ -571,7 +637,13 @@ const BookingTypeList = () => {
 
             {isViewing && updateData && (
               <div className="">
-                <table className="mb-5">
+                <img
+                  src={`${process.env.REACT_APP_URL}/${updateData.image}`}
+                  alt="branch"
+                  className="rounded-md mb-5"
+                  style={{ width: '80px', height: '80px' }}
+                />
+                <table className="mb-5 w-100">
                   <tbody>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Booking Id</td>
@@ -597,16 +669,13 @@ const BookingTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-In Time </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.clockInTime).format('ll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('ll') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-Out Time</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.clockOutTime).format('ll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('ll') : '-'}</td>
                     </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">image</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.image}</td>
-                    </tr>
+
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">seat</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.seat}</td>
@@ -625,11 +694,12 @@ const BookingTypeList = () => {
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBooking(updateData)}>
                     <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
-                  </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData)}>
-                    <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Check in</span>
+                  </Button> */}
+                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData)}>
+                    <CsLineIcons icon={updateData.clockInTime ? 'minus' : 'plus'} className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
+                    <span className="sr-only">{updateData.clockInTime ? 'Check out' : 'Check in'}</span>
                   </Button>
                 </div>
                 <hr className="my-4" />

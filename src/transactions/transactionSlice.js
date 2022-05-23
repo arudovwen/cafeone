@@ -16,11 +16,9 @@ const transactionSlice = createSlice({
   reducers: {
     settransactions(state, action) {
       state.items = action.payload.items;
-
     },
     setrecenttransactions(state, action) {
       state.items = action.payload;
-
     },
   },
 });

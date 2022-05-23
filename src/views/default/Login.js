@@ -22,7 +22,7 @@ const Login = () => {
     if (status === 'failed') {
       setisloading(false);
     }
-  });
+  }, [status]);
   const initialValues = { email: '', password: '' };
   const dispatch = useDispatch();
   const onSubmit = (values) => {

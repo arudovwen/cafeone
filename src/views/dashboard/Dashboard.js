@@ -259,9 +259,7 @@ const Dashboard = () => {
           <h2 className="small-title">Membership Stats</h2>
           <Card className="sh-45 h-xl-100-card">
             <Card.Body className="h-100">
-              <div className="h-100">
-                <PerformanceChart />
-              </div>
+              <div className="h-100">{data && data.membershiptStats ? <PerformanceChart statData={data.membershiptStats} /> : ''}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -278,15 +276,13 @@ const Dashboard = () => {
                 <Card className="mb-2" key={item.id}>
                   <Row className="g-0 sh-14 sh-md-10">
                     <Col className="col-auto">
-                      <NavLink to="#">
-                        <img src={`${process.env.REACT_APP_URL}/${item.photo}`} alt="alternate text" className="card-img card-img-horizontal sw-11" />
-                      </NavLink>
+                      <img src={`${process.env.REACT_APP_URL}/${item.photo}`} alt="alternate text" className="card-img card-img-horizontal sw-11" />
                     </Col>
                     <Col>
                       <Card.Body className="pt-0 pb-0 h-100">
                         <Row className="g-0 h-100 align-content-center">
                           <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                            <NavLink to="/products/detail">{item.name}</NavLink>
+                            {item.name}
                           </Col>
                           <Col md="3" className="d-flex align-items-center text-muted text-medium">
                             {item.branch}

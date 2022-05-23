@@ -60,23 +60,6 @@ const BranchesList = () => {
     dispatch(getBranches(page, search));
   }, [dispatch, page, search]);
 
-  const [selectedItems, setSelectedItems] = useState([]);
-  const checkItem = (item) => {
-    if (selectedItems.includes(item)) {
-      setSelectedItems(selectedItems.filter((x) => x !== item));
-    } else {
-      setSelectedItems([...selectedItems, item]);
-    }
-  };
-  const toggleCheckAll = () => {
-    if (selectedItems.length !== branchesData.length) {
-      const ids = branchesData.map((item) => item.id);
-      setSelectedItems(ids);
-    } else {
-      setSelectedItems([]);
-    }
-  };
-
   function nextPage() {
     if (branchesData.length / page > page) {
       setPage(page + 1);
@@ -156,11 +139,10 @@ const BranchesList = () => {
       });
     }
   }
-  function addNewBranch(val) {
+  function addNewBranch() {
     setIsAdding(true);
     setIsViewing(false);
     setIsEditing(false);
-
     toggleModal();
   }
 
@@ -181,7 +163,6 @@ const BranchesList = () => {
     setIsEditing(false);
     dispatch(getBranch(val.id)).then((res) => {
       const info = res.data;
-      console.log('🚀 ~ file: Branches.js ~ line 158 ~ dispatch ~ info', info);
       setUpdateData(info);
       setSeats(info.seats);
     });
@@ -310,14 +291,6 @@ const BranchesList = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="8" xxl="8" className="mb-1 text-end">
-          {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>

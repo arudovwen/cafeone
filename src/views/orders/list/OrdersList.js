@@ -8,7 +8,6 @@ import CheckAll from 'components/check-all/CheckAll';
 const OrdersList = () => {
   const title = 'Orders List';
   const description = 'Ecommerce Orders List Page';
-
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
   const checkItem = (item) => {
@@ -85,14 +84,6 @@ const OrdersList = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
-          {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>

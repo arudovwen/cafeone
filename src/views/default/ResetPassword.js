@@ -21,7 +21,12 @@ const ResetPassword = () => {
   const location = useLocation();
   const token = new URLSearchParams(location.search).get('resetToken');
 
-  const initialValues = { password: '', passwordConfirm: '', resetToken: token, email: '' };
+  const initialValues = {
+    password: '',
+    passwordConfirm: '',
+    resetToken: token,
+    email: '',
+  };
   const dispatch = useDispatch();
   const onSubmit = (values) => dispatch(resetPassword(values));
 

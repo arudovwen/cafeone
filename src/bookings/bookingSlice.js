@@ -15,7 +15,8 @@ const bookingSlice = createSlice({
   initialState,
   reducers: {
     setbooking(state, action) {
-      state.bookings = action.payload;
+      state.items = action.payload.items;
+      state.total = action.payload.total;
     },
 
     addbooking(state, action) {
@@ -43,7 +44,7 @@ export const getBookings = () => async (dispatch) => {
 };
 
 export const getBooking = (data) => async () => {
-  return axios.get(`${SERVICE_URL}/bookings/${data.id}`, requestConfig);
+  return axios.get(`${SERVICE_URL}/bookings/${data}`, requestConfig);
 };
 
 export const updateBooking = (data) => async () => {
@@ -55,11 +56,11 @@ export const deleteBooking = (data) => async () => {
 };
 
 export const checkinBooking = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/bookings/${data.id}/checkin`, requestConfig);
+  return axios.post(`${SERVICE_URL}/bookings/${data}/checkin`, data, requestConfig);
 };
 
 export const checkoutBooking = (data) => async () => {
-  return axios.delete(`${SERVICE_URL}/bookings/${data.id}/checkout`, requestConfig);
+  return axios.post(`${SERVICE_URL}/bookings/${data}/checkout`, data, requestConfig);
 };
 
 export const addBooking = (data) => async (dispatch) => {

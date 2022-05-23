@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const initialState = {
   types: [],
   memberships: [],
-  total:0,
+  total: 0,
   status: null,
 };
 
@@ -17,7 +17,7 @@ const membershipSlice = createSlice({
   reducers: {
     setmembership(state, action) {
       state.memberships = action.payload.items;
-       state.total = action.payload.total;
+      state.total = action.payload.total;
     },
     setmembershiptypes(state, action) {
       state.types = action.payload;

@@ -68,7 +68,7 @@ export const deactivateBranch = (data) => async () => {
 };
 
 export const addBranch = (data) => async (dispatch) => {
- axios
+  axios
     .post(`${SERVICE_URL}/branches`, data, requestConfig)
     .then((response) => {
       if (response.status === 200) {

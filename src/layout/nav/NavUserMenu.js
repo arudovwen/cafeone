@@ -89,7 +89,7 @@ const NavUserMenuContent = ({ dispatch }) => (
 );
 
 const NavUserMenuDropdownToggle = React.memo(
-  React.forwardRef(({ onClick, expanded = false, user = {} }, ref) => (
+  React.forwardRef(({ onClick, expanded = false }, ref) => (
     <a
       href="#/!"
       ref={ref}

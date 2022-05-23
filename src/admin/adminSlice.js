@@ -58,7 +58,7 @@ export const getAdmin = (data) => async () => {
 };
 
 export const updateAdmin = (data) => async (dispatch) => {
-  axios.post(`${SERVICE_URL}/admins/${data.id}`, data, requestConfig).then((res) => {
+  axios.post(`${SERVICE_URL}/admins/${data.id}`, data, requestConfig).then(() => {
     toast.success('User updated');
     dispatch(updatestatus('update'));
     dispatch(resetstatus());

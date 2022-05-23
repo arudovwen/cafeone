@@ -1,9 +1,9 @@
+/* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import CheckAll from 'components/check-all/CheckAll';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import { useFormik } from 'formik';
 import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAdmins, addAdmin, getAdmin, updateAdmin, activateAdmin, deactivateAdmin, getRoles, removeadmin } from '../../admin/adminSlice';
+import { getAdmins, addAdmin, updateAdmin, activateAdmin, deactivateAdmin, getRoles, removeadmin } from '../../admin/adminSlice';
 
 const AdminManagementList = () => {
   const [adminModal, setAdminModal] = useState(false);
@@ -20,9 +20,6 @@ const AdminManagementList = () => {
   const title = 'Admins List';
   const description = 'Admins List Page';
 
-  const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-  const [selectedItems, setSelectedItems] = useState([]);
   const adminsData = useSelector((state) => state.admins.items);
   const total = useSelector((state) => state.admins.total);
   const status = useSelector((state) => state.admins.status);
@@ -45,22 +42,6 @@ const AdminManagementList = () => {
     dispatch(getAdmins(page, search));
     dispatch(getRoles());
   }, [dispatch, page, search]);
-
-  const checkItem = (item) => {
-    if (selectedItems.includes(item)) {
-      setSelectedItems(selectedItems.filter((x) => x !== item));
-    } else {
-      setSelectedItems([...selectedItems, item]);
-    }
-  };
-  const toggleCheckAll = () => {
-    if (selectedItems.length !== adminsData.length) {
-      const ids = adminsData.map((item) => item.id);
-      setSelectedItems(ids);
-    } else {
-      setSelectedItems([]);
-    }
-  };
 
   function nextPage() {
     if (total / page > page) {
@@ -105,12 +86,12 @@ const AdminManagementList = () => {
       });
     }
   }
-  function editAdmin(val) {
-    setUpdateData(val);
-    setIsAdding(false);
-    setIsViewing(false);
-    setIsEditing(true);
-  }
+  // function editAdmin(val) {
+  //   setUpdateData(val);
+  //   setIsAdding(false);
+  //   setIsViewing(false);
+  //   setIsEditing(true);
+  // }
   function addNewAdmin() {
     setIsAdding(true);
     setIsViewing(false);
@@ -200,21 +181,6 @@ const AdminManagementList = () => {
             <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
               <CsLineIcons icon="sort" />
             </Button>
-            <div className="btn-group ms-1 check-all-container">
-              <CheckAll
-                allItems={allItems}
-                selectedItems={selectedItems}
-                onToggle={toggleCheckAll}
-                inputClassName="form-check"
-                className="btn btn-outline-primary btn-custom-control py-0"
-              />
-              <Dropdown align="end">
-                <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => deleteAdmin()}>Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
           </Col>
           {/* Top Buttons End */}
         </Row>
@@ -240,14 +206,6 @@ const AdminManagementList = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
-          {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>

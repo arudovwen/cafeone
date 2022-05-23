@@ -47,7 +47,7 @@ export const getMember = (data) => async () => {
 };
 
 export const updateMember = (data) => async (dispatch) => {
-  axios.post(`${SERVICE_URL}/members/${data.id}`, data, requestConfig).then((res) => {
+  axios.post(`${SERVICE_URL}/members/${data.id}`, data, requestConfig).then(() => {
     toast.success('User updated');
     dispatch(updatestatus('update'));
     dispatch(resetstatus());

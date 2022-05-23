@@ -1,9 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import CheckAll from 'components/check-all/CheckAll';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +13,7 @@ import { debounce } from 'lodash';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CsvDownloader from 'react-csv-downloader';
 import {
   getmembershiptypes,
   // eslint-disable-next-line import/extensions
@@ -25,10 +26,6 @@ const UserManagementList = () => {
   const dispatch = useDispatch();
   const title = 'Users List';
   const description = 'Users List Page';
-
-  const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-  const [selectedItems, setSelectedItems] = useState([]);
   const usersData = useSelector((state) => state.members.items);
   const total = useSelector((state) => state.members.total);
   const status = useSelector((state) => state.members.status);
@@ -63,26 +60,11 @@ const UserManagementList = () => {
     membershipTypeId: 0,
     campaignCode: '',
   });
+  const [datas, setDatas] = useState([]);
   React.useEffect(() => {
     dispatch(getMembers(page, search));
     dispatch(getmembershiptypes(page, search, 50));
   }, [dispatch, page, search]);
-
-  const checkItem = (item) => {
-    if (selectedItems.includes(item)) {
-      setSelectedItems(selectedItems.filter((x) => x !== item));
-    } else {
-      setSelectedItems([...selectedItems, item]);
-    }
-  };
-  const toggleCheckAll = () => {
-    if (selectedItems.length !== usersData.length) {
-      const ids = usersData.map((item) => item.id);
-      setSelectedItems(ids);
-    } else {
-      setSelectedItems([]);
-    }
-  };
 
   function nextPage() {
     if (total / page > page) {
@@ -145,7 +127,7 @@ const UserManagementList = () => {
       toggleModal();
     });
   }
-  function addNewUser(val) {
+  function addNewUser() {
     setIsAdding(true);
     setIsViewing(false);
     setIsEditing(false);
@@ -249,6 +231,36 @@ const UserManagementList = () => {
     }
   }, [status, dispatch]);
 
+  React.useEffect(() => {
+    const newdata = usersData.map((item) => {
+      return {
+        cell1: `${item.firstName} ${item.lastName}`,
+        cell2: item.email,
+        cell3: item.phone,
+        cell4: item.membershipStatus,
+      };
+    });
+    setDatas(newdata);
+  }, [usersData]);
+
+  const columns = [
+    {
+      id: 'cell1',
+      displayName: 'NAME',
+    },
+    {
+      id: 'cell2',
+      displayName: 'EMAIL',
+    },
+    {
+      id: 'cell3',
+      displayName: 'PHONE',
+    },
+    {
+      id: 'cell4',
+      displayName: 'MEMBERSHIP STATUS',
+    },
+  ];
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -271,21 +283,6 @@ const UserManagementList = () => {
             <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
               <CsLineIcons icon="sort" />
             </Button>
-            <div className="btn-group ms-1 check-all-container">
-              <CheckAll
-                allItems={allItems}
-                selectedItems={selectedItems}
-                onToggle={toggleCheckAll}
-                inputClassName="form-check"
-                className="btn btn-outline-primary btn-custom-control py-0"
-              />
-              <Dropdown align="end">
-                <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => deleteUser()}>Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
           </Col>
           {/* Top Buttons End */}
         </Row>
@@ -303,7 +300,6 @@ const UserManagementList = () => {
               <CsLineIcons icon="close" />
             </span>
           </div>
-
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewUser()}>
             <CsLineIcons icon="plus" /> <span>Add User</span>
           </Button>
@@ -311,26 +307,15 @@ const UserManagementList = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
-          {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsLineIcons icon="download" />
+                <CsvDownloader filename="users" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  <CsLineIcons icon="download" />
+                </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -363,7 +348,7 @@ const UserManagementList = () => {
           <div className="text-muted text-small cursor-pointer sort">Phone</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Membership Type</div>
+          <div className="text-muted text-small cursor-pointer sort">Membership Status</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -662,7 +647,7 @@ const UserManagementList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">DOB</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.birthDate}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.birthDate).format('l')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">City</td>
@@ -682,11 +667,11 @@ const UserManagementList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership start date</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.membershipStartDate}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.membershipStartDate).format('l')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership expiry date</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.membershipExpiryDate}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.membershipExpiryDate).format('l')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Note</td>

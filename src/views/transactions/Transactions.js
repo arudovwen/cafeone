@@ -1,16 +1,13 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Label } from 'react-bootstrap';
+import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-
 import { useDispatch, useSelector } from 'react-redux';
-
 import { debounce } from 'lodash';
-
 import 'react-toastify/dist/ReactToastify.css';
-
+import CsvDownloader from 'react-csv-downloader';
 import { getTransactions, getRecentTransactions } from '../../transactions/transactionSlice';
 
 const TransactionList = () => {
@@ -21,6 +18,7 @@ const TransactionList = () => {
   const transactionsData = useSelector((state) => state.transactions.items);
   const dispatch = useDispatch();
   const [showing, setShowing] = useState('all');
+  const [datas, setDatas] = useState([]);
   React.useEffect(() => {
     dispatch(getTransactions(page, search));
   }, [dispatch, page, search]);
@@ -54,6 +52,48 @@ const TransactionList = () => {
       dispatch(getRecentTransactions(page, search));
     }
   }
+
+  React.useEffect(() => {
+    const newdata = transactionsData.map((item) => {
+      return {
+        cell1: item.name,
+        cell2: item.email,
+        cell3: item.amountDue,
+        cell4: item.discount,
+        cell5: item.amountPaid,
+        cell6: item.naration,
+      };
+    });
+    setDatas(newdata);
+  }, [transactionsData]);
+
+  const columns = [
+    {
+      id: 'cell1',
+      displayName: 'NAME',
+    },
+    {
+      id: 'cell2',
+      displayName: 'EMAIL',
+    },
+    {
+      id: 'cell3',
+      displayName: 'AMOUNT DUE',
+    },
+    {
+      id: 'cell4',
+      displayName: 'DISCOUNT',
+    },
+    {
+      id: 'cell5',
+      displayName: 'AMOUNT PAID',
+    },
+     {
+      id: 'cell6',
+      displayName: 'NARATION',
+    },
+  ];
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -89,26 +129,15 @@ const TransactionList = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="8" xxl="8" className="mb-1 text-end">
-          {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsLineIcons icon="download" />
+                <CsvDownloader filename="transactions" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  <CsLineIcons icon="download" />
+                </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -148,7 +177,7 @@ const TransactionList = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">EMAIL</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
@@ -163,7 +192,7 @@ const TransactionList = () => {
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NARATION</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer sort">AMOUNT PAID</div>
         </Col>
       </Row>
@@ -175,7 +204,7 @@ const TransactionList = () => {
           <Card key={item.id} className="mb-2">
             <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
               <Row className="g-0 h-100 align-content-center cursor-default">
-                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+                <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
                   <div className="text-muted text-small d-md-none">Email</div>
                   <div className="text-alternate">{item.email}</div>
                 </Col>
@@ -197,7 +226,7 @@ const TransactionList = () => {
                   <div className="text-muted text-small d-md-none">Narration</div>
                   <div className="text-alternate">{item.narration}</div>
                 </Col>
-                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+                <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
                   <div className="text-muted text-small d-md-none">Amount paid</div>
                   <div className="text-alternate">{item.amountPaid}</div>
                 </Col>
@@ -218,11 +247,7 @@ const TransactionList = () => {
             <Pagination.Prev className="shadow" disabled={page === 1} onClick={() => prevPage()}>
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
-            {/* <Pagination.Item className="shadow"  onClick={() = handleActive(page)}>
-              {page}
-            </Pagination.Item>
-            <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
-            <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
+
             <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={transactionsData.length / page > page}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
@@ -232,7 +257,6 @@ const TransactionList = () => {
         ''
       )}
       {/* Pagination End */}
-
     </>
   );
 };
