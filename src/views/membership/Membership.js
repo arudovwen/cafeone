@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -204,9 +204,10 @@ const MembershipList = () => {
                 <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end order-md-last">
                   <span className="d-flex">
                     {' '}
-                    <span onClick={() => viewMembership(item)} className="text-muted me-3 cursor-pointer">
-                      View <CsLineIcons icon="eye" style={{ width: '12px', height: '12px' }} />
-                    </span>
+
+                    <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
+                      View
+                    </Button>
                   </span>
                 </Col>
               </Row>

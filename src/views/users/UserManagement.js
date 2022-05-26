@@ -301,7 +301,7 @@ const UserManagementList = () => {
             </span>
           </div>
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewUser()}>
-            <CsLineIcons icon="plus" /> <span>Add User</span>
+            <CsLineIcons icon="plus" /> <span>Add member</span>
           </Button>
 
           {/* Search End */}
@@ -347,8 +347,11 @@ const UserManagementList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Phone</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Membership Status</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -358,7 +361,7 @@ const UserManagementList = () => {
         <Card key={item.id} className="mb-2">
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
                 <div className="text-muted text-small d-md-none">Name</div>
                 <div className="text-alternate dflex align-items-center">
                   <img
@@ -370,17 +373,17 @@ const UserManagementList = () => {
                   {item.firstName} {item.lastName}
                 </div>
               </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">Email</div>
                 <div className="text-alternate">
                   <span>{item.email}</span>
                 </div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-4">
                 <div className="text-muted text-small d-md-none">Phone</div>
                 <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>
                   {item.membershipStatusId ? (
@@ -390,12 +393,12 @@ const UserManagementList = () => {
                   )}
                 </div>
               </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last order-md-last">
                 <span className="d-flex">
                   {' '}
-                  <span onClick={() => viewUser(item)} className="text-muted me-3 cursor-pointer">
+                  <Button variant="primary" type="button" size="sm" onClick={() => viewUser(item)} className="">
                     View
-                  </span>
+                  </Button>
                 </span>
               </Col>
             </Row>

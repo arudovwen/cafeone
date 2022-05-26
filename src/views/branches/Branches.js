@@ -325,23 +325,24 @@ const BranchesList = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">SEATS</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
-          <div className="text-muted text-small cursor-pointer sort">Action</div>
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
+          <div className="text-muted text-small cursor-pointer sort">TOGGLE</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
+          <div className="text-muted text-small cursor-pointer sort text-right">Action</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -351,37 +352,29 @@ const BranchesList = () => {
         <Card className="mb-2" key={item.id}>
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/branches/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col> */}
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">Name</div>
                 <div className="text-alternate">{item.name}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1">
                 <div className="text-muted text-small d-md-none">Location</div>
                 <div className="text-alternate">
                   <span>{item.address}</span>
                 </div>
               </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Description</div>
-                <div className="text-alternate">{item.description}</div>
-              </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4 px-1">
                 <div className="text-muted text-small d-md-none">Seats</div>
                 <div className="text-alternate">{item.seatCount}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.statusId ? <Badge bg="outline-primary">{item.status}</Badge> : <Badge bg="outline-warning">{item.status}</Badge>}</div>
               </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-start align-items-md-end mb-2 mb-md-0 order-5 px-1 order-md-last">
+                <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
-                  className="form-check mt-2 ps-5 ps-md-2"
+                  className="form-check mt-md-2 me-auto"
                   type="checkbox"
                   checked={item.statusId}
                   onChange={(e) => {
@@ -389,12 +382,12 @@ const BranchesList = () => {
                   }}
                 />
               </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last text-end order-md-last">
                 <span className="d-flex">
                   {' '}
-                  <span onClick={() => viewBranch(item)} className="text-muted me-3 cursor-pointer">
-                    View <CsLineIcons icon="eye" style={{ width: '12px', height: '12px' }} />
-                  </span>
+                  <Button variant="primary" type="button" size="sm" onClick={() => viewBranch(item)} className="">
+                    View
+                  </Button>
                 </span>
               </Col>
             </Row>
@@ -538,7 +531,7 @@ const BranchesList = () => {
                     <CsLineIcons icon="plus" /> <span>Add seat</span>
                   </Button>
                 </div>
-                <table className="mb-5">
+                <table className="mb-5 w-100">
                   <tbody>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Name</td>
@@ -583,45 +576,44 @@ const BranchesList = () => {
 
                 <h5>Seat Information</h5>
 
-                {seats && seats.length ? (
-                  <table className="mb-5 w-100 bg-light">
-                    <thead>
-                      <tr>
-                        <th className="text-small text-muted font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
-                          Id
-                        </th>
-                        <th className="text-small text-muted  font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
-                          Image
-                        </th>
-                        <th className="text-small text-muted font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
-                          Description
-                        </th>
-                        <th className=" text-small text-muted font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {seats &&
-                        seats.map((item) => (
-                          <tr key={item.id} className="border-bottom ">
-                            <td className="px-4 py-3 border-bottom py-2"> {item.id}</td>
-                            <td className="px-4 py-3 border-bottom py-2">
-                              <img src={item.id} className="rounded-full" alt="image" style={{ width: '30px', height: '30px' }} />
-                            </td>
-                            <td className=" py-2 px-1 border-bottom">{item.description}</td>
-                            <td className=" py-2 px-1 border-bottom">
-                              <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisSeat(item.id)}>
-                                <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div className="text-center py-2 px-1 bg-light rounded px-2">No seats available</div>
-                )}
+                <div className="" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  {seats && seats.length ? (
+                    <table className="mb-5 w-100 bg-light p-3 rounded-lg w-100">
+                      <thead>
+                        <tr>
+                          <th className="text-small text-muted font-weight-bold  py-2 px-3   border-bottom text-uppercase text-muted">Id</th>
+                          <th className="text-small text-muted  font-weight-bold  py-2 px-3  border-bottom text-uppercase text-muted">Image</th>
+                          <th className="text-small text-muted font-weight-bold  py-2 px-3   border-bottom text-uppercase text-muted">Description</th>
+                          <th className=" text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {seats &&
+                          seats.map((item) => (
+                            <tr key={item.id} className="border-bottom ">
+                              <td className="px-3  border-bottom py-2"> {item.id}</td>
+                              <td className="px-3  border-bottom py-2">
+                                <img
+                                  src={`${process.env.REACT_APP_URL}/${item.photo}`}
+                                  className="rounded-full"
+                                  alt="image"
+                                  style={{ width: '30px', height: '30px' }}
+                                />
+                              </td>
+                              <td className=" py-2 px-2 border-bottom">{item.description}</td>
+                              <td className=" py-2 px-2 border-bottom">
+                                <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisSeat(item.id)}>
+                                  <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="text-center py-2 px-1 bg-light rounded px-2">No seats available</div>
+                  )}
+                </div>
               </div>
             )}
           </OverlayScrollbarsComponent>

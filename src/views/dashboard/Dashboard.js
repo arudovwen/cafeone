@@ -5,20 +5,24 @@ import HtmlHead from 'components/html-head/HtmlHead';
 // import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { SERVICE_URL, requestConfig } from 'config.js';
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import PerformanceChart from './components/PerformanceChart';
+import { getRecentDashboardTransactions } from '../../transactions/transactionSlice';
 
 const Dashboard = () => {
   const title = 'Dashboard';
   const description = 'Ecommerce Dashboard Page';
   const [data, setData] = React.useState([]);
-
+  const transactions = useSelector((state) => state.transactions.items);
+  const dispatch = useDispatch();
   React.useEffect(() => {
     axios.get(`${SERVICE_URL}/reports`, requestConfig).then((res) => {
       if (res.status === 200) {
         setData(res.data);
       }
     });
+    dispatch(getRecentDashboardTransactions());
   }, []);
 
   return (
@@ -41,11 +45,11 @@ const Dashboard = () => {
           <Dropdown.Toggle className="small-title p-0 align-top h-auto me-2" variant="link">
             Today's
           </Dropdown.Toggle>
-          <Dropdown.Menu>
+          {/* <Dropdown.Menu>
             <Dropdown.Item>Weekly</Dropdown.Item>
             <Dropdown.Item>Monthly</Dropdown.Item>
             <Dropdown.Item>Yearly</Dropdown.Item>
-          </Dropdown.Menu>
+          </Dropdown.Menu> */}
         </Dropdown>
         <h2 className="small-title">Stats</h2>
       </div>
@@ -101,156 +105,29 @@ const Dashboard = () => {
         {/* Recent Orders Start */}
         <Col xl="6" className="mb-5">
           <h2 className="small-title">Recent Transactions</h2>
-          <Card className="mb-2 sh-15 sh-md-6">
-            <Card.Body className="pt-0 pb-0 h-100">
-              <Row className="g-0 h-100 align-content-center">
-                <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                  <NavLink to="/orders/detail" className="body-link stretched-link">
-                    Order #54129
-                  </NavLink>
-                </Col>
-                <Col xs="2" md="3" className="d-flex align-items-center text-muted mb-1 mb-md-0 justify-content-end justify-content-md-start">
-                  <Badge bg="outline-primary" className="me-1">
-                    PENDING
-                  </Badge>
-                </Col>
-                <Col xs="12" md="2" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                  <span>
-                    <span className="text-small">$</span>
-                    17.35
-                  </span>
-                </Col>
-                <Col xs="12" md="3" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
-                  Today - 13:20
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-          <Card className="mb-2 sh-15 sh-md-6">
-            <Card.Body className="pt-0 pb-0 h-100">
-              <Row className="g-0 h-100 align-content-center">
-                <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                  <NavLink to="/orders/detail" className="body-link stretched-link">
-                    Order #54128
-                  </NavLink>
-                </Col>
-                <Col xs="2" md="3" className="d-flex align-items-center text-muted mb-1 mb-md-0 justify-content-end justify-content-md-start">
-                  <Badge bg="outline-secondary" className="me-1">
-                    SHIPPED
-                  </Badge>
-                </Col>
-                <Col xs="12" md="2" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                  <span>
-                    <span className="text-small">$</span>
-                    145.20
-                  </span>
-                </Col>
-                <Col xs="12" md="3" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
-                  Today - 11:32
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-          <Card className="mb-2 sh-15 sh-md-6">
-            <Card.Body className="pt-0 pb-0 h-100">
-              <Row className="g-0 h-100 align-content-center">
-                <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                  <NavLink to="/orders/detail" className="body-link stretched-link">
-                    Order #54127
-                  </NavLink>
-                </Col>
-                <Col xs="2" md="3" className="d-flex align-items-center text-muted mb-1 mb-md-0 justify-content-end justify-content-md-start">
-                  <Badge bg="outline-secondary" className="me-1">
-                    SHIPPED
-                  </Badge>
-                </Col>
-                <Col xs="12" md="2" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                  <span>
-                    <span className="text-small">$</span>
-                    110.85
-                  </span>
-                </Col>
-                <Col xs="12" md="3" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
-                  Today - 11:20
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-          <Card className="mb-2 sh-15 sh-md-6">
-            <Card.Body className="pt-0 pb-0 h-100">
-              <Row className="g-0 h-100 align-content-center">
-                <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                  <NavLink to="/orders/detail" className="body-link stretched-link">
-                    Order #54126
-                  </NavLink>
-                </Col>
-                <Col xs="2" md="3" className="d-flex align-items-center text-muted mb-1 mb-md-0 justify-content-end justify-content-md-start">
-                  <Badge bg="outline-primary" className="me-1">
-                    PENDING
-                  </Badge>
-                </Col>
-                <Col xs="12" md="2" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                  <span>
-                    <span className="text-small">$</span>
-                    58.00
-                  </span>
-                </Col>
-                <Col xs="12" md="3" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
-                  Today - 10:20
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-          <Card className="mb-2 sh-15 sh-md-6">
-            <Card.Body className="pt-0 pb-0 h-100">
-              <Row className="g-0 h-100 align-content-center">
-                <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                  <NavLink to="/orders/detail" className="body-link stretched-link">
-                    Order #54125
-                  </NavLink>
-                </Col>
-                <Col xs="2" md="3" className="d-flex align-items-center text-muted mb-1 mb-md-0 justify-content-end justify-content-md-start">
-                  <Badge bg="outline-primary" className="me-1">
-                    PENDING
-                  </Badge>
-                </Col>
-                <Col xs="12" md="2" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                  <span>
-                    <span className="text-small">$</span>
-                    22.05
-                  </span>
-                </Col>
-                <Col xs="12" md="3" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
-                  Today - 07:30
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-          <Card className="mb-2 sh-15 sh-md-6">
-            <Card.Body className="pt-0 pb-0 h-100">
-              <Row className="g-0 h-100 align-content-center">
-                <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                  <NavLink to="/orders/detail" className="body-link stretched-link">
-                    Order #54124
-                  </NavLink>
-                </Col>
-                <Col xs="2" md="3" className="d-flex align-items-center text-muted mb-1 mb-md-0 justify-content-end justify-content-md-start">
-                  <Badge bg="outline-quaternary" className="me-1">
-                    DELIVERED
-                  </Badge>
-                </Col>
-                <Col xs="12" md="2" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                  <span>
-                    <span className="text-small">$</span>
-                    14.25
-                  </span>
-                </Col>
-                <Col xs="12" md="3" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
-                  Monday - 17:30
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
+          {transactions.length
+            ? transactions.map((item) => (
+                <Card className="mb-2 sh-15 sh-md-6" key={item.id}>
+                  <Card.Body className="pt-0 pb-0 h-100">
+                    <Row className="g-0 h-100 align-content-center justify-content-between">
+                      <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
+                        <span className="body-link stretched-link">{item.name}</span>
+                      </Col>
+
+                      <Col xs="12" md="3" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
+                        <span>
+                          <span className="text-small">NGN</span>
+                          {item.amountPaid}
+                        </span>
+                      </Col>
+                      <Col xs="12" md="4" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
+                        {item.narration}
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              ))
+            : ''}
         </Col>
         {/* Recent Orders End */}
 
@@ -273,10 +150,10 @@ const Dashboard = () => {
           <div className="mb-2">
             {data.seatUsage &&
               data.seatUsage.map((item) => (
-                <Card className="mb-2" key={item.id}>
-                  <Row className="g-0 sh-14 sh-md-10">
-                    <Col className="col-auto">
-                      <img src={`${process.env.REACT_APP_URL}/${item.photo}`} alt="alternate text" className="card-img card-img-horizontal sw-11" />
+                <Card className="mb-2 overflow-hidden" key={item.id}>
+                  <Row className="g-0 sh-14 sh-md-10 overflow-hidden">
+                    <Col className="col-auto h-100">
+                      <img src={`${process.env.REACT_APP_URL}/${item.photo}`} alt="alternate text" className="" style={{ width: '5rem', height: '100%' }} />
                     </Col>
                     <Col>
                       <Card.Body className="pt-0 pb-0 h-100">

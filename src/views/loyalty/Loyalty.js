@@ -232,7 +232,17 @@ const CampaignTypeList = () => {
       });
     }
   }, [status, dispatch]);
+  function selectAllMembers(e) {
+    if (e.target.checked) {
+      const users = usersData.map((item) => item.value);
+      values.members = [...users];
+      setmembers([...usersData]);
+      return;
+    }
 
+    values.members = [];
+    setmembers([]);
+  }
   function handleUpdateChange(e) {
     setUpdateData({
       ...updateData,
@@ -340,7 +350,10 @@ const CampaignTypeList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">TOGGLE</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
       </Row>
@@ -349,7 +362,7 @@ const CampaignTypeList = () => {
       {/* List Items Start */}
       {campaignsData.map((item) => (
         <Card key={item.id} className="mb-2">
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
+          <Card.Body className="pt-0 pb-0 sh-25 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
                 <div className="text-muted text-small d-md-none">Id</div>
@@ -357,34 +370,35 @@ const CampaignTypeList = () => {
                   {item.id}
                 </NavLink>
               </Col> */}
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
                 <div className="text-muted text-small d-md-none">Code</div>
                 <div className="text-alternate">{item.code}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
                 <div className="text-muted text-small d-md-none">Start Date</div>
                 <div className="text-alternate">
-                  <span>{moment(item.startDate).format('ll')}</span>
+                  <span>{moment(item.startDate).format('DD-MMM-YYYY hh:mm')}</span>
                 </div>
               </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">End date</div>
-                <div className="text-alternate">{moment(item.expiryDate).format('ll')}</div>
+                <div className="text-alternate">{moment(item.expiryDate).format('DD-MMM-YYYY hh:mm')}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-4">
                 <div className="text-muted text-small d-md-none">Total usage</div>
                 <div className="text-alternate">{item.totalUsage}</div>
               </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-6">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
 
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 order-md-last">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-4 order-md-5">
+                <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
-                  className="form-check mt-2 ps-5 ps-md-2"
+                  className="form-check ps-md-2"
                   type="checkbox"
                   checked={item.isActive}
                   onChange={(e) => {
@@ -392,12 +406,12 @@ const CampaignTypeList = () => {
                   }}
                 />
               </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end order-md-last">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
                 <span className="d-flex">
                   {' '}
-                  <span onClick={() => viewCampaign(item)} className="text-muted me-3 cursor-pointer">
-                    View <CsLineIcons icon="eye" style={{ width: '12px', height: '12px' }} />
-                  </span>
+                  <Button variant="primary" type="button" size="sm" onClick={() => viewCampaign(item)} className="">
+                    View
+                  </Button>
                 </span>
               </Col>
             </Row>
@@ -445,7 +459,7 @@ const CampaignTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Value</Form.Label>
+                  <Form.Label>Percentage Value (%)</Form.Label>
                   <Form.Control type="text" name="value" onChange={handleChange} value={values.value} />
                   {errors.value && touched.value && <div className="d-block invalid-tooltip">{errors.value}</div>}
                 </div>
@@ -503,7 +517,13 @@ const CampaignTypeList = () => {
                     onChange={(e) => addMember(e)}
                     placeholder="Select campaign members"
                   />
-                  <Row className="border rounded p-2 mt-3">
+                  <div className="py-2">
+                    <label className="d-flex align-items-center">
+                      <input type="checkbox" onChange={(e) => selectAllMembers(e)} className=" me-2" />
+                      Select all members
+                    </label>
+                  </div>
+                  <Row className="rounded p-2 mt-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                     {members.length
                       ? members.map((item, index) => (
                           <Col xs="12" key={item.value}>
@@ -533,7 +553,7 @@ const CampaignTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Value</Form.Label>
+                  <Form.Label>Percentage Value (%)</Form.Label>
                   <Form.Control type="text" name="value" onChange={(e) => handleUpdateChange(e)} value={updateData.value} />
                 </div>
                 <div className="mb-3">
@@ -610,7 +630,7 @@ const CampaignTypeList = () => {
 
             {isViewing && updateData && (
               <div className="">
-                <table className="mb-5">
+                <table className="mb-5 w-100">
                   <tbody>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Code</td>
@@ -631,14 +651,14 @@ const CampaignTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('ll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('DD-MMM-YYYY hh:mm')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Expiry date</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.expiryDate).format('ll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.expiryDate).format('DD-MMM-YYYY hh:mm')}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Value</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Percentage Value (%)</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.value}</td>
                     </tr>
                     <tr>

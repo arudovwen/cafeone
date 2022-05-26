@@ -394,26 +394,26 @@ const BookingTypeList = () => {
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">BookingId</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Name</div>
         </Col>
 
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">FromTime</div>
         </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">ToTime</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Branch</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Seat</div>
         </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+        {/* <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Status</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
+        </Col> */}
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
       </Row>
@@ -424,45 +424,45 @@ const BookingTypeList = () => {
         <Card key={item.bookingId} className="mb-2">
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">bookingId</div>
                 <div className="text-alternate">{item.bookingId}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">name</div>
                 <div className="text-alternate">{item.name}</div>
               </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1 px-1">
                 <div className="text-muted text-small d-md-none">fromTime</div>
                 <div className="text-alternate">
-                  <span>{moment(item.fromTime).format('ll')}</span>
+                  <span>{moment(item.fromTime).format('DD-MMM-YYYY hh:mm')}</span>
                 </div>
               </Col>
 
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1 px-1">
                 <div className="text-muted text-small d-md-none">toTime</div>
-                <div className="text-alternate">{moment(item.toTime).format('ll')}</div>
+                <div className="text-alternate">{moment(item.toTime).format('DD-MMM-YYYY hh:mm')}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Branch</div>
                 <div>{item.branch}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Seat</div>
                 <div>{item.seat}</div>
               </Col>
 
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              {/* <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.status ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
-              </Col>
+              </Col> */}
 
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end order-md-last">
+              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end px-1 order-md-last">
                 <span className="d-flex">
                   {' '}
-                  <span onClick={() => viewBooking(item)} className="text-muted me-3 cursor-pointer">
-                    View <CsLineIcons icon="eye" style={{ width: '11px', height: '11px' }} />
-                  </span>
+                  <Button variant="primary" type="button" size="sm" onClick={() => viewBooking(item)} className="">
+                    View
+                  </Button>
                 </span>
               </Col>
             </Row>
@@ -558,6 +558,7 @@ const BookingTypeList = () => {
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
+                      showTimeSelect
                     />
 
                     <DatePicker
@@ -568,6 +569,7 @@ const BookingTypeList = () => {
                       endDate={endDate}
                       minDate={startDate}
                       className="border rounded px-2 py-1"
+                      showTimeSelect
                     />
                   </div>
                   {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
@@ -610,6 +612,7 @@ const BookingTypeList = () => {
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
+                      showTimeSelect
                     />
 
                     <DatePicker
@@ -619,6 +622,7 @@ const BookingTypeList = () => {
                       startDate={startDate}
                       endDate={endDate}
                       minDate={startDate}
+                      showTimeSelect
                       className="border rounded px-2 py-1"
                     />
                   </div>
@@ -661,19 +665,21 @@ const BookingTypeList = () => {
 
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">from Time </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.fromTime).format('ll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.fromTime).format('DD-MMM-YYYY hh:mm')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">to Time</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.toTime).format('ll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.toTime).format('DD-MMM-YYYY hh:mm')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-In Time </td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('ll') : '-'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('DD-MMM-YYYY hh:mm') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-Out Time</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('ll') : '-'}</td>
+                      <td className=" py-2 px-1 border-bottom">
+                        {updateData.clockOutTime ? moment(updateData.clockOutTime).format('DD-MMM-YYYY hh:mm') : '-'}
+                      </td>
                     </tr>
 
                     <tr>
@@ -686,7 +692,7 @@ const BookingTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.isActive ? 'Active' : 'Inactive'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>

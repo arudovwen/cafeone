@@ -43,6 +43,16 @@ export const getRecentTransactions = (page, search) => async (dispatch) => {
   }
 };
 
+export const getRecentDashboardTransactions = () => async (dispatch) => {
+  const response = await axios.get(`${SERVICE_URL}/payments/recent?size=6`, requestConfig).catch((err) => {
+    toast.error(err.response.data.message);
+  });
+
+  if (response.status === 200) {
+    dispatch(setrecenttransactions(response.data));
+  }
+};
+
 const transactionReducer = transactionSlice.reducer;
 
 export default transactionReducer;

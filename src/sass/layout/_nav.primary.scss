@@ -209,6 +209,9 @@ html[data-placement="vertical"] {
         object-position: left;
         object-fit: cover;
         transition: width var(--transition-time), height var(--transition-time);
+        @media(max-width:768px){
+          width:40px;
+        }
       }
 
       .img {
