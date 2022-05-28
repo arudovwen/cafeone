@@ -21,17 +21,13 @@ const LayoutFullpage = ({ left, right }) => {
   return (
     <>
       {/* Background Start */}
-      <div className="fixed-background" />
+      <div className="fixed-background kenburns-top" />
       {/* Background End */}
 
       <div className="container-fluid p-0 h-100 position-relative">
-        <div className="row g-0 h-100">
-          {/* Left Side Start */}
-          <div className="offset-0 col-12 d-none d-lg-flex offset-md-1 col-lg h-lg-100">{left}</div>
-          {/* Left Side End */}
-
+        <div className="row g-0 h-100 justify-content-center align-items-center px-3">
           {/* Right Side Start */}
-          <div className="col-12 col-lg-auto h-100 pb-4 px-4 pt-0 p-lg-0">{right}</div>
+          {right}
           {/* Right Side End */}
         </div>
       </div>

@@ -116,7 +116,7 @@ const Dashboard = () => {
 
                       <Col xs="12" md="3" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
                         <span>
-                          <span className="text-small">NGN</span>
+                          <span className="">₦</span>
                           {item.amountPaid}
                         </span>
                       </Col>

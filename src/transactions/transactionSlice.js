@@ -24,10 +24,12 @@ const transactionSlice = createSlice({
 });
 
 export const { settransactions, setrecenttransactions } = transactionSlice.actions;
-export const getTransactions = (page, search) => async (dispatch) => {
-  const response = await axios.get(`${SERVICE_URL}/payments?page=${page}&search=${search}&size=15`, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
+export const getTransactions = (page, search, fromDate, toDate) => async (dispatch) => {
+  const response = await axios
+    .get(`${SERVICE_URL}/payments?page=${page}&search=${search}&size=15&fromDate=${fromDate}&toDate=${toDate}`, requestConfig)
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 
   if (response.status === 200) {
     dispatch(settransactions(response.data));

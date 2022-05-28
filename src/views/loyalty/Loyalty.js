@@ -49,6 +49,11 @@ const CampaignTypeList = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
+  const [startDateFrom, setstartDateFrom] = useState(null);
+  const [startDateTo, setstartDateTo] = useState(null);
+  const [expiryDateFrom, setExpiryDateFrom] = useState(null);
+  const [expiryDateTo, setExpiryDateTo] = useState(null);
+
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -259,7 +264,21 @@ const CampaignTypeList = () => {
     values.expiryDate = endDate;
     updateData.startDate = startDate;
     updateData.expiryDate = endDate;
+    return () => {};
   }, [startDate, endDate]);
+
+  React.useEffect(() => {
+    if (startDateFrom && startDateTo) {
+      dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD')));
+      return;
+    }
+    if (expiryDateFrom && expiryDateTo) {
+      dispatch(getCampaigns(page, '', null, null, moment(expiryDateFrom).format('YYYY-MM-DD'), moment(expiryDateTo).format('YYYY-MM-DD')));
+      return;
+    }
+
+    dispatch(getCampaigns(1, ''));
+  }, [startDateFrom, startDateTo, expiryDateFrom, expiryDateTo]);
 
   return (
     <>
@@ -281,7 +300,7 @@ const CampaignTypeList = () => {
       </div>
 
       <Row className="mb-3">
-        <Col md="5" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
+        <Col md="5" lg="7" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -299,7 +318,7 @@ const CampaignTypeList = () => {
 
           {/* Search End */}
         </Col>
-        <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
+        <Col md="7" lg="5" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
@@ -329,6 +348,61 @@ const CampaignTypeList = () => {
             </Dropdown.Menu>
           </Dropdown>
           {/* Length End */}
+        </Col>
+      </Row>
+      {/* Date filter starts   */}
+      <Row className="mb-4 justify-content-between">
+        <Col xs="12" md="5">
+          <div className="d-flex justify-content-between align-items-center">
+            <DatePicker
+              className="border rounded px-3 py-2 text-muted"
+              selected={startDateFrom}
+              onChange={(date) => setstartDateFrom(date)}
+              selectsStart
+              startDate={startDateFrom}
+              endDate={startDateTo}
+              isClearable
+              placeholderText="Start Date From"
+            />
+
+            <DatePicker
+              selected={startDateTo}
+              onChange={(date) => setstartDateTo(date)}
+              selectsEnd
+              startDate={startDateFrom}
+              endDate={startDateTo}
+              minDate={startDateFrom}
+              isClearable
+              placeholderText="Start Date To"
+              className="border rounded px-3 py-2 text-muted"
+            />
+          </div>
+        </Col>
+        <Col xs="12" md="5">
+          <div className="d-flex justify-content-between align-items-center">
+            <DatePicker
+              className="border rounded px-3 py-2 text-muted"
+              selected={expiryDateFrom}
+              onChange={(date) => setExpiryDateFrom(date)}
+              selectsStart
+              startDate={expiryDateFrom}
+              endDate={expiryDateTo}
+              isClearable
+              placeholderText="Expiry Date From"
+            />
+
+            <DatePicker
+              selected={expiryDateTo}
+              onChange={(date) => setExpiryDateTo(date)}
+              selectsEnd
+              startDate={expiryDateFrom}
+              endDate={expiryDateTo}
+              minDate={expiryDateFrom}
+              isClearable
+              placeholderText="Expiry Date To"
+              className="border rounded px-3 py-2 text-muted"
+            />
+          </div>
         </Col>
       </Row>
 

@@ -35,7 +35,7 @@ const ResetPassword = () => {
   const leftSide = (
     <div className="min-h-100 d-flex align-items-center">
       <div className="w-100 w-lg-75 w-xxl-50">
-        <div>
+        {/* <div>
           <div className="mb-5">
             <h1 className="display-3 text-white">Multiple Niches</h1>
             <h1 className="display-3 text-white">Ready for Your Project</h1>
@@ -49,14 +49,14 @@ const ResetPassword = () => {
               Learn More
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
 
   const rightSide = (
-    <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
-      <div className="sw-lg-50 px-5">
+    <div className="sw-lg-70 h-75 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 rounded-lg">
+      <div className="sw-lg-50 px-5  w-75 text-center">
         <div className="">
           <NavLink to="/">
             <img src="/img/logo/cafeone-black.png" alt="logo" className="gray-logo mx-auto" />
@@ -64,12 +64,12 @@ const ResetPassword = () => {
         </div>
         <div className="mb-5">
           <h2 className="cta-1 mb-0 text-primary">Password trouble?</h2>
-          <h2 className="cta-1 text-primary">Renew it here!</h2>
+          <h2 className="cta-1 text-dark">Renew it here!</h2>
         </div>
         <div className="mb-5">
           <p className="h6">Please use below form to reset your password.</p>
           <p className="h6">
-            If you are a member, please <NavLink to="/login">login</NavLink>.
+            If you are a member, please <NavLink to="/login" className="text-dark">Login here</NavLink>.
           </p>
         </div>
         <div>

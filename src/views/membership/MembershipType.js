@@ -287,7 +287,7 @@ const MembershipTypeList = () => {
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3">
                 <div className="text-muted text-small d-md-none">Amount</div>
                 <div className="text-alternate">
-                  <span className="text-small">NGN</span> <span>{item.amount}</span>
+                  <span className="">₦</span> <span>{item.amount}</span>
                 </div>
               </Col>
 
@@ -466,7 +466,7 @@ const MembershipTypeList = () => {
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Amount</td>
                       <td className=" py-2 px-1 border-bottom">
                         {' '}
-                        <span className="text-small">NGN</span> {' '}
+                        <span className="">₦</span> {' '}
                          {updateData.amount}
                       </td>
                     </tr>

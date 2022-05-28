@@ -8,6 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { debounce } from 'lodash';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 import { getTransactions, getRecentTransactions } from '../../transactions/transactionSlice';
 
 const TransactionList = () => {
@@ -19,6 +22,9 @@ const TransactionList = () => {
   const dispatch = useDispatch();
   const [showing, setShowing] = useState('all');
   const [datas, setDatas] = useState([]);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+
   React.useEffect(() => {
     dispatch(getTransactions(page, search));
   }, [dispatch, page, search]);
@@ -88,11 +94,19 @@ const TransactionList = () => {
       id: 'cell5',
       displayName: 'AMOUNT PAID',
     },
-     {
+    {
       id: 'cell6',
       displayName: 'NARATION',
     },
   ];
+
+  React.useEffect(() => {
+    if (fromDate && toDate) {
+      dispatch(getTransactions(page, search, moment(fromDate).format('YYYY-MM-DD'), moment(toDate).format('YYYY-MM-DD')));
+   return;
+    }
+    dispatch(getTransactions(page, search))
+  }, [fromDate, toDate]);
 
   return (
     <>
@@ -158,7 +172,7 @@ const TransactionList = () => {
         </Col>
       </Row>
       <Row className="mb-3">
-        <Col md="12" lg="7" xxl="6" className="mb-1 d-flex align-items-center ">
+        <Col sm="12" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* TOGGLE Start */}
           <div className="d-flex align-items-center me-4 mb-1  w-100 ">
             <label className="me-4 d-flex align-items-center">
@@ -172,6 +186,33 @@ const TransactionList = () => {
           </div>
 
           {/* toggle End */}
+        </Col>
+        <Col sm="12" md="6">
+          {' '}
+          <div className="d-flex justify-content-between align-items-center px-3">
+            <DatePicker
+              className="border rounded px-3 py-2 text-muted"
+              selected={fromDate}
+              onChange={(date) => setFromDate(date)}
+              selectsStart
+              startDate={fromDate}
+              endDate={toDate}
+              isClearable
+              placeholderText="Filter from"
+            />
+
+            <DatePicker
+              selected={toDate}
+              onChange={(date) => setToDate(date)}
+              selectsEnd
+              startDate={fromDate}
+              endDate={toDate}
+              minDate={fromDate}
+              isClearable
+              placeholderText="Filter to"
+              className="border rounded px-3 py-2 text-muted"
+            />
+          </div>
         </Col>
       </Row>
 

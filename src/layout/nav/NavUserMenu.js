@@ -87,7 +87,10 @@ const NavUserMenuContent = ({ dispatch }) => (
     </Row>
   </div>
 );
-const user = JSON.parse(localStorage.getItem('authAdmin')).role.replaceAll('_',' ');
+
+ const user = JSON.parse(localStorage.getItem('authAdmin'));
+
+
 const NavUserMenuDropdownToggle = React.memo(
   React.forwardRef(({ onClick, expanded = false }, ref) => (
     <a
@@ -104,7 +107,9 @@ const NavUserMenuDropdownToggle = React.memo(
     >
       {/* <img className="profile" alt={user.name} src={user.thumb} /> */}
       {/* <img src="/img/logo/cafeone-white.png" className="profile" alt="logo" /> */}
-      <div className="name cursor-pointer">{user}</div>
+    {
+      user?  <div className="name cursor-pointer">{user.role.replaceAll('_', ' ')}</div>:''
+    }
     </a>
   ))
 );

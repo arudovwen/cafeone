@@ -33,15 +33,22 @@ const campaignSlice = createSlice({
 
 export const { setcampaign, addcampaign, updatestatus, resetstatus } = campaignSlice.actions;
 
-export const getCampaigns = () => async (dispatch) => {
-  const response = await axios.get(`${SERVICE_URL}/campaigns`, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
+export const getCampaigns =
+  (page, search, startDateFrom = null, startDateTo = null, expiryDateFrom = null, expiryDateTo=null) =>
+  async (dispatch) => {
+    const response = await axios
+      .get(
+        `${SERVICE_URL}/campaigns?search=${search}&page=${page}&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}&expiryDateFrom=${expiryDateFrom}&expiryDateTo=${expiryDateTo}`,
+        requestConfig
+      )
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
 
-  if (response.status === 200) {
-    dispatch(setcampaign(response.data));
-  }
-};
+    if (response.status === 200) {
+      dispatch(setcampaign(response.data));
+    }
+  };
 
 export const getCampaign = (data) => async () => {
   return axios.get(`${SERVICE_URL}/campaigns/${data}`, requestConfig);

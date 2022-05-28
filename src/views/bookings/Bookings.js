@@ -70,6 +70,8 @@ const BookingTypeList = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [updateData, setUpdateData] = useState({});
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
 
   React.useEffect(() => {
     dispatch(getBookings(page, search));
@@ -321,6 +323,15 @@ const BookingTypeList = () => {
       displayName: 'STATUS',
     },
   ];
+
+  React.useEffect(() => {
+    if (fromDate && toDate) {
+      dispatch(getBookings(page, search, moment(fromDate).format('YYYY-MM-DD'), moment(toDate).format('YYYY-MM-DD')));
+      return;
+    }
+    dispatch(getBookings(page, search));
+  }, [fromDate, toDate]);
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -341,7 +352,7 @@ const BookingTypeList = () => {
       </div>
 
       <Row className="mb-3">
-        <Col md="5" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
+        <Col md="5" lg="9" xxl="9" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -356,10 +367,32 @@ const BookingTypeList = () => {
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewBooking()}>
             <CsLineIcons icon="plus" /> <span>Add booking</span>
           </Button>
+          <div className="d-flex justify-content-between align-items-center px-3">
+            <DatePicker
+              className="border rounded px-2 py-1 text-muted"
+              selected={fromDate}
+              onChange={(date) => setFromDate(date)}
+              selectsStart
+              startDate={fromDate}
+              endDate={toDate}
+              placeholderText="Filter from"
+            />
+            -
+            <DatePicker
+              selected={toDate}
+              onChange={(date) => setToDate(date)}
+              selectsEnd
+              startDate={fromDate}
+              endDate={toDate}
+              minDate={fromDate}
+              placeholderText="Filter to"
+              className="border rounded px-3 py-1 text-muted"
+            />
+          </div>
 
           {/* Search End */}
         </Col>
-        <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
+        <Col md="7" lg="3" xxl="3" className="mb-1 text-end">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
