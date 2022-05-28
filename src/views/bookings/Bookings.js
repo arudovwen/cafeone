@@ -2,7 +2,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -23,7 +23,7 @@ import {
   getBooking,
   getBookings,
   updateBooking,
-  deleteBooking,
+  // deleteBooking,
   checkinBooking,
   checkoutBooking,
 
@@ -119,21 +119,21 @@ const BookingTypeList = () => {
     // setSeatData(newbranch.seats);
   }, [values]);
 
-  function deleteThisBooking(id) {
-    const conf = window.confirm('Are you sure?');
-    if (conf) {
-      dispatch(deleteBooking(id)).then((res) => {
-        if (res.status === 200) {
-          toast.success('Booking removed');
-          dispatch(getBookings(page, search));
-          toggleModal();
-          setIsAdding(false);
-          setIsViewing(false);
-          setIsEditing(false);
-        }
-      });
-    }
-  }
+  // function deleteThisBooking(id) {
+  //   const conf = window.confirm('Are you sure?');
+  //   if (conf) {
+  //     dispatch(deleteBooking(id)).then((res) => {
+  //       if (res.status === 200) {
+  //         toast.success('Booking removed');
+  //         dispatch(getBookings(page, search));
+  //         toggleModal();
+  //         setIsAdding(false);
+  //         setIsViewing(false);
+  //         setIsEditing(false);
+  //       }
+  //     });
+  //   }
+  // }
 
   function addNewBooking() {
     setIsAdding(true);

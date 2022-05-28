@@ -34,7 +34,7 @@ const campaignSlice = createSlice({
 export const { setcampaign, addcampaign, updatestatus, resetstatus } = campaignSlice.actions;
 
 export const getCampaigns =
-  (page, search, startDateFrom = null, startDateTo = null, expiryDateFrom = null, expiryDateTo=null) =>
+  (page, search, startDateFrom = null, startDateTo = null, expiryDateFrom = null, expiryDateTo = null) =>
   async (dispatch) => {
     const response = await axios
       .get(

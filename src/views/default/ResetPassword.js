@@ -69,7 +69,11 @@ const ResetPassword = () => {
         <div className="mb-5">
           <p className="h6">Please use below form to reset your password.</p>
           <p className="h6">
-            If you are a member, please <NavLink to="/login" className="text-dark">Login here</NavLink>.
+            If you are a member, please{' '}
+            <NavLink to="/login" className="text-dark">
+              Login here
+            </NavLink>
+            .
           </p>
         </div>
         <div>

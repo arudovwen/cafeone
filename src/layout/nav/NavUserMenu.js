@@ -88,30 +88,32 @@ const NavUserMenuContent = ({ dispatch }) => (
   </div>
 );
 
- const user = JSON.parse(localStorage.getItem('authAdmin'));
-
+const user = JSON.parse(localStorage.getItem('authAdmin'));
 
 const NavUserMenuDropdownToggle = React.memo(
-  React.forwardRef(({ onClick, expanded = false }, ref) => (
-    <a
-      href="#/!"
-      ref={ref}
-      className="d-flex user position-relative"
-      data-toggle="dropdown"
-      aria-expanded={expanded}
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onClick(e);
-      }}
-    >
-      {/* <img className="profile" alt={user.name} src={user.thumb} /> */}
-      {/* <img src="/img/logo/cafeone-white.png" className="profile" alt="logo" /> */}
-    {
-      user?  <div className="name cursor-pointer">{user.role.replaceAll('_', ' ')}</div>:''
+  React.forwardRef(({ onClick, expanded = false }, ref) => {
+    if (!user) {
+      return <></>;
     }
-    </a>
-  ))
+    return (
+      <a
+        href="#/!"
+        ref={ref}
+        className="d-flex user position-relative"
+        data-toggle="dropdown"
+        aria-expanded={expanded}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onClick(e);
+        }}
+      >
+        {/* <img className="profile" alt={user.name} src={user.thumb} /> */}
+        {/* <img src="/img/logo/cafeone-white.png" className="profile" alt="logo" /> */}
+        {user ? <div className="name cursor-pointer">{user.role.replaceAll('_', ' ')}</div> : ''}
+      </a>
+    );
+  })
 );
 
 // Dropdown needs access to the DOM of the Menu to measure it

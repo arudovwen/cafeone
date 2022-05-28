@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import useLayout from 'hooks/useLayout';
 
-const LayoutFullpage = ({ left, right }) => {
+const LayoutFullpage = ({ right }) => {
   useLayout();
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { Row, Col, Dropdown, Card, Badge } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
@@ -115,10 +116,10 @@ const Dashboard = () => {
                       </Col>
 
                       <Col xs="12" md="3" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                        <span>
+                        <Badge>
                           <span className="">₦</span>
                           {item.amountPaid}
-                        </span>
+                        </Badge>
                       </Col>
                       <Col xs="12" md="4" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
                         {item.narration}

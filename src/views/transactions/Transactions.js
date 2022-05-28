@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -103,9 +104,9 @@ const TransactionList = () => {
   React.useEffect(() => {
     if (fromDate && toDate) {
       dispatch(getTransactions(page, search, moment(fromDate).format('YYYY-MM-DD'), moment(toDate).format('YYYY-MM-DD')));
-   return;
+      return;
     }
-    dispatch(getTransactions(page, search))
+    dispatch(getTransactions(page, search));
   }, [fromDate, toDate]);
 
   return (
