@@ -131,7 +131,7 @@ const TransactionList = () => {
       <Row className="mb-3">
         <Col md="5" lg="4" xxl="4" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
-          <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
+          <div className="d-inline-block float-md-start mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
             <span className="search-magnifier-icon">
               <CsLineIcons icon="search" />
@@ -192,7 +192,7 @@ const TransactionList = () => {
           {' '}
           <div className="d-flex justify-content-between align-items-center px-3">
             <DatePicker
-              className="border rounded px-3 py-2 text-muted"
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
               selected={fromDate}
               onChange={(date) => setFromDate(date)}
               selectsStart
@@ -211,7 +211,7 @@ const TransactionList = () => {
               minDate={fromDate}
               isClearable
               placeholderText="Filter to"
-              className="border rounded px-3 py-2 text-muted"
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
             />
           </div>
         </Col>

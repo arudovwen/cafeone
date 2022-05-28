@@ -312,7 +312,7 @@ const CampaignTypeList = () => {
             </span>
           </div>
 
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewCampaign()}>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewCampaign()}>
             <CsLineIcons icon="plus" /> <span>Add campaign</span>
           </Button>
 
@@ -351,11 +351,11 @@ const CampaignTypeList = () => {
         </Col>
       </Row>
       {/* Date filter starts   */}
-      <Row className="mb-4 justify-content-between">
-        <Col xs="12" md="5">
+      <Row className="mb-4 justify-content-between mb-2 mb-lg-1">
+        <Col xs="12" md="5" className="mb-2 mb-md:0">
           <div className="d-flex justify-content-between align-items-center">
             <DatePicker
-              className="border rounded px-3 py-2 text-muted"
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
               selected={startDateFrom}
               onChange={(date) => setstartDateFrom(date)}
               selectsStart
@@ -374,14 +374,14 @@ const CampaignTypeList = () => {
               minDate={startDateFrom}
               isClearable
               placeholderText="Start Date To"
-              className="border rounded px-3 py-2 text-muted"
+              className="border rounded px-2 px-lg-3 py-1 py-lg-2 text-muted"
             />
           </div>
         </Col>
         <Col xs="12" md="5">
           <div className="d-flex justify-content-between align-items-center">
             <DatePicker
-              className="border rounded px-3 py-2 text-muted"
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
               selected={expiryDateFrom}
               onChange={(date) => setExpiryDateFrom(date)}
               selectsStart
@@ -400,7 +400,7 @@ const CampaignTypeList = () => {
               minDate={expiryDateFrom}
               isClearable
               placeholderText="Expiry Date To"
-              className="border rounded px-3 py-2 text-muted"
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
             />
           </div>
         </Col>
