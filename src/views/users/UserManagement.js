@@ -502,7 +502,7 @@ const UserManagementList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Phone number</Form.Label>
-                  <Form.Control type="text" id="phoneNumber" name="phoneNumber" onChange={handleChange} value={values.phoneNumber} />
+                  <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={handleChange} value={values.phoneNumber} />
                   {errors.phoneNumber && touched.phoneNumber && <div className="d-block invalid-tooltip">{errors.phoneNumber}</div>}
                 </div>
                 <div className="mb-3">
@@ -582,7 +582,7 @@ const UserManagementList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Phone number</Form.Label>
-                  <Form.Control type="text" id="phoneNumber" name="phoneNumber" onChange={(e) => handleUpdateChange(e)} value={updateData.phoneNumber} />
+                  <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={(e) => handleUpdateChange(e)} value={updateData.phoneNumber} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Email</Form.Label>

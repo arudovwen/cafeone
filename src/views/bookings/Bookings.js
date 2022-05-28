@@ -2,7 +2,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Badge, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -248,16 +248,22 @@ const BookingTypeList = () => {
     values.seatId = val;
   }
   function handleChecking(data) {
-    if (!data.checkInTime) {
-      dispatch(checkinBooking(data.bookingId)).then((res) => {
+    if (data.status.toLowerCase() === 'in use') {
+      dispatch(checkoutBooking(data.bookingId)).then((res) => {
         if (res.status === 200) {
           toast.success('Checked in successful');
+          dispatch(getBooking(data.bookingId)).then((resp) => {
+            setUpdateData(resp.data);
+          });
         }
       });
     } else {
-      dispatch(checkoutBooking(data.bookingId)).then((res) => {
+      dispatch(checkinBooking(data.bookingId)).then((res) => {
         if (res.status === 200) {
           toast.success('Checked out successful');
+          dispatch(getBooking(data.bookingId)).then((resp) => {
+            setUpdateData(resp.data);
+          });
         }
       });
     }
@@ -373,6 +379,7 @@ const BookingTypeList = () => {
               selected={fromDate}
               onChange={(date) => setFromDate(date)}
               selectsStart
+              minDate={new Date()}
               startDate={fromDate}
               endDate={toDate}
               placeholderText="Filter from"
@@ -424,9 +431,6 @@ const BookingTypeList = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">BookingId</div>
-        </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Name</div>
         </Col>
@@ -443,9 +447,9 @@ const BookingTypeList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Seat</div>
         </Col>
-        {/* <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Status</div>
-        </Col> */}
+        </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
@@ -457,10 +461,6 @@ const BookingTypeList = () => {
         <Card key={item.bookingId} className="mb-2">
           <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2 px-1">
-                <div className="text-muted text-small d-md-none">bookingId</div>
-                <div className="text-alternate">{item.bookingId}</div>
-              </Col>
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">name</div>
                 <div className="text-alternate">{item.name}</div>
@@ -485,10 +485,13 @@ const BookingTypeList = () => {
                 <div>{item.seat}</div>
               </Col>
 
-              {/* <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
-                <div>{item.status ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
-              </Col> */}
+                <div>
+                  {' '}
+                  <Badge bg="outline-primary">{item.status === '2' ? 'Not checked in' : item.status}</Badge>
+                </div>
+              </Col>
 
               <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end px-1 order-md-last">
                 <span className="d-flex">
@@ -590,6 +593,7 @@ const BookingTypeList = () => {
                       onChange={(date) => setStartDate(date)}
                       selectsStart
                       startDate={startDate}
+                      minDate={new Date()}
                       endDate={endDate}
                       showTimeSelect
                     />
@@ -621,17 +625,17 @@ const BookingTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Value</Form.Label>
-                  <Form.Control type="text" name="value" onChange={(e) => handleUpdateChange(e)} value={updateData.value} />
+                  <Form.Label>Percentage Value(%)</Form.Label>
+                  <Form.Control type="number" name="value" onChange={(e) => handleUpdateChange(e)} value={updateData.value} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Total usage</Form.Label>
-                  <Form.Control type="text" name="totalUsage" onChange={(e) => handleUpdateChange(e)} value={updateData.totalUsage} />
+                  <Form.Control type="number" name="totalUsage" onChange={(e) => handleUpdateChange(e)} value={updateData.totalUsage} />
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Usage per-user </Form.Label>
-                  <Form.Control type="text" name="usagePerUser" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerUser} />
+                  <Form.Control type="number" name="usagePerUser" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerUser} />
                 </div>
 
                 <div className="mb-3">
@@ -643,6 +647,7 @@ const BookingTypeList = () => {
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
                       selectsStart
+                      minDate={new Date()}
                       startDate={startDate}
                       endDate={endDate}
                       showTimeSelect
@@ -725,23 +730,26 @@ const BookingTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.status === '2' ? 'Not checked' : updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>
                 <div className="text-center">
-                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBooking(updateData)}>
+                  {/* <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBooking(updateData)}>
                     <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
-                  </Button>
+                  </Button> */}
                   {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
                   </Button> */}
-                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData)}>
-                    <CsLineIcons icon={updateData.clockInTime ? 'minus' : 'plus'} className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
-                    <span className="sr-only">{updateData.clockInTime ? 'Check out' : 'Check in'}</span>
-                  </Button>
+                  {updateData.status.toLowerCase() !== 'available' ? (
+                    <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData)}>
+                      <CsLineIcons icon={updateData.clockInTime ? 'minus' : 'plus'} className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
+                      <span className="sr-only">{updateData.clockInTime ? 'Check out' : 'Check in'}</span>
+                    </Button>
+                  ) : (
+                    ''
+                  )}
                 </div>
-                <hr className="my-4" />
               </div>
             )}
           </OverlayScrollbarsComponent>

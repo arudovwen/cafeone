@@ -103,8 +103,6 @@ const Discount = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
-
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
@@ -310,11 +308,11 @@ const Discount = () => {
               </div>
               <div className="mb-3">
                 <Form.Label>Start</Form.Label>
-                <DatePicker className="form-control" selected={startDate} onChange={(date) => setStartDate(date)} />
+                <DatePicker className="form-control" minDate={new Date()} selected={startDate} endDate={endDate} onChange={(date) => setStartDate(date)} />
               </div>
               <div className="mb-3">
                 <Form.Label>End</Form.Label>
-                <DatePicker className="form-control" selected={endDate} onChange={(date) => setEndDate(date)} />
+                <DatePicker className="form-control" minDate={startDate} selected={endDate} onChange={(date) => setEndDate(date)} />
               </div>
               <div className="mb-3">
                 <Form.Label>Limit</Form.Label>

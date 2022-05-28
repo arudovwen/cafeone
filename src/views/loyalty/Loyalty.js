@@ -361,6 +361,7 @@ const CampaignTypeList = () => {
               selectsStart
               startDate={startDateFrom}
               endDate={startDateTo}
+              minDate={new Date()}
               isClearable
               placeholderText="Start Date From"
             />
@@ -387,6 +388,7 @@ const CampaignTypeList = () => {
               selectsStart
               startDate={expiryDateFrom}
               endDate={expiryDateTo}
+              minDate={new Date()}
               isClearable
               placeholderText="Expiry Date From"
             />
@@ -534,18 +536,18 @@ const CampaignTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Percentage Value (%)</Form.Label>
-                  <Form.Control type="text" name="value" onChange={handleChange} value={values.value} />
+                  <Form.Control type="number" name="value" onChange={handleChange} value={values.value} />
                   {errors.value && touched.value && <div className="d-block invalid-tooltip">{errors.value}</div>}
                 </div>
                 <div className="mb-3">
                   <Form.Label>Total usage</Form.Label>
-                  <Form.Control type="text" name="totalUsage" onChange={handleChange} value={values.totalUsage} />
+                  <Form.Control type="number" name="totalUsage" onChange={handleChange} value={values.totalUsage} />
                   {errors.totalUsage && touched.totalUsage && <div className="d-block invalid-tooltip">{errors.totalUsage}</div>}
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Usage per-user </Form.Label>
-                  <Form.Control type="text" name="usagePerUser" onChange={handleChange} value={values.usagePerUser} />
+                  <Form.Control type="number" name="usagePerUser" onChange={handleChange} value={values.usagePerUser} />
                   {errors.usagePerUser && touched.usagePerUser && <div className="d-block invalid-tooltip">{errors.usagePerUser}</div>}
                 </div>
 
@@ -558,6 +560,7 @@ const CampaignTypeList = () => {
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
                       selectsStart
+                      minDate={new Date()}
                       startDate={startDate}
                       endDate={endDate}
                     />
@@ -628,16 +631,16 @@ const CampaignTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Percentage Value (%)</Form.Label>
-                  <Form.Control type="text" name="value" onChange={(e) => handleUpdateChange(e)} value={updateData.value} />
+                  <Form.Control type="number" name="value" onChange={(e) => handleUpdateChange(e)} value={updateData.value} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Total usage</Form.Label>
-                  <Form.Control type="text" name="totalUsage" onChange={(e) => handleUpdateChange(e)} value={updateData.totalUsage} />
+                  <Form.Control type="number" name="totalUsage" onChange={(e) => handleUpdateChange(e)} value={updateData.totalUsage} />
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Usage per-user </Form.Label>
-                  <Form.Control type="text" name="usagePerUser" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerUser} />
+                  <Form.Control type="number" name="usagePerUser" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerUser} />
                 </div>
 
                 <div className="mb-3">
@@ -649,6 +652,7 @@ const CampaignTypeList = () => {
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
                       selectsStart
+                      minDate={new Date()}
                       startDate={startDate}
                       endDate={endDate}
                     />

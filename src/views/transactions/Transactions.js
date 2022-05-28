@@ -198,6 +198,7 @@ const TransactionList = () => {
               selectsStart
               startDate={fromDate}
               endDate={toDate}
+              minDate={new Date()}
               isClearable
               placeholderText="Filter from"
             />

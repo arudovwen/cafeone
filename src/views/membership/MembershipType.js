@@ -371,7 +371,7 @@ const MembershipTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Amount</Form.Label>
-                  <Form.Control type="text" name="amount" onChange={handleChange} value={values.amount} />
+                  <Form.Control type="number" name="amount" onChange={handleChange} value={values.amount} />
                   {errors.amount && touched.amount && <div className="d-block invalid-tooltip">{errors.amount}</div>}
                 </div>
                 <div className="mb-3">
@@ -416,7 +416,7 @@ const MembershipTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Amount</Form.Label>
-                  <Form.Control type="text" name="amount" onChange={(e) => handleUpdateChange(e)} value={updateData.amount} />
+                  <Form.Control type="number" name="amount" onChange={(e) => handleUpdateChange(e)} value={updateData.amount} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Validity Period</Form.Label>
@@ -466,8 +466,7 @@ const MembershipTypeList = () => {
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Amount</td>
                       <td className=" py-2 px-1 border-bottom">
                         {' '}
-                        <span className="">₦</span> {' '}
-                         {updateData.amount}
+                        <span className="">₦</span> {updateData.amount}
                       </td>
                     </tr>
                     <tr>
