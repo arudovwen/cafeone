@@ -350,8 +350,8 @@ const UserManagementList = () => {
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Membership Status</div>
         </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Action</div>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-md-end">
+          <div className="text-muted text-small cursor-pointer sort text-md-right">Action</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -359,31 +359,31 @@ const UserManagementList = () => {
       {/* List Items Start */}
       {usersData.map((item) => (
         <Card key={item.id} className="mb-2">
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
+          <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
                 <div className="text-muted text-small d-md-none">Name</div>
                 <div className="text-alternate dflex align-items-center">
                   <img
                     src={`${process.env.REACT_APP_URL}/${item.avatar}`}
                     alt="avatar"
-                    className="avatar avatar-sm me-2 rounded"
+                    className="avatar avatar-sm me-2 rounded d-none d-md-inline"
                     style={{ width: '30px', height: '30px' }}
                   />
                   {item.firstName} {item.lastName}
                 </div>
               </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">Email</div>
                 <div className="text-alternate">
                   <span>{item.email}</span>
                 </div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-4">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-4">
                 <div className="text-muted text-small d-md-none">Phone</div>
                 <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
               </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>
                   {item.membershipStatusId ? (
@@ -393,13 +393,12 @@ const UserManagementList = () => {
                   )}
                 </div>
               </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last order-md-last">
-                <span className="d-flex">
-                  {' '}
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last order-md-last">
+
                   <Button variant="primary" type="button" size="sm" onClick={() => viewUser(item)} className="">
                     View
                   </Button>
-                </span>
+
               </Col>
             </Row>
           </Card.Body>

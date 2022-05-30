@@ -438,7 +438,7 @@ const CampaignTypeList = () => {
       {/* List Items Start */}
       {campaignsData.map((item) => (
         <Card key={item.id} className="mb-2">
-          <Card.Body className="pt-0 pb-0 sh-25 sh-md-8">
+          <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
                 <div className="text-muted text-small d-md-none">Id</div>
@@ -446,32 +446,32 @@ const CampaignTypeList = () => {
                   {item.id}
                 </NavLink>
               </Col> */}
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
                 <div className="text-muted text-small d-md-none">Code</div>
                 <div className="text-alternate">{item.code}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
                 <div className="text-muted text-small d-md-none">Start Date</div>
                 <div className="text-alternate">
                   <span>{moment(item.startDate).format('DD-MMM-YYYY hh:mm')}</span>
                 </div>
               </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">End date</div>
                 <div className="text-alternate">{moment(item.expiryDate).format('DD-MMM-YYYY hh:mm')}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-4">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
                 <div className="text-muted text-small d-md-none">Total usage</div>
                 <div className="text-alternate">{item.totalUsage}</div>
               </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-6">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-6">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
 
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-4 order-md-5">
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-6 order-md-5">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
                   className="form-check ps-md-2"
@@ -482,13 +482,12 @@ const CampaignTypeList = () => {
                   }}
                 />
               </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
-                <span className="d-flex">
-                  {' '}
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
+
                   <Button variant="primary" type="button" size="sm" onClick={() => viewCampaign(item)} className="">
                     View
                   </Button>
-                </span>
+
               </Col>
             </Row>
           </Card.Body>

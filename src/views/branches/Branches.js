@@ -350,28 +350,28 @@ const BranchesList = () => {
       {/* List Items Start */}
       {branchesData.map((item) => (
         <Card className="mb-2" key={item.id}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
+          <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">Name</div>
                 <div className="text-alternate">{item.name}</div>
               </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1">
                 <div className="text-muted text-small d-md-none">Location</div>
                 <div className="text-alternate">
                   <span>{item.address}</span>
                 </div>
               </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4 px-1">
                 <div className="text-muted text-small d-md-none">Seats</div>
                 <div className="text-alternate">{item.seatCount}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-5 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.statusId ? <Badge bg="outline-primary">{item.status}</Badge> : <Badge bg="outline-warning">{item.status}</Badge>}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-start align-items-md-end mb-2 mb-md-0 order-5 px-1 order-md-last">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-start align-items-md-end mb-2 mb-md-0 order-5 px-1 order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
                   className="form-check mt-md-2 me-auto"
@@ -382,13 +382,12 @@ const BranchesList = () => {
                   }}
                 />
               </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last text-end order-md-last">
-                <span className="d-flex">
-                  {' '}
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last text-end order-md-last">
+
                   <Button variant="primary" type="button" size="sm" onClick={() => viewBranch(item)} className="">
                     View
                   </Button>
-                </span>
+
               </Col>
             </Row>
           </Card.Body>

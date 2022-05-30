@@ -438,3 +438,8 @@ table {
   padding-right:.5rem !important;
   padding-left:.5rem !important;
 }
+@media(min-width:768px){
+  .text-md-right{
+  text-align:right
+}
+}

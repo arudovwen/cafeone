@@ -370,10 +370,10 @@ const BookingTypeList = () => {
             </span>
           </div>
 
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewBooking()}>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
             <CsLineIcons icon="plus" /> <span>Add booking</span>
           </Button>
-          <div className="d-flex justify-content-between align-items-center px-3">
+          <div className="d-none justify-content-between align-items-center px-3">
             <DatePicker
               className="border rounded px-2 py-1 text-muted"
               selected={fromDate}
@@ -459,33 +459,33 @@ const BookingTypeList = () => {
       {/* List Items Start */}
       {bookingsData.map((item) => (
         <Card key={item.bookingId} className="mb-2">
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
+          <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">name</div>
                 <div className="text-alternate">{item.name}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1 px-1">
                 <div className="text-muted text-small d-md-none">fromTime</div>
                 <div className="text-alternate">
                   <span>{moment(item.fromTime).format('DD-MMM-YYYY hh:mm')}</span>
                 </div>
               </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4 px-1 px-1">
                 <div className="text-muted text-small d-md-none">toTime</div>
                 <div className="text-alternate">{moment(item.toTime).format('DD-MMM-YYYY hh:mm')}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Branch</div>
                 <div>{item.branch}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5 px-1">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Seat</div>
                 <div>{item.seat}</div>
               </Col>
 
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>
                   {' '}
@@ -493,13 +493,12 @@ const BookingTypeList = () => {
                 </div>
               </Col>
 
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-2 text-end px-1 order-md-last">
-                <span className="d-flex">
-                  {' '}
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end px-1 order-md-last">
+
                   <Button variant="primary" type="button" size="sm" onClick={() => viewBooking(item)} className="">
                     View
                   </Button>
-                </span>
+
               </Col>
             </Row>
           </Card.Body>
