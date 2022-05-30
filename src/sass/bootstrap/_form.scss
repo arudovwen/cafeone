@@ -134,6 +134,7 @@ textarea.form-control {
     background: transparent !important;
     width: calc(100% - 25px);
     border: initial;
+    min-width: 220px;
   }
 
   &.search-sm {

@@ -301,7 +301,7 @@ const UserManagementList = () => {
             </span>
           </div>
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewUser()}>
-            <CsLineIcons icon="plus" /> <span>Add member</span>
+            <CsLineIcons icon="plus" className="d-none d-md-inline" /> <span>Add member</span>
           </Button>
 
           {/* Search End */}
