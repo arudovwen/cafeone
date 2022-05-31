@@ -73,6 +73,14 @@ const BookingTypeList = () => {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
 
+  const [startTimeFrom, setstartTimeFrom] = useState(null);
+  const [startTimeTo, setstartTimeTo] = useState(null);
+  const [endTimeFrom, setEndDateFrom] = useState(null);
+  const [endTimeTo, setEndDateTo] = useState(null);
+  const [memberId, setMemberId] = useState(null);
+  const [statusId, setStatusId] = useState(null);
+  const [seatSearchId, setSeatSearchId] = useState(null);
+
   React.useEffect(() => {
     dispatch(getBookings(page, search));
     dispatch(getMembers(page, search, 50));
@@ -150,7 +158,7 @@ const BookingTypeList = () => {
 
     setUpdateData(val);
     setStartDate(new Date(val.startDate));
-    setEndDate(new Date(val.expiryDate));
+    setEndDate(new Date(val.endDate));
   }
 
   function viewBooking(val) {
@@ -338,6 +346,35 @@ const BookingTypeList = () => {
     dispatch(getBookings(page, search));
   }, [fromDate, toDate]);
 
+  React.useEffect(() => {
+    if (statusId) {
+      dispatch(getBookings(page, search, null, null, null, null, statusId, null));
+      return;
+    }
+    if (memberId) {
+      dispatch(getBookings(page, search, null, null, null, null, null, memberId));
+      return;
+    }
+    if (seatSearchId) {
+      dispatch(getBookings(page, search, null, null, null, null, null, null, seatSearchId));
+      return;
+    }
+    dispatch(getBookings(page, search));
+  }, [statusId, memberId, seatSearchId]);
+
+  React.useEffect(() => {
+    if (startTimeFrom && startTimeTo) {
+      dispatch(getBookings(1, '', moment(startTimeFrom).format('YYYY-MM-DD'), moment(startTimeTo).format('YYYY-MM-DD')));
+      return;
+    }
+    if (endTimeFrom && endTimeTo) {
+      dispatch(getBookings(page, '', null, null, moment(endTimeFrom).format('YYYY-MM-DD'), moment(endTimeTo).format('YYYY-MM-DD')));
+      return;
+    }
+
+    dispatch(getBookings(1, ''));
+  }, [startTimeFrom, startTimeTo, endTimeFrom, endTimeTo]);
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -358,7 +395,7 @@ const BookingTypeList = () => {
       </div>
 
       <Row className="mb-3">
-        <Col md="5" lg="9" xxl="9" className="mb-1 d-flex align-items-center ">
+        <Col md="12" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -371,35 +408,32 @@ const BookingTypeList = () => {
           </div>
 
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
-            <CsLineIcons icon="plus" /> <span>Add booking</span>
+            <CsLineIcons icon="plus" /> <span className="d-none d-sm-inline">Add booking</span>
           </Button>
-          <div className="d-none justify-content-between align-items-center px-3">
-            <DatePicker
-              className="border rounded px-2 py-1 text-muted"
-              selected={fromDate}
-              onChange={(date) => setFromDate(date)}
-              selectsStart
-              minDate={new Date()}
-              startDate={fromDate}
-              endDate={toDate}
-              placeholderText="Filter from"
-            />
-            -
-            <DatePicker
-              selected={toDate}
-              onChange={(date) => setToDate(date)}
-              selectsEnd
-              startDate={fromDate}
-              endDate={toDate}
-              minDate={fromDate}
-              placeholderText="Filter to"
-              className="border rounded px-3 py-1 text-muted"
-            />
-          </div>
 
           {/* Search End */}
         </Col>
-        <Col md="7" lg="3" xxl="3" className="mb-1 text-end">
+        <Col md="12" lg="6" xxl="6" className="mb-1 d-flex justify-content-between align-items-center">
+          <SelectSearch
+            filterOptions={() => fuzzySearch(membersData)}
+            options={membersData}
+            search
+            name="members"
+            value={memberId}
+            onChange={(val) => setMemberId(val)}
+            placeholder="Filter by  member"
+          />
+
+          <SelectSearch
+            filterOptions={() => fuzzySearch(seatData)}
+            options={seatData}
+            search
+            name="seat"
+            value={seatSearchId}
+            placeholder="Filter by seat"
+            onChange={(val) => setSeatSearchId(val)}
+          />
+
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
@@ -411,21 +445,61 @@ const BookingTypeList = () => {
             </OverlayTrigger>
           </Dropdown>
           {/* Export Dropdown End */}
+        </Col>
+      </Row>
+      {/* Date filter starts   */}
+      <Row className="mb-4 justify-content-between mb-2 mb-lg-1">
+        <Col xs="12" md="5" className="mb-2 mb-md:0">
+          <div className="d-flex justify-content-between align-items-center">
+            <DatePicker
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              selected={startTimeFrom}
+              onChange={(date) => setstartTimeFrom(date)}
+              selectsStart
+              startDate={startTimeFrom}
+              endDate={startTimeTo}
+              isClearable
+              placeholderText="Start Date From"
+            />
 
-          {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                {bookingsData.length} Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">5 Items</Dropdown.Item>
-              <Dropdown.Item href="#">10 Items</Dropdown.Item>
-              <Dropdown.Item href="#">20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-          {/* Length End */}
+            <DatePicker
+              selected={startTimeTo}
+              onChange={(date) => setstartTimeTo(date)}
+              selectsEnd
+              startDate={startTimeFrom}
+              endDate={startTimeTo}
+              minDate={startTimeFrom}
+              isClearable
+              placeholderText="Start Date To"
+              className="border rounded px-2 px-lg-3 py-1 py-lg-2 text-muted"
+            />
+          </div>
+        </Col>
+        <Col xs="12" md="5">
+          <div className="d-flex justify-content-between align-items-center">
+            <DatePicker
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              selected={endTimeFrom}
+              onChange={(date) => setEndDateFrom(date)}
+              selectsStart
+              startDate={endTimeFrom}
+              endDate={endTimeTo}
+              isClearable
+              placeholderText="End Date From"
+            />
+
+            <DatePicker
+              selected={endTimeTo}
+              onChange={(date) => setEndDateTo(date)}
+              selectsEnd
+              startDate={endTimeFrom}
+              endDate={endTimeTo}
+              minDate={endTimeFrom}
+              isClearable
+              placeholderText="End Date To"
+              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
+            />
+          </div>
         </Col>
       </Row>
 
@@ -493,12 +567,14 @@ const BookingTypeList = () => {
                 </div>
               </Col>
 
-              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end px-1 order-md-last">
-
-                  <Button variant="primary" type="button" size="sm" onClick={() => viewBooking(item)} className="">
-                    View
-                  </Button>
-
+              <Col
+                xs="12"
+                md="1"
+                className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end px-1 order-md-last"
+              >
+                <Button variant="primary" type="button" size="sm" onClick={() => viewBooking(item)} className="">
+                  View
+                </Button>
               </Col>
             </Row>
           </Card.Body>

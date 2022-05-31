@@ -34,11 +34,16 @@ const bookingSlice = createSlice({
 export const { setbooking, addbooking, updatestatus, resetstatus } = bookingSlice.actions;
 
 export const getBookings =
-  (page, search, fromDate = null, toDate = null) =>
+  (page, search, startTimeFrom = null, startTimeTo = null, endTimeFrom = null, endTimeTo = null, SeatId = null, MemberId = null, seatId=null) =>
   async (dispatch) => {
-    const response = await axios.get(`${SERVICE_URL}/bookings?search=${search}&fromDate=${fromDate}&toDate=${toDate}`, requestConfig).catch((err) => {
-      toast.error(err.response.data.message);
-    });
+    const response = await axios
+      .get(
+        `${SERVICE_URL}/bookings?search=${search}&page=${page}&startTimeFrom=${startTimeFrom}&startTimeTo=${startTimeTo}&endTimeFrom=${endTimeFrom}&endTimeTo=${endTimeTo}&SeatId=${SeatId}}&MemberId=${MemberId}`,
+        requestConfig
+      )
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
 
     if (response.status === 200) {
       dispatch(setbooking(response.data));

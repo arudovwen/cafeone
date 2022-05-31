@@ -26,6 +26,7 @@ const SidebarMenu = () => {
     <Col xs="auto" className="side-menu-container">
       <ul className="sw-25 side-menu mb-0 primary" id="menuSide">
         <SidebarMenuItems menuItems={menuItemsMemo} />
+       
       </ul>
     </Col>
   );
