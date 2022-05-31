@@ -375,6 +375,16 @@ const BookingTypeList = () => {
     dispatch(getBookings(1, ''));
   }, [startTimeFrom, startTimeTo, endTimeFrom, endTimeTo]);
 
+  function resetFilter() {
+    setstartTimeFrom(null);
+    setstartTimeTo(null);
+    setEndDateFrom(null);
+    setEndDateTo(null);
+    setMemberId(null);
+    setStatusId(null);
+    setSeatSearchId(null);
+  }
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -500,6 +510,11 @@ const BookingTypeList = () => {
               className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
             />
           </div>
+        </Col>
+        <Col xs="12" md="1" className="d-flex align-items-center">
+          <span onClick={() => resetFilter()} className="cursor-pointer d-flex align-items-center">
+            Reset{' '}
+          </span>
         </Col>
       </Row>
 

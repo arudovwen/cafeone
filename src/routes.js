@@ -12,6 +12,7 @@ const branches = lazy(() => import('views/branches/Branches'));
 const bookings = lazy(() => import('views/bookings/Bookings'));
 const transactions = lazy(() => import('views/transactions/Transactions'));
 const loyalty = lazy(() => import('views/loyalty/Loyalty'));
+const logout = lazy(() => import('views/membership/logout'));
 const membership = {
   types: lazy(() => import('views/membership/MembershipType')),
   list: lazy(() => import('views/membership/Membership')),
@@ -120,6 +121,13 @@ const routesAndMenuItems = {
       component: transactions,
       label: 'Transactions',
       icon: 'invoice',
+      protected: true,
+    },
+    {
+      path: `${appRoot}/logout`,
+      component: logout,
+      label: 'Logout',
+      icon: 'logout',
       protected: true,
     },
 

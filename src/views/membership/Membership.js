@@ -202,11 +202,9 @@ const MembershipList = () => {
                 </Col>
 
                 <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
-
-                    <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
-                      View
-                    </Button>
-               
+                  <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
+                    View
+                  </Button>
                 </Col>
               </Row>
             </Card.Body>
