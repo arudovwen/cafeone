@@ -470,6 +470,7 @@ const BookingTypeList = () => {
               endDate={startTimeTo}
               isClearable
               placeholderText="Start Date From"
+              showTimeSelect
             />
 
             <DatePicker
@@ -482,6 +483,7 @@ const BookingTypeList = () => {
               isClearable
               placeholderText="Start Date To"
               className="border rounded px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              showTimeSelect
             />
           </div>
         </Col>
@@ -496,6 +498,7 @@ const BookingTypeList = () => {
               endDate={endTimeTo}
               isClearable
               placeholderText="End Date From"
+              showTimeSelect
             />
 
             <DatePicker
@@ -508,6 +511,7 @@ const BookingTypeList = () => {
               isClearable
               placeholderText="End Date To"
               className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              showTimeSelect
             />
           </div>
         </Col>
@@ -834,7 +838,7 @@ const BookingTypeList = () => {
                   {updateData.status.toLowerCase() !== 'available' ? (
                     <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData)}>
                       <CsLineIcons icon={updateData.clockInTime ? 'minus' : 'plus'} className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
-                      <span className="sr-only">{updateData.clockInTime ? 'Check out' : 'Check in'}</span>
+                      <span className="sr-only">{updateData.clockInTime ? 'Clock out' : 'Clock in'}</span>
                     </Button>
                   ) : (
                     ''

@@ -437,7 +437,7 @@ const UserManagementList = () => {
         <Modal.Body>
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
             {isAdding && (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="pb-5">
                 <div className="mb-3">
                   <Form.Label>First name</Form.Label>
                   <Form.Control type="text" name="firstName" onChange={handleChange} value={values.firstName} />
@@ -509,16 +509,7 @@ const UserManagementList = () => {
                   <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
                   {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
                 </div>
-                {/* <div className="mb-3">
-                <Form.Label>Twitter handle</Form.Label>
-                <Form.Control type="text" id="twitter" name="twitter" onChange={handleChange} value={values.twitter} />
-                {errors.twitter && touched.twitter && <div className="d-block invalid-tooltip">{errors.twitter}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Note</Form.Label>
-                <Form.Control type="text" id="note" name="note" onChange={handleChange} value={values.note} />
-                {errors.note && touched.note && <div className="d-block invalid-tooltip">{errors.note}</div>}
-              </div> */}
+
                 <div className="border-0 mt-3 mb-5">
                   <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
                     <span>Submit</span>
@@ -527,7 +518,7 @@ const UserManagementList = () => {
               </form>
             )}
             {isEditing && (
-              <form onSubmit={(e) => handleUpdate(e)}>
+              <form onSubmit={(e) => handleUpdate(e)} className="pb-5">
                 <div className="mb-3">
                   <Form.Label>First name</Form.Label>
                   <Form.Control type="text" name="firstName" onChange={(e) => handleUpdateChange(e)} value={updateData.firstName} />

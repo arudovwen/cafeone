@@ -364,6 +364,7 @@ const CampaignTypeList = () => {
               minDate={new Date()}
               isClearable
               placeholderText="Start Date From"
+              showTimeSelect
             />
 
             <DatePicker
@@ -376,6 +377,7 @@ const CampaignTypeList = () => {
               isClearable
               placeholderText="Start Date To"
               className="border rounded px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              showTimeSelect
             />
           </div>
         </Col>
@@ -391,6 +393,7 @@ const CampaignTypeList = () => {
               minDate={new Date()}
               isClearable
               placeholderText="Expiry Date From"
+              showTimeSelect
             />
 
             <DatePicker
@@ -403,6 +406,7 @@ const CampaignTypeList = () => {
               isClearable
               placeholderText="Expiry Date To"
               className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              showTimeSelect
             />
           </div>
         </Col>
@@ -483,11 +487,9 @@ const CampaignTypeList = () => {
                 />
               </Col>
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
-
-                  <Button variant="primary" type="button" size="sm" onClick={() => viewCampaign(item)} className="">
-                    View
-                  </Button>
-
+                <Button variant="primary" type="button" size="sm" onClick={() => viewCampaign(item)} className="">
+                  View
+                </Button>
               </Col>
             </Row>
           </Card.Body>
@@ -526,7 +528,7 @@ const CampaignTypeList = () => {
         <Modal.Body>
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
             {isAdding && (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="pb-5">
                 <div className="mb-3">
                   <Form.Label>Code</Form.Label>
                   <Form.Control type="text" name="code" onChange={handleChange} value={values.code} />
@@ -616,13 +618,13 @@ const CampaignTypeList = () => {
                   </Row>
                 </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
+                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3 mb-5">
                   <span>Submit</span>
                 </Button>
               </form>
             )}
             {isEditing && (
-              <form onSubmit={(e) => handleUpdate(e)}>
+              <form onSubmit={(e) => handleUpdate(e)} className="pb-5">
                 <div className="mb-3">
                   <Form.Label>Code</Form.Label>
                   <Form.Control type="text" name="code" onChange={(e) => handleUpdateChange(e)} value={updateData.code} />
@@ -699,7 +701,7 @@ const CampaignTypeList = () => {
                       : ''}
                   </Row>
                 </div>
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
+                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3 mb-5">
                   <span>Submit</span>
                 </Button>
               </form>
