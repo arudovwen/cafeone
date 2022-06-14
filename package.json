@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "private": true,
   "proxy": "http://localhost:3000",
-  "engine":{
+  "engines":{
     "node":"15.x"
   },
   "dependencies": {
