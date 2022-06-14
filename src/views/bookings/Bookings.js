@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
@@ -582,7 +583,9 @@ const BookingTypeList = () => {
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>
                   {' '}
-                  <Badge bg="outline-primary">{item.status === '2' ? 'Not checked in' : item.status}</Badge>
+                  <Badge bg="outline-primary">{item.statusId == 1 ? 'Available' : ''}</Badge>
+                  <Badge bg="outline-primary">{item.statusId == 2 ? 'Not checked in' : ''}</Badge>
+                  <Badge bg="outline-primary">{item.statusId < 3 ? 'In use' : ''}</Badge>
                 </div>
               </Col>
 
@@ -824,7 +827,7 @@ const BookingTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.status === '2' ? 'Not checked' : updateData.status}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.status === '2' ? 'Not checked in' : updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -835,7 +838,7 @@ const BookingTypeList = () => {
                   {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
                   </Button> */}
-                  {updateData.status.toLowerCase() !== 'available' ? (
+                  {updateData.statusId == 2 || updateData.statusId == 3 ? (
                     <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData)}>
                       <CsLineIcons icon={updateData.clockInTime ? 'minus' : 'plus'} className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
                       <span className="sr-only">{updateData.clockInTime ? 'Clock out' : 'Clock in'}</span>
