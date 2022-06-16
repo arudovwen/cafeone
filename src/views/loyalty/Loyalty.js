@@ -17,6 +17,7 @@ import Fuse from 'fuse.js';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
+import CsvDownloader from 'react-csv-downloader';
 import {
   addCampaign,
   getCampaign,
@@ -25,12 +26,15 @@ import {
   activateCampaign,
   deactivateCampaign,
   deleteCampaign,
+  updateCampaignStatus
+
 
   // eslint-disable-next-line import/extensions
 } from '../../campaigns/campaignSlice';
 import { getMembers } from '../../members/memberSlice';
 
 const CampaignTypeList = () => {
+  const [datas, setDatas] = useState([]);
   const title = 'Campaigns ';
   const description = 'Campaigns Page';
   const [campaignModal, setCampaignModal] = useState(false);
@@ -53,6 +57,23 @@ const CampaignTypeList = () => {
   const [startDateTo, setstartDateTo] = useState(null);
   const [expiryDateFrom, setExpiryDateFrom] = useState(null);
   const [expiryDateTo, setExpiryDateTo] = useState(null);
+
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
+
+    const [startTimeFrom, setstartTimeFrom] = useState(null);
+    const [startTimeTo, setstartTimeTo] = useState(null);
+    const [endTimeFrom, setEndDateFrom] = useState(null);
+    const [endTimeTo, setEndDateTo] = useState(null);
+    const [memberId, setBranch] = useState(null);
+
+    const membershipsData = useSelector((state) => state.membership.memberships);
+    const branchesData = useSelector((state) => state.branches.branches).map((item) => {
+    return {
+      value: item.id,
+      name: item.name,
+    };
+  });
 
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
@@ -126,7 +147,7 @@ const CampaignTypeList = () => {
       dispatch(deactivateCampaign(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getCampaigns(page, search));
+          dispatch(updateCampaignStatus({ id, value }));
         }
       });
     }
@@ -134,7 +155,7 @@ const CampaignTypeList = () => {
       dispatch(activateCampaign(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getCampaigns(page, search));
+           dispatch(updateCampaignStatus({ id, value }));
         }
       });
     }
@@ -280,6 +301,63 @@ const CampaignTypeList = () => {
     dispatch(getCampaigns(1, ''));
   }, [startDateFrom, startDateTo, expiryDateFrom, expiryDateTo]);
 
+   React.useEffect(() => {
+    const newdata = campaignsData.map((item) => {
+      return {
+        cell1: item.code,
+        cell2: item.totalUsage,
+        cell3: item.usagePerUser,
+        cell4: item.value,
+        cell5: moment(item.startDate).format('llll'),
+          cell6: moment(item.expiryDate).format('llll'),
+            cell7: item.status,
+
+      };
+    });
+    setDatas(newdata);
+  }, [campaignsData]);
+
+  const columns = [
+    {
+      id: 'cell1',
+      displayName: 'CODE',
+    },
+    {
+      id: 'cell2',
+      displayName: 'TOTAL USAGE',
+    },
+    {
+      id: 'cell3',
+      displayName: 'USAGE PER USER',
+    },
+    {
+      id: 'cell4',
+      displayName: 'VALUE',
+    },
+    {
+      id: 'cell5',
+      displayName: 'START DATE',
+    },
+       {
+      id: 'cell6',
+      displayName: 'EXPIRY DATE',
+    },   {
+      id: 'cell7',
+      displayName: 'STATUS',
+    },
+
+
+  ];
+
+
+  function resetFilter() {
+    setstartTimeFrom(null);
+    setstartTimeTo(null);
+    setEndDateFrom(null);
+    setEndDateTo(null);
+    setBranch(null);
+  }
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -323,14 +401,11 @@ const CampaignTypeList = () => {
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsLineIcons icon="download" />
+                <CsvDownloader filename="campaigns" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  <CsLineIcons icon="download" />
+                </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -341,11 +416,7 @@ const CampaignTypeList = () => {
                 {campaignsData.length} Items
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">5 Items</Dropdown.Item>
-              <Dropdown.Item href="#">10 Items</Dropdown.Item>
-              <Dropdown.Item href="#">20 Items</Dropdown.Item>
-            </Dropdown.Menu>
+         
           </Dropdown>
           {/* Length End */}
         </Col>
@@ -353,81 +424,75 @@ const CampaignTypeList = () => {
       {/* Date filter starts   */}
       <Row className="mb-4 justify-content-between mb-2 mb-lg-1">
         <Col xs="12" md="5" className="mb-2 mb-md:0">
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
             <DatePicker
-              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
-              selected={startDateFrom}
-              onChange={(date) => setstartDateFrom(date)}
+              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted me-3"
+              selected={startTimeFrom}
+              onChange={(date) => setstartTimeFrom(date)}
               selectsStart
-              startDate={startDateFrom}
-              endDate={startDateTo}
-              minDate={new Date()}
+              startDate={startTimeFrom}
+              endDate={startTimeTo}
               isClearable
               placeholderText="Start Date From"
               showTimeSelect
             />
 
             <DatePicker
-              selected={startDateTo}
-              onChange={(date) => setstartDateTo(date)}
+              selected={startTimeTo}
+              onChange={(date) => setstartTimeTo(date)}
               selectsEnd
-              startDate={startDateFrom}
-              endDate={startDateTo}
-              minDate={startDateFrom}
+              startDate={startTimeFrom}
+              endDate={startTimeTo}
+              minDate={startTimeFrom}
               isClearable
               placeholderText="Start Date To"
-              className="border rounded px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              className="border rounded-sm px-2 px-lg-3 py-1 py-lg-2 text-muted"
               showTimeSelect
             />
           </div>
         </Col>
-        <Col xs="12" md="5">
-          <div className="d-flex justify-content-between align-items-center">
-            <DatePicker
-              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
-              selected={expiryDateFrom}
-              onChange={(date) => setExpiryDateFrom(date)}
-              selectsStart
-              startDate={expiryDateFrom}
-              endDate={expiryDateTo}
-              minDate={new Date()}
-              isClearable
-              placeholderText="Expiry Date From"
-              showTimeSelect
-            />
-
-            <DatePicker
-              selected={expiryDateTo}
-              onChange={(date) => setExpiryDateTo(date)}
-              selectsEnd
-              startDate={expiryDateFrom}
-              endDate={expiryDateTo}
-              minDate={expiryDateFrom}
-              isClearable
-              placeholderText="Expiry Date To"
-              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
-              showTimeSelect
-            />
-          </div>
+        <Col xs="12" md="5" className="d-flex gap-3">
+          <SelectSearch
+            filterOptions={() => fuzzySearch(branchesData)}
+            options={branchesData}
+            search
+            name="members"
+            value={memberId}
+            onChange={(val) => setBranch(val)}
+            placeholder="Filter by branch"
+          />
+          <SelectSearch
+            filterOptions={() => fuzzySearch(branchesData)}
+            options={branchesData}
+            search
+            name="members"
+            value={memberId}
+            onChange={(val) => setBranch(val)}
+            placeholder="Filter by membership"
+          />
+        </Col>
+        <Col xs="12" md="2" className="d-flex align-items-center">
+          <span onClick={() => resetFilter()} className="cursor-pointer d-flex align-items-center">
+            <span className="me-1">Reset filter</span> <CsLineIcons icon="refresh-horizontal" size="13" />
+          </span>
         </Col>
       </Row>
-
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">CODE</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">START DATE</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">END DATE</div>
         </Col>
 
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">TOTAL USAGE</div>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">USAGE</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
@@ -454,23 +519,23 @@ const CampaignTypeList = () => {
                 <div className="text-muted text-small d-md-none">Code</div>
                 <div className="text-alternate">{item.code}</div>
               </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
                 <div className="text-muted text-small d-md-none">Start Date</div>
                 <div className="text-alternate">
-                  <span>{moment(item.startDate).format('DD-MMM-YYYY hh:mm')}</span>
+                  <span>{moment(item.startDate).format('llll')}</span>
                 </div>
               </Col>
 
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">End date</div>
-                <div className="text-alternate">{moment(item.expiryDate).format('DD-MMM-YYYY hh:mm')}</div>
+                <div className="text-alternate">{moment(item.expiryDate).format('llll')}</div>
               </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
                 <div className="text-muted text-small d-md-none">Total usage</div>
                 <div className="text-alternate">{item.totalUsage}</div>
               </Col>
 
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-6">
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-6">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
@@ -730,11 +795,11 @@ const CampaignTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('DD-MMM-YYYY hh:mm')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('llll')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Expiry date</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.expiryDate).format('DD-MMM-YYYY hh:mm')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.expiryDate).format('llll')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Percentage Value (%)</td>

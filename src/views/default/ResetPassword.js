@@ -20,7 +20,10 @@ const ResetPassword = () => {
   });
   const location = useLocation();
   const token = new URLSearchParams(location.search).get('resetToken');
-
+  const [showPassword, setShowPassword] = React.useState(false);
+  function togglePassword() {
+    setShowPassword(!showPassword);
+  }
   const initialValues = {
     password: '',
     passwordConfirm: '',
@@ -80,12 +83,32 @@ const ResetPassword = () => {
           <form id="resetForm" className="tooltip-end-bottom" onSubmit={handleSubmit}>
             <div className="mb-3 filled">
               <CsLineIcons icon="lock-off" />
-              <Form.Control type="password" name="password" onChange={handleChange} value={values.password} placeholder="Password" />
+              <Form.Control type={!showPassword ? 'password' : 'text'} name="password" onChange={handleChange} value={values.password} placeholder="Password" />
+              <span className="position-absolute  e-3 cursor-pointer" style={{ top: '13px' }} onClick={() => togglePassword()}>
+                {!showPassword ? (
+                  <CsLineIcons icon="eye" className="text-small" style={{ width: '13px', height: '13px' }} />
+                ) : (
+                  <CsLineIcons icon="eye-off" className="text-small" style={{ width: '13px', height: '13px' }} />
+                )}
+              </span>
               {errors.password && touched.password && <div className="d-block invalid-tooltip">{errors.password}</div>}
             </div>
             <div className="mb-3 filled">
               <CsLineIcons icon="lock-on" />
-              <Form.Control type="password" name="passwordConfirm" onChange={handleChange} value={values.passwordConfirm} placeholder="Verify Password" />
+              <Form.Control
+                type={!showPassword ? 'password' : 'text'}
+                name="passwordConfirm"
+                onChange={handleChange}
+                value={values.passwordConfirm}
+                placeholder="Verify Password"
+              />
+              <span className="position-absolute  e-3 cursor-pointer" style={{ top: '13px' }} onClick={() => togglePassword()}>
+                {!showPassword ? (
+                  <CsLineIcons icon="eye" className="text-small" style={{ width: '13px', height: '13px' }} />
+                ) : (
+                  <CsLineIcons icon="eye-off" className="text-small" style={{ width: '13px', height: '13px' }} />
+                )}
+              </span>
               {errors.passwordConfirm && touched.passwordConfirm && <div className="d-block invalid-tooltip">{errors.passwordConfirm}</div>}
             </div>
             <Button size="lg" type="submit">

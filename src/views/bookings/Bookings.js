@@ -405,7 +405,7 @@ const BookingTypeList = () => {
         </Row>
       </div>
 
-      <Row className="mb-3">
+      <Row className="mb-4">
         <Col md="12" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
@@ -424,27 +424,7 @@ const BookingTypeList = () => {
 
           {/* Search End */}
         </Col>
-        <Col md="12" lg="6" xxl="6" className="mb-1 d-flex justify-content-between align-items-center">
-          <SelectSearch
-            filterOptions={() => fuzzySearch(membersData)}
-            options={membersData}
-            search
-            name="members"
-            value={memberId}
-            onChange={(val) => setMemberId(val)}
-            placeholder="Filter by  member"
-          />
-
-          <SelectSearch
-            filterOptions={() => fuzzySearch(seatData)}
-            options={seatData}
-            search
-            name="seat"
-            value={seatSearchId}
-            placeholder="Filter by seat"
-            onChange={(val) => setSeatSearchId(val)}
-          />
-
+        <Col md="12" lg="6" xxl="6" className="mb-1 d-flex justify-content-end align-items-center">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
@@ -456,14 +436,24 @@ const BookingTypeList = () => {
             </OverlayTrigger>
           </Dropdown>
           {/* Export Dropdown End */}
+
+          {/* Length Start */}
+          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
+              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
+                {bookingsData.length} Items
+              </Dropdown.Toggle>
+            </OverlayTrigger>
+          </Dropdown>
+          {/* Length End */}
         </Col>
       </Row>
       {/* Date filter starts   */}
       <Row className="mb-4 justify-content-between mb-2 mb-lg-1">
         <Col xs="12" md="5" className="mb-2 mb-md:0">
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
             <DatePicker
-              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted me-3"
               selected={startTimeFrom}
               onChange={(date) => setstartTimeFrom(date)}
               selectsStart
@@ -483,67 +473,50 @@ const BookingTypeList = () => {
               minDate={startTimeFrom}
               isClearable
               placeholderText="Start Date To"
-              className="border rounded px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              className="border rounded-sm px-2 px-lg-3 py-1 py-lg-2 text-muted"
               showTimeSelect
             />
           </div>
         </Col>
-        <Col xs="12" md="5">
-          <div className="d-flex justify-content-between align-items-center">
-            <DatePicker
-              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
-              selected={endTimeFrom}
-              onChange={(date) => setEndDateFrom(date)}
-              selectsStart
-              startDate={endTimeFrom}
-              endDate={endTimeTo}
-              isClearable
-              placeholderText="End Date From"
-              showTimeSelect
-            />
-
-            <DatePicker
-              selected={endTimeTo}
-              onChange={(date) => setEndDateTo(date)}
-              selectsEnd
-              startDate={endTimeFrom}
-              endDate={endTimeTo}
-              minDate={endTimeFrom}
-              isClearable
-              placeholderText="End Date To"
-              className="border rounded  px-2 px-lg-3 py-1 py-lg-2 text-muted"
-              showTimeSelect
-            />
-          </div>
+        <Col xs="12" md="4">
+          <SelectSearch
+            filterOptions={() => fuzzySearch(membersData)}
+            options={membersData}
+            search
+            name="members"
+            value={memberId}
+            onChange={(val) => setMemberId(val)}
+            placeholder="Filter by  member"
+          />
         </Col>
-        <Col xs="12" md="1" className="d-flex align-items-center">
+        <Col xs="12" md="2" className="d-flex align-items-center">
           <span onClick={() => resetFilter()} className="cursor-pointer d-flex align-items-center">
-            Reset{' '}
+            <span className="me-1">Reset filter</span> <CsLineIcons icon="refresh-horizontal" size="13" />
           </span>
         </Col>
       </Row>
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Name</div>
         </Col>
 
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">FromTime</div>
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
+          <div className="text-muted text-small cursor-pointer sort">DATE</div>
+        </Col>
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
+          <div className="text-muted text-small cursor-pointer sort">PLAN</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">ToTime</div>
+          <div className="text-muted text-small cursor-pointer sort">PAID STATUS</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">Branch</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
+        {/* <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Seat</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Status</div>
-        </Col>
+        </Col> */}
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
           <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
@@ -555,37 +528,37 @@ const BookingTypeList = () => {
         <Card key={item.bookingId} className="mb-2">
           <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">name</div>
                 <div className="text-alternate">{item.name}</div>
               </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1 px-1">
-                <div className="text-muted text-small d-md-none">fromTime</div>
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1 px-1">
+                <div className="text-muted text-small d-md-none">Date</div>
                 <div className="text-alternate">
-                  <span>{moment(item.fromTime).format('DD-MMM-YYYY hh:mm')}</span>
+                  <span>{moment(item.fromTime).format('llll')}</span>
                 </div>
               </Col>
 
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4 px-1 px-1">
+              {/* <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4 px-1 px-1">
                 <div className="text-muted text-small d-md-none">toTime</div>
-                <div className="text-alternate">{moment(item.toTime).format('DD-MMM-YYYY hh:mm')}</div>
-              </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
-                <div className="text-muted text-small d-md-none">Branch</div>
+                <div className="text-alternate">{moment(item.toTime).format('llll')}</div>
+              </Col> */}
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
+                <div className="text-muted text-small d-md-none">Plan</div>
                 <div>{item.branch}</div>
               </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5 px-1">
+              {/* <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Seat</div>
                 <div>{item.seat}</div>
-              </Col>
+              </Col> */}
 
-              <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-5">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>
                   {' '}
                   <Badge bg="outline-primary">{item.statusId == 1 ? 'Available' : ''}</Badge>
                   <Badge bg="outline-primary">{item.statusId == 2 ? 'Not checked in' : ''}</Badge>
-                  <Badge bg="outline-primary">{item.statusId < 3 ? 'In use' : ''}</Badge>
+                  <Badge bg="outline-primary">{item.statusId == 3 ? 'In use' : ''}</Badge>
                 </div>
               </Col>
 
@@ -685,7 +658,7 @@ const BookingTypeList = () => {
 
                   <div className="d-flex justify-content-between align-items-center">
                     <DatePicker
-                      className="border rounded px-2 py-1"
+                      className="border rounded-sm px-2 py-1"
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
                       selectsStart
@@ -702,7 +675,7 @@ const BookingTypeList = () => {
                       startDate={startDate}
                       endDate={endDate}
                       minDate={startDate}
-                      className="border rounded px-2 py-1"
+                      className="border rounded-sm px-2 py-1"
                       showTimeSelect
                     />
                   </div>
@@ -740,7 +713,7 @@ const BookingTypeList = () => {
 
                   <div className="d-flex justify-content-between align-items-center">
                     <DatePicker
-                      className="border rounded px-2 py-1"
+                      className="border rounded-sm px-2 py-1"
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
                       selectsStart
@@ -758,7 +731,7 @@ const BookingTypeList = () => {
                       endDate={endDate}
                       minDate={startDate}
                       showTimeSelect
-                      className="border rounded px-2 py-1"
+                      className="border rounded-sm px-2 py-1"
                     />
                   </div>
                 </div>
@@ -800,21 +773,19 @@ const BookingTypeList = () => {
 
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">from Time </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.fromTime).format('DD-MMM-YYYY hh:mm')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.fromTime).format('llll')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">to Time</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.toTime).format('DD-MMM-YYYY hh:mm')}</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.toTime).format('llll')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-In Time </td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('DD-MMM-YYYY hh:mm') : '-'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('llll') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-Out Time</td>
-                      <td className=" py-2 px-1 border-bottom">
-                        {updateData.clockOutTime ? moment(updateData.clockOutTime).format('DD-MMM-YYYY hh:mm') : '-'}
-                      </td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('llll') : '-'}</td>
                     </tr>
 
                     <tr>

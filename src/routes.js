@@ -75,6 +75,7 @@ const routesAndMenuItems = {
       label: 'User Management',
       icon: 'user',
       protected: true,
+      roles: ['SUPER_ADMIN'],
       subs: [
         { path: '/members', label: 'Members', component: usermanagement.members },
         { path: '/admins', label: 'Admins', component: usermanagement.admins },
@@ -95,6 +96,7 @@ const routesAndMenuItems = {
       label: 'Membership',
       icon: 'tag',
       protected: true,
+      roles: ['SUPER_ADMIN'],
       subs: [
         { path: '/list', label: 'List', component: membership.list },
         { path: '/types', label: 'Types', component: membership.types },
@@ -107,6 +109,7 @@ const routesAndMenuItems = {
       label: 'Bookings',
       icon: 'menu-bookmark',
       protected: true,
+      roles: ['SUPER_ADMIN'],
     },
     {
       path: `${appRoot}/loyalty`,
@@ -114,6 +117,7 @@ const routesAndMenuItems = {
       label: 'Campaigns',
       icon: 'gift',
       protected: true,
+      roles: ['SUPER_ADMIN'],
     },
 
     {

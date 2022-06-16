@@ -32,7 +32,11 @@ const Login = () => {
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
+  const [showPassword, setShowPassword] = React.useState(false);
+  function togglePassword() {
 
+    setShowPassword(!showPassword);
+  }
   const rightSide = (
     <div className="sw-lg-70 h-75 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 rounded-lg">
       <div className="sw-lg-50 px-md-5 text-center  w-75">
@@ -42,7 +46,7 @@ const Login = () => {
           </NavLink>
         </div>
         <div className="mb-5">
-          <h2 className="cta-1 mb-0 text-primary">Welcome to Cafeone</h2>
+          <h2 className="cta-1 mb-0 text-primary">Welcome to Café One</h2>
           <p className="h6 text-dark">Please use your credentials to login.</p>
         </div>
         <div>
@@ -54,10 +58,14 @@ const Login = () => {
             </div>
             <div className="mb-3 filled form-group tooltip-end-top">
               <CsLineIcons icon="lock-off" />
-              <Form.Control type="password" name="password" onChange={handleChange} value={values.password} placeholder="Password" />
-              <NavLink className="text-small position-absolute t-3 e-3" to="/forgot-password">
-                Forgot?
-              </NavLink>
+              <Form.Control type={!showPassword ? 'password' : 'text'} name="password" onChange={handleChange} value={values.password} placeholder="Password" />
+              <span className="position-absolute  e-3 cursor-pointer" size="13" onClick={() => togglePassword()}>
+                {!showPassword ? (
+                  <CsLineIcons icon="eye" className="text-small"  size="13" />
+                ) : (
+                  <CsLineIcons icon="eye-off" className="text-small"  size="13" />
+                )}
+              </span>
               {errors.password && touched.password && <div className="d-block invalid-tooltip">{errors.password}</div>}
             </div>
 
@@ -71,6 +79,11 @@ const Login = () => {
               )}
             </Button>
           </form>
+          <div className="mt-2">
+            <NavLink className="text-small " to="/forgot-password">
+              Forgot password?
+            </NavLink>
+          </div>
         </div>
       </div>
     </div>

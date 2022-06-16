@@ -124,7 +124,6 @@ const UserManagementList = () => {
       setIsViewing(false);
       setIsSubscribing(false);
       setIsEditing(true);
-      toggleModal();
     });
   }
   function addNewUser() {
@@ -309,7 +308,7 @@ const UserManagementList = () => {
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
                 <CsvDownloader filename="users" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
                   <CsLineIcons icon="download" />
@@ -429,9 +428,9 @@ const UserManagementList = () => {
         <Modal.Header closeButton>
           <Modal.Title as="h5">
             {' '}
-            {isAdding && 'Add new user'}
-            {isEditing && 'Update new user'}
-            {isViewing && 'User Information'}
+            {isAdding && 'Add new member'}
+            {isEditing && 'Update new member'}
+            {isViewing && 'Member Information'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -590,7 +589,7 @@ const UserManagementList = () => {
               </div> */}
                 <div className="border-0 mt-3 mb-5">
                   <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
-                    <span>Update user</span>
+                    <span>Update member</span>
                   </Button>
                 </div>
               </form>
@@ -710,7 +709,7 @@ const UserManagementList = () => {
                 </div>
                 <div className="border-0 mt-3 mb-5">
                   <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
-                    <span>Subscribe user</span>
+                    <span>Subscribe member</span>
                   </Button>
                 </div>
               </form>

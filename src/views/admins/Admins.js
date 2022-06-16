@@ -12,14 +12,16 @@ import { useFormik } from 'formik';
 import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAdmins, addAdmin, updateAdmin, activateAdmin, deactivateAdmin, getRoles, removeadmin } from '../../admin/adminSlice';
+import CsvDownloader from 'react-csv-downloader';
+import moment from 'moment';
+import { getAdmins, addAdmin, updateAdmin, activateAdmin, deactivateAdmin, getRoles, removeadmin, updateAdminStatus } from '../../admin/adminSlice';
 
 const AdminManagementList = () => {
   const [adminModal, setAdminModal] = useState(false);
   const dispatch = useDispatch();
   const title = 'Admins List';
   const description = 'Admins List Page';
-
+  const [datas, setDatas] = useState([]);
   const adminsData = useSelector((state) => state.admins.items);
   const total = useSelector((state) => state.admins.total);
   const status = useSelector((state) => state.admins.status);
@@ -112,7 +114,7 @@ const AdminManagementList = () => {
       dispatch(deactivateAdmin(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getAdmins(page, search));
+          dispatch(updateAdminStatus({ id, value }));
         }
       });
     }
@@ -120,7 +122,7 @@ const AdminManagementList = () => {
       dispatch(activateAdmin(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getAdmins(page, search));
+          dispatch(updateAdminStatus({ id, value }));
         }
       });
     }
@@ -159,6 +161,41 @@ const AdminManagementList = () => {
     dispatch(updateAdmin(updateData));
   }
 
+  React.useEffect(() => {
+    const newdata = adminsData.map((item) => {
+      return {
+        cell1: `${item.firstName} ${item.lastName}`,
+        cell2: item.email,
+        cell3: item.role,
+        cell4: item.isActive,
+        cell5: moment(item.dateCreated).format('llll'),
+      };
+    });
+    
+    setDatas(newdata);
+  }, [adminsData]);
+  const columns = [
+    {
+      id: 'cell1',
+      displayName: 'NAME',
+    },
+    {
+      id: 'cell2',
+      displayName: 'EMAIL',
+    },
+    {
+      id: 'cell3',
+      displayName: 'ROLE',
+    },
+    {
+      id: 'cell4',
+      displayName: 'STATUS',
+    },
+    {
+      id: 'cell5',
+      displayName: 'DATE CREATED',
+    },
+  ];
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -208,16 +245,13 @@ const AdminManagementList = () => {
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsLineIcons icon="download" />
+                <CsvDownloader filename="admins" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  <CsLineIcons icon="download" />
+                </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -357,7 +391,7 @@ const AdminManagementList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control type="text" id="email" name="email" onChange={handleChange} value={values.email} />
+                  <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
                   {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
                 </div>
                 <div className="mb-3">
@@ -443,6 +477,11 @@ const AdminManagementList = () => {
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Role</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.role}</td>
                     </tr>
+                      <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Date created</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.dateCreated).format('llll')}</td>
+                    </tr>
+
                   </tbody>
                 </table>
                 <div className="text-center">

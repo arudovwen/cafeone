@@ -25,14 +25,25 @@ const campaignSlice = createSlice({
     updatestatus(state, action) {
       state.status = action.payload;
     },
+     updatecampaignstatus(state, action) {
+      state.items = state.items.map((v) => {
+        if (v.id === action.payload.id) {
+          v.isActive = action.payload.value;
+        }
+        return v;
+      });
+    },
     resetstatus(state) {
       state.status = null;
     },
   },
 });
 
-export const { setcampaign, addcampaign, updatestatus, resetstatus } = campaignSlice.actions;
+export const { setcampaign, addcampaign, updatestatus, resetstatus, updatecampaignstatus } = campaignSlice.actions;
 
+export const updateCampaignStatus = (data) => async (dispatch) => {
+  dispatch(updatecampaignstatus(data));
+};
 export const getCampaigns =
   (page, search, startDateFrom = null, startDateTo = null, expiryDateFrom = null, expiryDateTo = null) =>
   async (dispatch) => {

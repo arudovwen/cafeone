@@ -28,14 +28,27 @@ const membershipSlice = createSlice({
     updatestatus(state, action) {
       state.status = action.payload;
     },
+      updatemembershipstatus(state, action) {
+      console.log("🚀 ~ file: membershipSlice.js ~ line 32 ~ updatemembershipstatus ~ action", action)
+      state.types = state.types.map((v) => {
+        if (v.id === action.payload.id) {
+          v.statusId = action.payload.value;
+        }
+        return v;
+      });
+    },
     resetstatus(state) {
       state.status = null;
     },
   },
 });
 
-export const { setmembership, addmembership, updatestatus, resetstatus, setmembershiptypes } = membershipSlice.actions;
+export const { setmembership, addmembership, updatestatus, resetstatus, setmembershiptypes, updatemembershipstatus } = membershipSlice.actions;
 
+
+export const updatemembershipStatus = (data) => async (dispatch) => {
+  dispatch(updatemembershipstatus(data));
+};
 export const getmembershiptypes = () => async (dispatch) => {
   const response = await axios.get(`${SERVICE_URL}/membership-types`, requestConfig).catch((err) => {
     toast.error(err.response.data.message);

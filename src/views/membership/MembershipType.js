@@ -11,7 +11,8 @@ import { useFormik } from 'formik';
 import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import CsvDownloader from 'react-csv-downloader';
+import moment from 'moment';
 import {
   getmembershiptypes,
   addMembershipType,
@@ -19,6 +20,7 @@ import {
   activateMembership,
   deactivateMembership,
   deleteMembership,
+  updatemembershipStatus
 
   // eslint-disable-next-line import/extensions
 } from '../../membership/membershipSlice';
@@ -29,7 +31,7 @@ const MembershipTypeList = () => {
   const [membershipModal, setMembershipModal] = useState(false);
   const membershipsData = useSelector((state) => state.membership.types);
   const status = useSelector((state) => state.membership.status);
-
+    const [datas, setDatas] = useState([]);
   const initialValues = {
     name: '',
     amount: '',
@@ -102,7 +104,7 @@ const MembershipTypeList = () => {
       dispatch(deactivateMembership(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getmembershiptypes(page, search));
+          dispatch(updatemembershipStatus({id, value}));
         }
       });
     }
@@ -110,7 +112,7 @@ const MembershipTypeList = () => {
       dispatch(activateMembership(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getmembershiptypes(page, search));
+          dispatch(updatemembershipStatus({ id, value }));
         }
       });
     }
@@ -180,6 +182,43 @@ const MembershipTypeList = () => {
     console.log('🚀 ~ file: Membership.js ~ line 202 ~ handleUpdate ~ updateData', updateData);
   }
 
+    React.useEffect(() => {
+    const newdata = membershipsData.map((item) => {
+      return {
+        cell1: item.name,
+        cell2: item.amount,
+        cell3: item.description,
+        cell4: item.status,
+        cell5: item.validityPeriodType
+      };
+    });
+
+    setDatas(newdata);
+  }, [membershipsData]);
+  const columns = [
+    {
+      id: 'cell1',
+      displayName: 'NAME',
+    },
+    {
+      id: 'cell2',
+      displayName: 'AMOUNT',
+    },
+    {
+      id: 'cell3',
+      displayName: 'DESCRIPTION',
+    },
+    {
+      id: 'cell4',
+      displayName: 'STATUS',
+    },
+     {
+      id: 'cell5',
+      displayName: 'VALIDITY PERIOD',
+    },
+
+  ];
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -221,16 +260,13 @@ const MembershipTypeList = () => {
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsLineIcons icon="download" />
+                <CsvDownloader filename="membership" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  <CsLineIcons icon="download" />
+                </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -313,11 +349,9 @@ const MembershipTypeList = () => {
                 />
               </Col>
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
-
-                  <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
-                    View
-                  </Button>
-
+                <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
+                  View
+                </Button>
               </Col>
             </Row>
           </Card.Body>
@@ -373,14 +407,9 @@ const MembershipTypeList = () => {
                   <Form.Control type="number" name="amount" onChange={handleChange} value={values.amount} />
                   {errors.amount && touched.amount && <div className="d-block invalid-tooltip">{errors.amount}</div>}
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Validity Period</Form.Label>
-                  <Form.Control type="text" name="validityPeriod" onChange={handleChange} value={values.validityPeriod} />
-                  {errors.validityPeriod && touched.validityPeriod && <div className="d-block invalid-tooltip">{errors.validityPeriod}</div>}
-                </div>
 
                 <div className="mb-3">
-                  <Form.Label>Period TypeId </Form.Label>
+                <Form.Label>Validity Period</Form.Label>
                   <Form.Select
                     type="text"
                     name="validityPeriodTypeId"
@@ -433,10 +462,6 @@ const MembershipTypeList = () => {
                   </Form.Select>
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Period TypeId </Form.Label>
-                  <Form.Control type="text" name="validityPeriodTypeId" onChange={(e) => handleUpdateChange(e)} value={updateData.validityPeriodTypeId} />
-                </div>
 
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
@@ -468,12 +493,12 @@ const MembershipTypeList = () => {
                         <span className="">₦</span> {updateData.amount}
                       </td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Validity period</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.validityPeriod}</td>
-                    </tr>
+                    </tr> */}
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Period type</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Validity period</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.validityPeriodType}</td>
                     </tr>
                     <tr>

@@ -160,10 +160,10 @@ const Dashboard = () => {
                       <Card.Body className="pt-0 pb-0 h-100">
                         <Row className="g-0 h-100 align-content-center">
                           <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                            {item.name}
+                            {item.branch}
                           </Col>
                           <Col md="3" className="d-flex align-items-center text-muted text-medium">
-                            {item.branch}
+                            {item.name}
                           </Col>
                           <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
                             {item.bookings} bookings

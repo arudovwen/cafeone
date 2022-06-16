@@ -28,13 +28,22 @@ const adminSlice = createSlice({
     updatestatus(state, action) {
       state.status = action.payload;
     },
+    updateadminstatus(state, action) {
+      console.log("🚀 ~ file: adminSlice.js ~ line 32 ~ updateadminstatus ~ action", action)
+      state.items = state.items.map((v) => {
+        if (v.id === action.payload.id) {
+          v.isActive = action.payload.value;
+        }
+        return v;
+      });
+    },
     resetstatus(state) {
       state.status = null;
     },
   },
 });
 
-export const { setadmins, addadmins, updatestatus, resetstatus, setroles } = adminSlice.actions;
+export const { setadmins, addadmins, updatestatus, resetstatus, setroles, updateadminstatus } = adminSlice.actions;
 export const getAdmins = (page, search) => async (dispatch) => {
   const response = await axios.get(`${SERVICE_URL}/admins?page=${page}&search=${search}&size=15`, requestConfig).catch((err) => {
     toast.error(err.response.data.message);
@@ -59,7 +68,7 @@ export const getAdmin = (data) => async () => {
 
 export const updateAdmin = (data) => async (dispatch) => {
   axios.post(`${SERVICE_URL}/admins/${data.id}`, data, requestConfig).then(() => {
-    toast.success('User updated');
+    toast.success('Admin updated');
     dispatch(updatestatus('update'));
     dispatch(resetstatus());
   });
@@ -83,6 +92,9 @@ export const activateAdmin = (data) => async () => {
 
 export const deactivateAdmin = (data) => async () => {
   return axios.post(`${SERVICE_URL}/admins/${data}/deactivate`, data, requestConfig);
+};
+export const updateAdminStatus = (data) => async (dispatch) => {
+  dispatch(updateadminstatus(data));
 };
 
 export const subscribeAdmin = (data) => async () => {

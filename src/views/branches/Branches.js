@@ -11,7 +11,8 @@ import { useFormik } from 'formik';
 import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import CsvDownloader from 'react-csv-downloader';
+import moment from 'moment';
 import {
   getBranches,
   addBranch,
@@ -22,6 +23,7 @@ import {
   deactivateBranch,
   deleteBranch,
   deleteBranchSeat,
+  updateBranchstatus
 } from '../../branches/branchSlice';
 import { uploadPhoto } from '../../members/memberSlice';
 
@@ -31,6 +33,7 @@ const BranchesList = () => {
   const [branchModal, setBranchModal] = useState(false);
   const branchesData = useSelector((state) => state.branches.branches);
   const status = useSelector((state) => state.branches.status);
+    const [datas, setDatas] = useState([]);
   const [seatInfo, setSeatInfo] = useState({
     image: '',
     description: '',
@@ -72,10 +75,10 @@ const BranchesList = () => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Branch name is required'),
     location: Yup.string().required('Location name is required'),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('City is required'),
+    // address: Yup.string().required('Address is required'),
+    // city: Yup.string().required('City is required'),
     state: Yup.string().required('State is required'),
-    description: Yup.string().required('Description is required'),
+    // description: Yup.string().required('Description is required'),
   });
 
   const toggleModal = () => {
@@ -126,7 +129,7 @@ const BranchesList = () => {
       dispatch(deactivateBranch(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getBranches(page, search));
+          dispatch(updateBranchstatus({id, value}));
         }
       });
     }
@@ -134,7 +137,7 @@ const BranchesList = () => {
       dispatch(activateBranch(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(getBranches(page, search));
+          dispatch(updateBranchstatus({ id, value }));
         }
       });
     }
@@ -252,6 +255,37 @@ const BranchesList = () => {
     });
   }
 
+    React.useEffect(() => {
+    const newdata = branchesData.map((item) => {
+      return {
+        cell1: item.name,
+        cell2: item.location,
+        cell3: item.seatCount,
+        cell4: item.state,
+      };
+    });
+
+    setDatas(newdata);
+  }, [branchesData]);
+  const columns = [
+    {
+      id: 'cell1',
+      displayName: 'NAME',
+    },
+    {
+      id: 'cell2',
+      displayName: 'LOCATION',
+    },
+    {
+      id: 'cell3',
+      displayName: 'SEATS',
+    },
+    {
+      id: 'cell4',
+      displayName: 'STATE',
+    },
+
+  ];
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -293,16 +327,13 @@ const BranchesList = () => {
         <Col md="7" lg="8" xxl="8" className="mb-1 text-end">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsLineIcons icon="download" />
+                <CsvDownloader filename="branches" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  <CsLineIcons icon="download" />
+                </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -383,11 +414,9 @@ const BranchesList = () => {
                 />
               </Col>
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last text-end order-md-last">
-
-                  <Button variant="primary" type="button" size="sm" onClick={() => viewBranch(item)} className="">
-                    View
-                  </Button>
-
+                <Button variant="primary" type="button" size="sm" onClick={() => viewBranch(item)} className="">
+                  View
+                </Button>
               </Col>
             </Row>
           </Card.Body>
@@ -443,7 +472,7 @@ const BranchesList = () => {
                   <Form.Control type="text" name="location" onChange={handleChange} value={values.location} />
                   {errors.location && touched.location && <div className="d-block invalid-tooltip">{errors.location}</div>}
                 </div>
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   <Form.Label>Description</Form.Label>
                   <Form.Control type="text" name="description" onChange={handleChange} value={values.description} />
                   {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
@@ -459,7 +488,7 @@ const BranchesList = () => {
                   <Form.Label>City</Form.Label>
                   <Form.Control type="text" name="city" onChange={handleChange} value={values.city} />
                   {errors.city && touched.city && <div className="d-block invalid-tooltip">{errors.city}</div>}
-                </div>
+                </div> */}
                 <div className="mb-3">
                   <Form.Label>State</Form.Label>
                   <Form.Control type="text" name="state" onChange={handleChange} value={values.state} />
@@ -481,7 +510,7 @@ const BranchesList = () => {
                   <Form.Control type="text" name="location" onChange={(e) => handleUpdateChange(e)} value={updateData.location} />
                 </div>
 
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   <Form.Label>Description</Form.Label>
                   <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
                 </div>
@@ -492,7 +521,7 @@ const BranchesList = () => {
                 <div className="mb-3">
                   <Form.Label>City</Form.Label>
                   <Form.Control type="text" name="city" onChange={(e) => handleUpdateChange(e)} value={updateData.city} />
-                </div>
+                </div> */}
                 <div className="mb-3">
                   <Form.Label>State</Form.Label>
                   <Form.Control type="text" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
@@ -541,18 +570,18 @@ const BranchesList = () => {
                       <td className=" py-2 px-1 border-bottom">{updateData.address}</td>
                     </tr>
 
-                    <tr>
+                    {/* <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">City</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.city}</td>
-                    </tr>
+                    </tr> */}
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">State</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.state}</td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
-                    </tr>
+                    </tr> */}
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
@@ -580,17 +609,17 @@ const BranchesList = () => {
                     <table className="mb-5 w-100 bg-light p-3 rounded-lg w-100">
                       <thead>
                         <tr>
-                          <th className="text-small text-muted font-weight-bold  py-2 px-3   border-bottom text-uppercase text-muted">Id</th>
-                          <th className="text-small text-muted  font-weight-bold  py-2 px-3  border-bottom text-uppercase text-muted">Image</th>
-                          <th className="text-small text-muted font-weight-bold  py-2 px-3   border-bottom text-uppercase text-muted">Description</th>
+                          <th className="text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Id</th>
+                          <th className="text-small text-muted  font-weight-bold  py-2 px-2  border-bottom text-uppercase text-muted">Image</th>
+                          <th className="text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Description</th>
                           <th className=" text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {seats &&
-                          seats.map((item) => (
+                          seats.map((item, index) => (
                             <tr key={item.id} className="border-bottom ">
-                              <td className="px-3  border-bottom py-2"> {item.id}</td>
+                              <td className="px-3  border-bottom py-2"> {index+1}</td>
                               <td className="px-3  border-bottom py-2">
                                 <img
                                   src={`${process.env.REACT_APP_URL}/${item.photo}`}

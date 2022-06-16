@@ -23,14 +23,26 @@ const branchSlice = createSlice({
     updatestatus(state, action) {
       state.status = action.payload;
     },
+     updateBranchstatus(state, action) {
+
+      state.branches = state.branches.map((v) => {
+        if (v.id === action.payload.id) {
+          v.statusId = action.payload.value;
+        }
+        return v;
+      });
+    },
     resetstatus(state) {
       state.status = null;
     },
   },
 });
 
-export const { setbranch, addbranch, updatestatus, resetstatus } = branchSlice.actions;
+export const { setbranch, addbranch, updatestatus, resetstatus, updateBranchstatus } = branchSlice.actions;
 
+export const updateBranchStatus = (data) => async (dispatch) => {
+  dispatch(updateBranchstatus(data));
+};
 export const getBranches = (page, search) => async (dispatch) => {
   const response = await axios.get(`${SERVICE_URL}/branches?page=${page}&search=${search}&size=15`, requestConfig).catch((err) => {
     toast.error(err.response.data.message);
