@@ -120,7 +120,6 @@ const CampaignTypeList = () => {
     discountType: Yup.string().required('Discount type is required'),
     value: Yup.string().required('Value  is required'),
     description: Yup.string().required('Description is required'),
-
   });
 
   const toggleModal = () => {
@@ -130,7 +129,6 @@ const CampaignTypeList = () => {
   const onSubmit = (values, { resetForm }) => {
     dispatch(addCampaign(values));
     // resetForm({ values: '' });
-
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -188,8 +186,8 @@ const CampaignTypeList = () => {
     setStartDate(new Date(val.startDate));
     setEndDate(new Date(val.expiryDate));
     val.branchId ? setType('branch') : setType('membership');
-     setUpdateData({...val, discountType:val.typeId});
-     setIsEditing(true);
+    setUpdateData({ ...val, discountType: val.typeId });
+    setIsEditing(true);
   }
 
   function viewCampaign(val) {
@@ -248,17 +246,16 @@ const CampaignTypeList = () => {
     if (status === 'success') {
       setCampaignModal(false);
 
-    values.discountType= 1
-    values.description= ''
-    values.value= ''
-    values.startDate= null
-    values.expiryDate= null
-    values.usagePerMember= ''
-    values.membershipTypeId= ''
-    values.branchId= ''
-     setStartDate(null)
-    setEndDate(null);
-
+      values.discountType = 1;
+      values.description = '';
+      values.value = '';
+      values.startDate = null;
+      values.expiryDate = null;
+      values.usagePerMember = '';
+      values.membershipTypeId = '';
+      values.branchId = '';
+      setStartDate(null);
+      setEndDate(null);
     }
     if (status === 'update') {
       dispatch(getCampaigns(1, ''));
@@ -303,14 +300,13 @@ const CampaignTypeList = () => {
   }, [startDate, endDate]);
 
   React.useEffect(() => {
-     console.log('🚀 ~ file: Loyalty.js ~ line 321 ~ React.useEffect ~ startDateFrom', startDateFrom);
+    console.log('🚀 ~ file: Loyalty.js ~ line 321 ~ React.useEffect ~ startDateFrom', startDateFrom);
     if (startDateFrom && startDateTo) {
-
       dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD')));
       return;
     }
-    if(branchId || membershipId){
-   dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD'), branchId, membershipId));
+    if (branchId || membershipId) {
+      dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD'), branchId, membershipId));
       return;
     }
 
@@ -434,7 +430,7 @@ const CampaignTypeList = () => {
         </Col>
       </Row>
       {/* Date filter starts   */}
-      <Row className="mb-4 justify-content-between mb-2 mb-lg-1">
+      <Row className="mb-5 justify-content-between mb-2 mb-lg-1">
         <Col xs="12" md="5" className="mb-2 mb-md:0">
           <div className="d-flex align-items-center">
             <DatePicker
@@ -442,7 +438,6 @@ const CampaignTypeList = () => {
               selected={startDateFrom}
               onChange={(date) => setStartDateFrom(date)}
               selectsStart
-              startDate={startDateFrom}
               endDate={startDateTo}
               isClearable
               placeholderText="Start Date From"
@@ -720,6 +715,7 @@ const CampaignTypeList = () => {
                         startDate={startDate}
                         endDate={endDate}
                         placeholder="Start date"
+                        showTimeSelect
                       />
 
                       <DatePicker
@@ -731,6 +727,7 @@ const CampaignTypeList = () => {
                         minDate={startDate}
                         className="border rounded-sm px-2 py-1 text-muted"
                         placeholder="Expiry date"
+                        showTimeSelect
                       />
                     </div>
                     {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
@@ -746,8 +743,6 @@ const CampaignTypeList = () => {
             )}
             {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)} className="pb-5">
-
-
                 <div className="mb-3">
                   <Form.Label>Discount type</Form.Label>
                   <Form.Select type="text" name="discountType" onChange={handleChange} value={updateData.discountType}>
@@ -865,6 +860,7 @@ const CampaignTypeList = () => {
                         startDate={startDate}
                         endDate={endDate}
                         placeholder="Start date"
+                        showTimeSelect
                       />
 
                       <DatePicker
@@ -876,6 +872,7 @@ const CampaignTypeList = () => {
                         minDate={startDate}
                         className="border rounded-sm px-2 py-1 text-muted"
                         placeholder="Expiry date"
+                        showTimeSelect
                       />
                     </div>
                   </div>
