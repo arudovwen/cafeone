@@ -50,7 +50,14 @@ export const getBookings =
     }
   };
 
-export const getBooking = (data) => async () => {
+export const getPaymentStatusTypes  = () => async () => {
+  return axios.get(`${SERVICE_URL}/bookings/plan-types`, requestConfig);
+};
+
+export const getPlanTypes = () => async () => {
+  return axios.get(`${SERVICE_URL}/bookings/payment-status-types`, requestConfig);
+};
+export const  getBooking = (data) => async () => {
   return axios.get(`${SERVICE_URL}/bookings/${data}`, requestConfig);
 };
 

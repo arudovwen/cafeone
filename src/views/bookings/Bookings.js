@@ -27,6 +27,8 @@ import {
   // deleteBooking,
   checkinBooking,
   checkoutBooking,
+  getPaymentStatusTypes,
+  getPlanTypes,
 
   // eslint-disable-next-line import/extensions
 } from '../../bookings/bookingSlice';
@@ -54,15 +56,19 @@ const BookingTypeList = () => {
 
   const status = useSelector((state) => state.bookings.status);
   const initialValues = {
-    seatId: '',
-    memberId: '',
-    branchId: '',
-    toTime: '',
-    fromTime: '',
+    seats: [],
+    memberId: 0,
+    branchId: 0,
+    startTime: '',
+    duration: 0,
+    planType: 1,
+    startDate: null,
+    paymentStatus: 0,
   };
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-
+  const [planTypes, setPlanTypes] = useState([])
+  const [paymentTypes, setPaymentTypes] = useState([])
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -86,6 +92,13 @@ const BookingTypeList = () => {
     dispatch(getBookings(page, search));
     dispatch(getMembers(page, search, 50));
     dispatch(getBranches(page, search, 50));
+    dispatch(  getPaymentStatusTypes).then(res=>{
+      setPaymentTypes(res.data)
+    })
+        dispatch(
+  getPlanTypes).then(res=>{
+    setPlanTypes(res.data)
+  })
   }, [dispatch, page, search]);
 
   function nextPage() {
@@ -98,7 +111,7 @@ const BookingTypeList = () => {
     setPage(page - 1);
   }
   const validationSchema = Yup.object().shape({
-    seatId: Yup.string().required('seatId is required'),
+   
     fromTime: Yup.string().required('From Time  is required'),
     toTime: Yup.string().required('To Time is required'),
     memberId: Yup.string().required('MemberId is required'),
@@ -408,7 +421,7 @@ const BookingTypeList = () => {
       <Row className="mb-4">
         <Col md="12" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
-          <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
+          {/* <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
             <span className="search-magnifier-icon">
               <CsLineIcons icon="search" />
@@ -416,11 +429,14 @@ const BookingTypeList = () => {
             <span className="search-delete-icon d-none">
               <CsLineIcons icon="close" />
             </span>
-          </div>
-
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
+          </div> */}
+    <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
             <CsLineIcons icon="plus" /> <span className="d-none d-sm-inline">Add booking</span>
           </Button>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
+            <CsLineIcons icon="plus" /> <span className="d-none d-sm-inline">Book event</span>
+          </Button>
+
 
           {/* Search End */}
         </Col>

@@ -221,20 +221,27 @@ const TransactionList = () => {
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
 
+ <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
+          <div className="text-muted text-small cursor-pointer sort">DATE</div>
+        </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">AMOUNT DUE</div>
+          <div className="text-muted text-small cursor-pointer sort">AMOUNT </div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer sort">DISCOUNT</div>
         </Col>
-        <Col md="4" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">NARATION</div>
-        </Col>
+
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">AMOUNT PAID</div>
+          <div className="text-muted text-small cursor-pointer sort">SUBTOTAL</div>
+        </Col>
+         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
+          <div className="text-muted text-small cursor-pointer sort">STATUS </div>
+        </Col>
+          <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
+          <div className="text-muted text-small cursor-pointer sort">NARATION</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -246,27 +253,38 @@ const TransactionList = () => {
             <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
               <Row className="g-0 h-100 align-content-center cursor-default">
 
+ <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
+                  <div className="text-muted text-small d-md-none">Date</div>
+                  <div className="text-alternate">
+                    <span>{moment(item.dateCreated).format('l')}</span>
+                  </div>
+                </Col>
                 <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
                   <div className="text-muted text-small d-md-none">Name</div>
                   <div className="text-alternate">
-                    <span>{item.name}</span>
+                    <span>{item.member.name}</span>
                   </div>
                 </Col>
                 <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
-                  <div className="text-muted text-small d-md-none">Amount due</div>
-                  <div className="text-alternate"> <span className="">₦</span>{item.amountDue}</div>
+                  <div className="text-muted text-small d-md-none">Amount </div>
+                  <div className="text-alternate"> <span className="">₦</span>{item.amountPayable}</div>
                 </Col>
                 <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Discount</div>
                   <div className="text-alternate">{item.discount}</div>
                 </Col>
-                <Col xs="12" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+
+                <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                  <div className="text-muted text-small d-md-none">Subtotal</div>
+                  <div className="text-alternate"> <span className="">₦</span>{item.subtotal}</div>
+                </Col>
+                 <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                  <div className="text-muted text-small d-md-none">Status</div>
+                  <div className="text-alternate"> <span className="">₦</span>{item.status}</div>
+                </Col>
+                 <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Narration</div>
                   <div className="text-alternate">{item.narration}</div>
-                </Col>
-                <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
-                  <div className="text-muted text-small d-md-none">Amount paid</div>
-                  <div className="text-alternate"> <span className="">₦</span>{item.amountPaid}</div>
                 </Col>
               </Row>
             </Card.Body>
