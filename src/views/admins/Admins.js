@@ -166,12 +166,12 @@ const AdminManagementList = () => {
       return {
         cell1: `${item.firstName} ${item.lastName}`,
         cell2: item.email,
-        cell3: item.role,
+        cell3: item.roleName,
         cell4: item.isActive,
         cell5: moment(item.dateCreated).format('llll'),
       };
     });
-    
+
     setDatas(newdata);
   }, [adminsData]);
   const columns = [
@@ -214,11 +214,11 @@ const AdminManagementList = () => {
           {/* Title End */}
 
           {/* Top Buttons Start */}
-          <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
+          {/* <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
             <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
               <CsLineIcons icon="sort" />
             </Button>
-          </Col>
+          </Col> */}
           {/* Top Buttons End */}
         </Row>
       </div>
@@ -274,7 +274,7 @@ const AdminManagementList = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
@@ -290,8 +290,8 @@ const AdminManagementList = () => {
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Toggle</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-end">
-          <span className="text-muted text-small cursor-pointer sort text-right">Action</span>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <span className="text-muted text-small cursor-pointer sort">Action</span>
         </Col>
       </Row>
       {/* List Header End */}
@@ -299,9 +299,9 @@ const AdminManagementList = () => {
       {/* List Items Start */}
       {adminsData.map((item) => (
         <Card key={item.id} className="mb-2">
-          <Card.Body className="pt-0 pb-0 sh-auto sh-md-8">
+          <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
                 <div className="text-muted text-small d-md-none">Name</div>
                 <div className="text-alternate dflex align-items-center">
                   {item.firstName} {item.lastName}
@@ -316,14 +316,14 @@ const AdminManagementList = () => {
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">Role</div>
                 <div className="text-alternate">
-                  <span>{item.role}</span>
+                  <span>{item.roleName}</span>
                 </div>
               </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
-              <Col xs="12" md="1" className="d-flex flex-column justify-content-end align-items-md-start mb-2 mb-md-0 order-4 text-md-end order-md-last">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-end align-items-md-start mb-2 mb-md-0 order-4 text-md-end order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
                   className="form-check mt-md-2 "
@@ -335,7 +335,7 @@ const AdminManagementList = () => {
                 />
               </Col>
 
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last text-end order-md-last">
+              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-start mb-2 mb-md-0 order-last text-end order-md-last">
                 <Button variant="primary" type="button" size="sm" onClick={() => viewAdmin(item)} className="">
                   View
                 </Button>
@@ -475,13 +475,12 @@ const AdminManagementList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Role</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.role}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.roleName}</td>
                     </tr>
-                      <tr>
+                    <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Date created</td>
                       <td className=" py-2 px-1 border-bottom">{moment(updateData.dateCreated).format('llll')}</td>
                     </tr>
-
                   </tbody>
                 </table>
                 <div className="text-center">

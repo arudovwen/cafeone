@@ -14,13 +14,15 @@ import { getRecentDashboardTransactions } from '../../transactions/transactionSl
 const Dashboard = () => {
   const title = 'Dashboard';
   const description = 'Ecommerce Dashboard Page';
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState({});
+   const [seatUsage, setSeatUsage] = React.useState([]);
   const transactions = useSelector((state) => state.transactions.items);
   const dispatch = useDispatch();
   React.useEffect(() => {
     axios.get(`${SERVICE_URL}/reports`, requestConfig).then((res) => {
       if (res.status === 200) {
         setData(res.data);
+        setSeatUsage(res.data.seatUsage)
       }
     });
     dispatch(getRecentDashboardTransactions());
@@ -35,7 +37,7 @@ const Dashboard = () => {
           <span className="align-middle text-small ms-1">&nbsp;</span>
         </NavLink>
         <h1 className="mb-0 pb-0 display-4" id="title">
-          Welcome, Admin!
+          Welcome!
         </h1>
       </div>
       {/* Title End */}
@@ -62,7 +64,7 @@ const Dashboard = () => {
                 <CsLineIcons icon="dollar" className="text-primary" />
               </div>
               <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">BOOKINGS</div>
-              <div className="text-primary cta-4">{data.summary && data.summary.booking}</div>
+              <div className="text-primary cta-4">{data && data.summary && data.summary.booking}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -73,7 +75,7 @@ const Dashboard = () => {
                 <CsLineIcons icon="database" className="text-primary" />
               </div>
               <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">BRANCHES</div>
-              <div className="text-primary cta-4">{data.summary && data.summary.branches}</div>
+              <div className="text-primary cta-4">{data && data.summary && data.summary.branches}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -84,7 +86,7 @@ const Dashboard = () => {
                 <CsLineIcons icon="server" className="text-primary" />
               </div>
               <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">CAMPAIGNS</div>
-              <div className="text-primary cta-4">{data.summary && data.summary.campaigns}</div>
+              <div className="text-primary cta-4">{data && data.summary && data.summary.campaigns}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -95,7 +97,7 @@ const Dashboard = () => {
                 <CsLineIcons icon="user" className="text-primary" />
               </div>
               <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">MEMBERS</div>
-              <div className="text-primary cta-4">{data.summary && data.summary.members}</div>
+              <div className="text-primary cta-4">{data && data.summary && data.summary.members}</div>
             </Card.Body>
           </Card>
         </Col>
@@ -106,29 +108,31 @@ const Dashboard = () => {
         {/* Recent Orders Start */}
         <Col xl="6" className="mb-5">
           <h2 className="small-title">Recent Transactions</h2>
-          {transactions.length
-            ? transactions.map((item) => (
-                <Card className="mb-2 sh-15 sh-md-6" key={item.id}>
-                  <Card.Body className="pt-0 pb-0 h-100">
-                    <Row className="g-0 h-100 align-content-center justify-content-between">
-                      <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                        <span className="body-link stretched-link">{item.name}</span>
-                      </Col>
+          {transactions.length ? (
+            transactions.map((item) => (
+              <Card className="mb-2 sh-15 sh-md-6" key={item.id}>
+                <Card.Body className="pt-0 pb-0 h-100">
+                  <Row className="g-0 h-100 align-content-center justify-content-between">
+                    <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
+                      <span className="body-link stretched-link">{item.name}</span>
+                    </Col>
 
-                      <Col xs="12" md="3" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                        <Badge>
-                          <span className="">₦</span>
-                          {item.amountPaid}
-                        </Badge>
-                      </Col>
-                      <Col xs="12" md="4" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
-                        {item.narration}
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              ))
-            : ''}
+                    <Col xs="12" md="3" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
+                      <Badge>
+                        <span className="">₦</span>
+                        {item.amountPaid}
+                      </Badge>
+                    </Col>
+                    <Col xs="12" md="4" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
+                      {item.narration}
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            ))
+          ) : (
+            <div className="text-center p-3">No recent transaction </div>
+          )}
         </Col>
         {/* Recent Orders End */}
 
@@ -145,12 +149,13 @@ const Dashboard = () => {
       </Row>
 
       <Row className="gx-4 gy-5">
-        {/* Top Selling Items Start */}
+        {/* Top Selling f Items Start */}
         <Col>
           <h2 className="small-title">Top Booked Spaces</h2>
-          <div className="mb-2">
-            {data.seatUsage &&
-              data.seatUsage.map((item) => (
+           <div className="mb-2">
+
+            {seatUsage.length ? (
+               seatUsage.map((item) => (
                 <Card className="mb-2 overflow-hidden" key={item.id}>
                   <Row className="g-0 sh-14 sh-md-10 overflow-hidden">
                     <Col className="col-auto h-100">
@@ -173,7 +178,10 @@ const Dashboard = () => {
                     </Col>
                   </Row>
                 </Card>
-              ))}
+              ))
+            ) : (
+              <div className="text-center p-3">No information available </div>
+            )}
           </div>
         </Col>
         {/* Top Selling Items End */}

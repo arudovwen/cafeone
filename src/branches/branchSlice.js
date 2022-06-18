@@ -78,6 +78,13 @@ export const activateBranch = (data) => async () => {
 export const deactivateBranch = (data) => async () => {
   return axios.post(`${SERVICE_URL}/branches/${data}/deactivate`, data, requestConfig);
 };
+export const activateSeat =  (seatId, branchId) => async () => {
+  return axios.post(`${SERVICE_URL}/branches/${branchId}/seats/${seatId}/activate`, seatId, requestConfig);
+};
+
+export const deactivateSeat = (seatId, branchId) => async () => {
+  return axios.post(`${SERVICE_URL}/branches/${branchId}/seats/${seatId}/deactivate`, seatId, requestConfig);
+};
 
 export const addBranch = (data) => async (dispatch) => {
   axios
@@ -99,7 +106,7 @@ export const addBranchSeat = (data) => async () => {
   return axios.post(`${SERVICE_URL}/branches/${data.branchId}/seats`, data, requestConfig);
 };
 export const updateBranchSeat = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/branches/${data.id}/seats/${data.seat_id}`, data, requestConfig);
+  return axios.post(`${SERVICE_URL}/branches/${data.branchId}/seats/${data.id}`, data, requestConfig);
 };
 export const deleteBranchSeat = (data) => async () => {
   return axios.delete(`${SERVICE_URL}/branches/${data.id}/seats/${data.seat_id}`, requestConfig);

@@ -28,7 +28,7 @@ const campaignSlice = createSlice({
      updatecampaignstatus(state, action) {
       state.items = state.items.map((v) => {
         if (v.id === action.payload.id) {
-          v.isActive = action.payload.value;
+          v.statusId = action.payload.value;
         }
         return v;
       });
@@ -45,11 +45,11 @@ export const updateCampaignStatus = (data) => async (dispatch) => {
   dispatch(updatecampaignstatus(data));
 };
 export const getCampaigns =
-  (page, search, startDateFrom = null, startDateTo = null, expiryDateFrom = null, expiryDateTo = null) =>
+  (page, search, startDateFrom = null, startDateTo = null, branchId = null, membershipId = null) =>
   async (dispatch) => {
     const response = await axios
       .get(
-        `${SERVICE_URL}/campaigns?search=${search}&page=${page}&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}&expiryDateFrom=${expiryDateFrom}&expiryDateTo=${expiryDateTo}`,
+        `${SERVICE_URL}/campaigns?search=${search}&page=${page}&fromDate=${startDateFrom}&toDate=${startDateTo}&branchId=${branchId}&membershipId=${membershipId}`,
         requestConfig
       )
       .catch((err) => {
@@ -63,6 +63,9 @@ export const getCampaigns =
 
 export const getCampaign = (data) => async () => {
   return axios.get(`${SERVICE_URL}/campaigns/${data}`, requestConfig);
+};
+export const getCampaignDiscountType = () => async () => {
+  return axios.get(`${SERVICE_URL}/campaigns/discount-types`, requestConfig);
 };
 
 export const updateCampaign = (data) => async (dispatch) => {

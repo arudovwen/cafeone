@@ -29,10 +29,10 @@ const membershipSlice = createSlice({
       state.status = action.payload;
     },
       updatemembershipstatus(state, action) {
-      console.log("🚀 ~ file: membershipSlice.js ~ line 32 ~ updatemembershipstatus ~ action", action)
+    
       state.types = state.types.map((v) => {
         if (v.id === action.payload.id) {
-          v.statusId = action.payload.value;
+          v.isActive = action.payload.value;
         }
         return v;
       });
@@ -61,6 +61,10 @@ export const getmembershiptypes = () => async (dispatch) => {
 
 export const getMembership = () => async () => {
   return axios.get(`${SERVICE_URL}/memberships`, requestConfig);
+};
+
+export const getPlanType = () => async () => {
+  return axios.get(`${SERVICE_URL}/membership-types/plan-types`, requestConfig);
 };
 
 export const updateMembership = (data) => async (dispatch) => {

@@ -70,6 +70,9 @@ export const addMember = (data) => async (dispatch) => {
     });
 };
 
+export const deleteMember = (data) => async () => {
+  return axios.delete(`${SERVICE_URL}/members/${data}`, requestConfig);
+};
 export const subscribeMember = (data) => async () => {
   return axios.post(`${SERVICE_URL}/members/${data.id}/subscribe`, data, requestConfig);
 };

@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
@@ -26,14 +28,22 @@ import {
   activateCampaign,
   deactivateCampaign,
   deleteCampaign,
-  updateCampaignStatus
-
+  updateCampaignStatus,
+  getCampaignDiscountType,
 
   // eslint-disable-next-line import/extensions
 } from '../../campaigns/campaignSlice';
+import { getBranches } from '../../branches/branchSlice';
 import { getMembers } from '../../members/memberSlice';
+import {
+  getmembershiptypes,
+
+  // eslint-disable-next-line import/extensions
+} from '../../membership/membershipSlice';
 
 const CampaignTypeList = () => {
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   const [datas, setDatas] = useState([]);
   const title = 'Campaigns ';
   const description = 'Campaigns Page';
@@ -41,53 +51,55 @@ const CampaignTypeList = () => {
   const campaignsData = useSelector((state) => state.campaigns.items);
   const status = useSelector((state) => state.campaigns.status);
   const initialValues = {
-    code: '',
+    discountType: 1,
     description: '',
     value: '',
-    totalUsage: '',
-    usagePerUser: '',
-    startDate: '',
-    expiryDate: '',
-    members: [],
+    startDate: null,
+    expiryDate: null,
+    usagePerMember: '',
+    membershipTypeId: '',
+    branchId: '',
   };
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  const [startDateFrom, setstartDateFrom] = useState(null);
-  const [startDateTo, setstartDateTo] = useState(null);
-  const [expiryDateFrom, setExpiryDateFrom] = useState(null);
-  const [expiryDateTo, setExpiryDateTo] = useState(null);
-
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
-
-    const [startTimeFrom, setstartTimeFrom] = useState(null);
-    const [startTimeTo, setstartTimeTo] = useState(null);
-    const [endTimeFrom, setEndDateFrom] = useState(null);
-    const [endTimeTo, setEndDateTo] = useState(null);
-    const [memberId, setBranch] = useState(null);
-
-    const membershipsData = useSelector((state) => state.membership.memberships);
-    const branchesData = useSelector((state) => state.branches.branches).map((item) => {
+  const [startDateFrom, setStartDateFrom] = useState(null);
+  const [startDateTo, setStartDateTo] = useState(null);
+  const [branchId, setBranch] = useState(null);
+  const [membershipId, setMembershipId] = useState(null);
+  const branchesData = useSelector((state) => state.branches.branches).map((i) => {
     return {
-      value: item.id,
-      name: item.name,
+      name: i.name,
+      value: i.id,
     };
   });
+  const membershipsData = useSelector((state) => state.membership.types).map((i) => {
+    return {
+      name: i.name,
+      value: i.id,
+    };
+  });
+  const [type, setType] = React.useState('branch');
+  const [duration, setDuration] = React.useState(1);
 
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  // const [isShowing, setIsShowing] = useState(1);
   const [search, setSearch] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [updateData, setUpdateData] = useState({});
   const [members, setmembers] = useState([]);
+  const [discountTypes, setDiscountTypes] = useState([]);
 
   React.useEffect(() => {
+    dispatch(getmembershiptypes(page, search));
+    dispatch(getBranches(page, search, 50));
     dispatch(getCampaigns(page, search));
     dispatch(getMembers(page, search, 50));
+    dispatch(getCampaignDiscountType()).then((res) => {
+      setDiscountTypes(res.data);
+    });
   }, [dispatch, page, search]);
   const usersData = useSelector((state) => state.members.items).map((item) => {
     const fullname = `${item.firstName} ${item.lastName}`;
@@ -105,12 +117,10 @@ const CampaignTypeList = () => {
     setPage(page - 1);
   }
   const validationSchema = Yup.object().shape({
-    code: Yup.string().required('name is required'),
-    value: Yup.string().required('value  is required'),
-    startDate: Yup.string().required('startDate is required'),
-    expiryDate: Yup.string().required('expiryDate is required'),
-    totalUsage: Yup.string().required('Total Usage is required'),
-    usagePerUser: Yup.string().required('UsagePerUser is required'),
+    discountType: Yup.string().required('Discount type is required'),
+    value: Yup.string().required('Value  is required'),
+    description: Yup.string().required('Description is required'),
+
   });
 
   const toggleModal = () => {
@@ -119,7 +129,8 @@ const CampaignTypeList = () => {
 
   const onSubmit = (values, { resetForm }) => {
     dispatch(addCampaign(values));
-    resetForm({ values: '' });
+    // resetForm({ values: '' });
+
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -140,6 +151,9 @@ const CampaignTypeList = () => {
       });
     }
   }
+  function handleType(e) {
+    setType(e.target.value);
+  }
 
   function toggleStatus(e, id) {
     const value = e.target.checked;
@@ -155,7 +169,7 @@ const CampaignTypeList = () => {
       dispatch(activateCampaign(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-           dispatch(updateCampaignStatus({ id, value }));
+          dispatch(updateCampaignStatus({ id, value }));
         }
       });
     }
@@ -171,23 +185,11 @@ const CampaignTypeList = () => {
   function editCampaign(val) {
     setIsAdding(false);
     setIsViewing(false);
-    setIsEditing(true);
-
-    setUpdateData(val);
     setStartDate(new Date(val.startDate));
     setEndDate(new Date(val.expiryDate));
-    values.member = [...val.members.map((item) => item.userId)];
-
-    const fullmembers = val.members.map((item) => {
-      const user = usersData.find((v) => Number(v.value) === Number(item.userId));
-
-      return {
-        name: user.name,
-        id: user.value,
-      };
-    });
-
-    setmembers(fullmembers);
+    val.branchId ? setType('branch') : setType('membership');
+     setUpdateData({...val, discountType:val.typeId});
+     setIsEditing(true);
   }
 
   function viewCampaign(val) {
@@ -245,6 +247,18 @@ const CampaignTypeList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setCampaignModal(false);
+
+    values.discountType= 1
+    values.description= ''
+    values.value= ''
+    values.startDate= null
+    values.expiryDate= null
+    values.usagePerMember= ''
+    values.membershipTypeId= ''
+    values.branchId= ''
+     setStartDate(null)
+    setEndDate(null);
+
     }
     if (status === 'update') {
       dispatch(getCampaigns(1, ''));
@@ -289,42 +303,44 @@ const CampaignTypeList = () => {
   }, [startDate, endDate]);
 
   React.useEffect(() => {
+     console.log('🚀 ~ file: Loyalty.js ~ line 321 ~ React.useEffect ~ startDateFrom', startDateFrom);
     if (startDateFrom && startDateTo) {
+
       dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD')));
       return;
     }
-    if (expiryDateFrom && expiryDateTo) {
-      dispatch(getCampaigns(page, '', null, null, moment(expiryDateFrom).format('YYYY-MM-DD'), moment(expiryDateTo).format('YYYY-MM-DD')));
+    if(branchId || membershipId){
+   dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD'), branchId, membershipId));
       return;
     }
 
     dispatch(getCampaigns(1, ''));
-  }, [startDateFrom, startDateTo, expiryDateFrom, expiryDateTo]);
+  }, [startDateFrom, startDateTo, branchId, membershipId]);
 
-   React.useEffect(() => {
-    const newdata = campaignsData.map((item) => {
-      return {
-        cell1: item.code,
-        cell2: item.totalUsage,
-        cell3: item.usagePerUser,
-        cell4: item.value,
-        cell5: moment(item.startDate).format('llll'),
-          cell6: moment(item.expiryDate).format('llll'),
-            cell7: item.status,
-
-      };
-    });
-    setDatas(newdata);
-  }, [campaignsData]);
+  // React.useEffect(() => {
+  //   if(!campaignsData.length) return
+  //   const newdata = campaignsData.map((item) => {
+  //     return {
+  //       cell1: item.description,
+  //       cell2: item.totalUsage,
+  //       cell3: item.usagePerMember,
+  //       cell4: item.value,
+  //       cell5: moment(item.startDate).format('llll'),
+  //       cell6: moment(item.expiryDate).format('llll'),
+  //       cell7: item.status,
+  //     };
+  //   });
+  //   setDatas(newdata);
+  // }, [campaignsData]);
 
   const columns = [
     {
       id: 'cell1',
-      displayName: 'CODE',
+      displayName: 'DESCRIPTION',
     },
     {
       id: 'cell2',
-      displayName: 'TOTAL USAGE',
+      displayName: 'USAGE',
     },
     {
       id: 'cell3',
@@ -338,23 +354,20 @@ const CampaignTypeList = () => {
       id: 'cell5',
       displayName: 'START DATE',
     },
-       {
+    {
       id: 'cell6',
       displayName: 'EXPIRY DATE',
-    },   {
+    },
+    {
       id: 'cell7',
       displayName: 'STATUS',
     },
-
-
   ];
 
-
   function resetFilter() {
-    setstartTimeFrom(null);
-    setstartTimeTo(null);
-    setEndDateFrom(null);
-    setEndDateTo(null);
+    setStartDateFrom(null);
+    setStartDateTo(null);
+    setMembershipId(null);
     setBranch(null);
   }
 
@@ -416,7 +429,6 @@ const CampaignTypeList = () => {
                 {campaignsData.length} Items
               </Dropdown.Toggle>
             </OverlayTrigger>
-         
           </Dropdown>
           {/* Length End */}
         </Col>
@@ -427,23 +439,23 @@ const CampaignTypeList = () => {
           <div className="d-flex align-items-center">
             <DatePicker
               className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted me-3"
-              selected={startTimeFrom}
-              onChange={(date) => setstartTimeFrom(date)}
+              selected={startDateFrom}
+              onChange={(date) => setStartDateFrom(date)}
               selectsStart
-              startDate={startTimeFrom}
-              endDate={startTimeTo}
+              startDate={startDateFrom}
+              endDate={startDateTo}
               isClearable
               placeholderText="Start Date From"
               showTimeSelect
             />
 
             <DatePicker
-              selected={startTimeTo}
-              onChange={(date) => setstartTimeTo(date)}
+              selected={startDateTo}
+              onChange={(date) => setStartDateTo(date)}
               selectsEnd
-              startDate={startTimeFrom}
-              endDate={startTimeTo}
-              minDate={startTimeFrom}
+              startDate={startDateFrom}
+              endDate={startDateTo}
+              minDate={startDateFrom}
               isClearable
               placeholderText="Start Date To"
               className="border rounded-sm px-2 px-lg-3 py-1 py-lg-2 text-muted"
@@ -457,17 +469,17 @@ const CampaignTypeList = () => {
             options={branchesData}
             search
             name="members"
-            value={memberId}
+            value={branchId}
             onChange={(val) => setBranch(val)}
             placeholder="Filter by branch"
           />
           <SelectSearch
-            filterOptions={() => fuzzySearch(branchesData)}
-            options={branchesData}
+            filterOptions={() => fuzzySearch(membershipsData)}
+            options={membershipsData}
             search
             name="members"
-            value={memberId}
-            onChange={(val) => setBranch(val)}
+            value={membershipId}
+            onChange={(val) => setMembershipId(val)}
             placeholder="Filter by membership"
           />
         </Col>
@@ -480,7 +492,7 @@ const CampaignTypeList = () => {
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">CODE</div>
+          <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">START DATE</div>
@@ -509,35 +521,29 @@ const CampaignTypeList = () => {
         <Card key={item.id} className="mb-2">
           <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              {/* <Col xs="11" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/campaigns/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col> */}
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
-                <div className="text-muted text-small d-md-none">Code</div>
-                <div className="text-alternate">{item.code}</div>
+                <div className="text-muted text-small d-md-none">Description</div>
+                <div className="text-alternate">{item.description}</div>
               </Col>
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
                 <div className="text-muted text-small d-md-none">Start Date</div>
                 <div className="text-alternate">
-                  <span>{moment(item.startDate).format('llll')}</span>
+                  <span>{item.startDate ? moment(item.startDate).format('llll') : '-'}</span>
                 </div>
               </Col>
 
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">End date</div>
-                <div className="text-alternate">{moment(item.expiryDate).format('llll')}</div>
+                <div className="text-alternate">{item.expiryDate ? moment(item.expiryDate).format('llll') : '-'}</div>
               </Col>
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
-                <div className="text-muted text-small d-md-none">Total usage</div>
-                <div className="text-alternate">{item.totalUsage}</div>
+                <div className="text-muted text-small d-md-none">Usage/Member </div>
+                <div className="text-alternate">{item.usagePerMember ? item.usagePerMember : '-'}</div>
               </Col>
 
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-6">
                 <div className="text-muted text-small d-md-none">Status</div>
-                <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
+                <div>{item.statusId ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
 
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-6 order-md-5">
@@ -545,7 +551,7 @@ const CampaignTypeList = () => {
                 <Form.Switch
                   className="form-check ps-md-2"
                   type="checkbox"
-                  checked={item.isActive}
+                  checked={item.statusId}
                   onChange={(e) => {
                     toggleStatus(e, item.id);
                   }}
@@ -595,53 +601,22 @@ const CampaignTypeList = () => {
             {isAdding && (
               <form onSubmit={handleSubmit} className="pb-5">
                 <div className="mb-3">
-                  <Form.Label>Code</Form.Label>
-                  <Form.Control type="text" name="code" onChange={handleChange} value={values.code} />
-                  {errors.code && touched.code && <div className="d-block invalid-tooltip">{errors.code}</div>}
+                  <Form.Label>Discount type</Form.Label>
+                  <Form.Select type="text" name="discountType" onChange={handleChange} value={values.discountType}>
+                    <option value="" disabled>
+                      Select discount type
+                    </option>
+                    {discountTypes.map((item) => (
+                      <option value={item.id} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </div>
-
                 <div className="mb-3">
-                  <Form.Label>Percentage Value (%)</Form.Label>
+                  <Form.Label>{Number(values.discountType) === 2 ? 'Percentage Value (%)' : 'Discount Value'}</Form.Label>
                   <Form.Control type="number" name="value" onChange={handleChange} value={values.value} />
                   {errors.value && touched.value && <div className="d-block invalid-tooltip">{errors.value}</div>}
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Total usage</Form.Label>
-                  <Form.Control type="number" name="totalUsage" onChange={handleChange} value={values.totalUsage} />
-                  {errors.totalUsage && touched.totalUsage && <div className="d-block invalid-tooltip">{errors.totalUsage}</div>}
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Usage per-user </Form.Label>
-                  <Form.Control type="number" name="usagePerUser" onChange={handleChange} value={values.usagePerUser} />
-                  {errors.usagePerUser && touched.usagePerUser && <div className="d-block invalid-tooltip">{errors.usagePerUser}</div>}
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Duration</Form.Label>
-
-                  <div className="d-flex justify-content-between align-items-center">
-                    <DatePicker
-                      className="border rounded px-2 py-1 text-muted"
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      selectsStart
-                      minDate={new Date()}
-                      startDate={startDate}
-                      endDate={endDate}
-                    />
-
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      selectsEnd
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                      className="border rounded px-2 py-1 text-muted"
-                    />
-                  </div>
-                  {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
                 </div>
 
                 <div className="mb-3">
@@ -651,37 +626,118 @@ const CampaignTypeList = () => {
                 </div>
 
                 <div>
-                  <h6>Select members</h6>
-                  <SelectSearch
-                    filterOptions={() => fuzzySearch(usersData)}
-                    options={usersData}
-                    search
-                    name="members"
-                    onChange={(e) => addMember(e)}
-                    placeholder="Select campaign members"
-                  />
-                  <div className="py-2">
-                    <label className="d-flex align-items-center">
-                      <input type="checkbox" onChange={(e) => selectAllMembers(e)} className=" me-2" />
-                      Select all members
-                    </label>
+                  <div className="mb-3">
+                    <Form.Label>Campaign type</Form.Label>
+                    <div className="d-flex">
+                      <Form.Check
+                        type="radio"
+                        id="branch"
+                        label="Branch"
+                        className="me-4"
+                        value="branch"
+                        checked={type === 'branch'}
+                        onChange={(e) => handleType(e)}
+                      />
+                      <Form.Check
+                        type="radio"
+                        id="membership"
+                        label="Membership"
+                        value="membership"
+                        checked={type === 'membership'}
+                        onChange={(e) => handleType(e)}
+                      />
+                    </div>
                   </div>
-                  <Row className="rounded p-2 mt-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                    {members.length
-                      ? members.map((item, index) => (
-                          <Col xs="12" key={item.value}>
-                            <p className="py-1 px-2 mb-0  d-flex justify-content-between">
-                              {' '}
-                              <span> {item.name}</span>{' '}
-                              <span className="cursor-pointer" onClick={() => removeMember(item.value, index)}>
-                                x
-                              </span>
-                            </p>
-                          </Col>
-                        ))
-                      : ''}
-                  </Row>
+
+                  {type === 'branch' ? (
+                    <div className="mb-3">
+                      <Form.Label>Select branch</Form.Label>
+                      <Form.Select type="text" name="branchId" onChange={handleChange} value={values.branchId}>
+                        <option value="" disabled>
+                          Select branch
+                        </option>
+                        {branchesData.map((item) => (
+                          <option value={item.value} key={item.value}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-3">
+                        <Form.Label>Select membership</Form.Label>
+                        <Form.Select type="text" name="membershipTypeId" onChange={handleChange} value={values.membershipTypeId}>
+                          <option value="" disabled>
+                            Select membership type
+                          </option>
+                          {membershipsData.map((item) => (
+                            <option value={item.value} key={item.value}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </div>
+                      <div className="mb-3">
+                        <Form.Label>Discount type</Form.Label>
+                        <Form.Select
+                          type="select"
+                          name="duration"
+                          onChange={(e) => {
+                            setDuration(e.target.value);
+                            forceUpdate();
+                          }}
+                          value={duration}
+                        >
+                          <option value="" disabled>
+                            Select duration
+                          </option>
+                          <option value={1}>Limited</option>
+                          <option value={2}>Unlimited</option>
+                        </Form.Select>
+                      </div>
+
+                      <div className="mb-3">
+                        <Form.Label>Usage per-member </Form.Label>
+                        <Form.Control type="number" name="usagePerMember" onChange={handleChange} value={values.usagePerMember} />
+                        {errors.usagePerMember && touched.usagePerMember && <div className="d-block invalid-tooltip">{errors.usagePerMember}</div>}
+                      </div>
+                    </>
+                  )}
                 </div>
+
+                {duration == 1 ? (
+                  <div className="mb-3 mt-3">
+                    <Form.Label>Duration</Form.Label>
+
+                    <div className="d-flex justify-content-between align-items-center">
+                      <DatePicker
+                        className="border rounded-sm px-2 py-1 text-muted"
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        selectsStart
+                        minDate={new Date()}
+                        startDate={startDate}
+                        endDate={endDate}
+                        placeholder="Start date"
+                      />
+
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        selectsEnd
+                        startDate={startDate}
+                        endDate={endDate}
+                        minDate={startDate}
+                        className="border rounded-sm px-2 py-1 text-muted"
+                        placeholder="Expiry date"
+                      />
+                    </div>
+                    {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
+                  </div>
+                ) : (
+                  ''
+                )}
 
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3 mb-5">
                   <span>Submit</span>
@@ -690,82 +746,143 @@ const CampaignTypeList = () => {
             )}
             {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)} className="pb-5">
-                <div className="mb-3">
-                  <Form.Label>Code</Form.Label>
-                  <Form.Control type="text" name="code" onChange={(e) => handleUpdateChange(e)} value={updateData.code} />
-                </div>
+
 
                 <div className="mb-3">
-                  <Form.Label>Percentage Value (%)</Form.Label>
+                  <Form.Label>Discount type</Form.Label>
+                  <Form.Select type="text" name="discountType" onChange={handleChange} value={updateData.discountType}>
+                    <option value="" disabled>
+                      Select discount type
+                    </option>
+                    {discountTypes.map((item) => (
+                      <option value={item.id} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+                <div className="mb-3">
+                  <Form.Label>{Number(values.discountType) === 2 ? 'Percentage Value (%)' : 'Discount Value'}</Form.Label>
                   <Form.Control type="number" name="value" onChange={(e) => handleUpdateChange(e)} value={updateData.value} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Total usage</Form.Label>
-                  <Form.Control type="number" name="totalUsage" onChange={(e) => handleUpdateChange(e)} value={updateData.totalUsage} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Usage per-user </Form.Label>
-                  <Form.Control type="number" name="usagePerUser" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerUser} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Duration</Form.Label>
-
-                  <div className="d-flex justify-content-between align-items-center">
-                    <DatePicker
-                      className="border rounded px-2 py-1 text-muted"
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      selectsStart
-                      minDate={new Date()}
-                      startDate={startDate}
-                      endDate={endDate}
-                    />
-
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      selectsEnd
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                      className="border rounded px-2 py-1 text-muted"
-                    />
-                  </div>
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={handleChange} value={updateData.description} />
                 </div>
 
                 <div>
-                  <h6>Select members</h6>
-                  <SelectSearch
-                    options={usersData}
-                    filterOptions={() => fuzzySearch(usersData)}
-                    search
-                    name="members"
-                    onChange={(e) => addMember(e)}
-                    placeholder="Select campaign members"
-                  />
-                  <Row className="border rounded p-2 mt-3">
-                    {members.length
-                      ? members.map((item, index) => (
-                          <Col xs="12" key={index}>
-                            <p className="py-1 px-2 mb-0 d-flex justify-content-between">
-                              {' '}
-                              <span> {item.name}</span>{' '}
-                              <span className="cursor-pointer" onClick={() => removeMember(item.value, index)}>
-                                x
-                              </span>
-                            </p>
-                          </Col>
-                        ))
-                      : ''}
-                  </Row>
+                  <div className="mb-3">
+                    <Form.Label>Campaign type</Form.Label>
+                    <div className="d-flex">
+                      <Form.Check
+                        type="radio"
+                        id="branch"
+                        label="Branch"
+                        className="me-4"
+                        value="branch"
+                        checked={type === 'branch'}
+                        onChange={(e) => handleType(e)}
+                      />
+                      <Form.Check
+                        type="radio"
+                        id="membership"
+                        label="Membership"
+                        value="membership"
+                        checked={type === 'membership'}
+                        onChange={(e) => handleType(e)}
+                      />
+                    </div>
+                  </div>
+
+                  {type === 'branch' ? (
+                    <div className="mb-3">
+                      <Form.Label>Select branch</Form.Label>
+                      <Form.Select type="text" name="branchId" onChange={(e) => handleUpdateChange(e)} value={updateData.branchId}>
+                        <option value="" disabled>
+                          Select branch
+                        </option>
+                        {branchesData.map((item) => (
+                          <option value={item.value} key={item.value}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-3">
+                        <Form.Label>Select membership</Form.Label>
+                        <Form.Select type="text" name="membershipTypeId" onChange={(e) => handleUpdateChange(e)} value={updateData.membershipTypeId}>
+                          <option value="" disabled>
+                            Select membership type
+                          </option>
+                          {membershipsData.map((item) => (
+                            <option value={item.value} key={item.value}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </div>
+                      <div className="mb-3">
+                        <Form.Label>Discount type</Form.Label>
+                        <Form.Select
+                          type="select"
+                          name="duration"
+                          onChange={(e) => {
+                            setDuration(e.target.value);
+                            forceUpdate();
+                          }}
+                          value={duration}
+                        >
+                          <option value="" disabled>
+                            Select duration
+                          </option>
+                          <option value={1}>Limited</option>
+                          <option value={2}>Unlimited</option>
+                        </Form.Select>
+                      </div>
+
+                      <div className="mb-3">
+                        <Form.Label>Usage per-member </Form.Label>
+                        <Form.Control type="number" name="usagePerMember" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerMember} />
+                      </div>
+                    </>
+                  )}
                 </div>
+
+                {duration == 1 ? (
+                  <div className="mb-3 mt-3">
+                    <Form.Label>Duration</Form.Label>
+
+                    <div className="d-flex justify-content-between align-items-center">
+                      <DatePicker
+                        className="border rounded-sm px-2 py-1 text-muted"
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        selectsStart
+                        minDate={new Date()}
+                        startDate={startDate}
+                        endDate={endDate}
+                        placeholder="Start date"
+                      />
+
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        selectsEnd
+                        startDate={startDate}
+                        endDate={endDate}
+                        minDate={startDate}
+                        className="border rounded-sm px-2 py-1 text-muted"
+                        placeholder="Expiry date"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  ''
+                )}
+
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3 mb-5">
                   <span>Submit</span>
                 </Button>
@@ -776,38 +893,42 @@ const CampaignTypeList = () => {
               <div className="">
                 <table className="mb-5 w-100">
                   <tbody>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Code</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.code}</td>
-                    </tr>
+                    {updateData.branch && (
+                      <tr>
+                        <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Branch</td>
+                        <td className=" py-2 px-1 border-bottom">{updateData.branch}</td>
+                      </tr>
+                    )}
+                    {updateData.membershipType && (
+                      <tr>
+                        <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Membership type</td>
+                        <td className=" py-2 px-1 border-bottom">{updateData.membershipType}</td>
+                      </tr>
+                    )}
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Todal usage</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.totalUsage}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Usage per user</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.usagePerUser}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Usage per member</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.usagePerMember || '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('llll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.startDate ? moment(updateData.startDate).format('llll') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Expiry date</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.expiryDate).format('llll')}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.expiryDate ? moment(updateData.expiryDate).format('llll') : '-'}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Percentage Value (%)</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">{updateData.type} Value</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.value}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.isActive ? 'Active' : 'Inactive'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>

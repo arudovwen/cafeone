@@ -19,7 +19,7 @@ import {
   // eslint-disable-next-line import/extensions
 } from '../../membership/membershipSlice';
 
-import { getMembers, addMember, uploadPhoto, getMember, updateMember, subscribeMember } from '../../members/memberSlice';
+import { getMembers, addMember, uploadPhoto, getMember, updateMember, subscribeMember, deleteMember } from '../../members/memberSlice';
 
 const UserManagementList = () => {
   const [userModal, setUserModal] = useState(false);
@@ -43,10 +43,9 @@ const UserManagementList = () => {
     birthDate: '',
     occupation: '',
     photo: '',
-    gender: 'male',
-    twitter: '',
-    note: '',
     phoneNumber: '',
+    note: '',
+    membershipTypeId: '',
   };
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -84,6 +83,8 @@ const UserManagementList = () => {
     state: Yup.string().required('State is required'),
     gender: Yup.string().required('Gender is required'),
     birthDate: Yup.string().required('Dob is required'),
+    phoneNumber: Yup.string().required('Phone number is required'),
+     membershipTypeId: Yup.string().required('Field is required'),
   });
 
   const toggleModal = () => {
@@ -114,7 +115,21 @@ const UserManagementList = () => {
     });
   };
 
-  function deleteUser() {}
+  function deleteThisMember(id) {
+    const conf = window.confirm('Are you sure?');
+    if (conf) {
+      dispatch(deleteMember(id)).then((res) => {
+        if (res.status === 200) {
+          toast.success('Member removed');
+          dispatch(getMembers(page, search));
+          toggleModal();
+          setIsAdding(false);
+          setIsViewing(false);
+          setIsEditing(false);
+        }
+      });
+    }
+  }
   function editUser(val) {
     dispatch(getMember(val.id)).then((res) => {
       const info = res.data;
@@ -393,11 +408,9 @@ const UserManagementList = () => {
                 </div>
               </Col>
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last order-md-last">
-
-                  <Button variant="primary" type="button" size="sm" onClick={() => viewUser(item)} className="">
-                    View
-                  </Button>
-
+                <Button variant="primary" type="button" size="sm" onClick={() => viewUser(item)} className="">
+                  View
+                </Button>
               </Col>
             </Row>
           </Card.Body>
@@ -453,6 +466,13 @@ const UserManagementList = () => {
                   <Form.Control type="text" id="middleName" name="middleName" onChange={handleChange} value={values.middleName} />
                   {errors.middleName && touched.middleName && <div className="d-block invalid-tooltip">{errors.middleName}</div>}
                 </div>
+
+                <div className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
+                  {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
+                </div>
+
                 <div className="mb-3">
                   <Form.Label>Photo</Form.Label>
                   <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleFile} />
@@ -473,15 +493,11 @@ const UserManagementList = () => {
                   {errors.birthDate && touched.birthDate && <div className="d-block invalid-tooltip">{errors.birthDate}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Address 1</Form.Label>
+                  <Form.Label>Address</Form.Label>
                   <Form.Control type="text" id="address1" name="address1" onChange={handleChange} value={values.address1} />
                   {errors.address1 && touched.address1 && <div className="d-block invalid-tooltip">{errors.address1}</div>}
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Address 2</Form.Label>
-                  <Form.Control type="text" id="address2" name="address2" onChange={handleChange} value={values.address2} />
-                  {errors.address2 && touched.address2 && <div className="d-block invalid-tooltip">{errors.address2}</div>}
-                </div>
+
                 <div className="mb-3">
                   <Form.Label>City</Form.Label>
                   <Form.Control type="text" id="city" name="city" onChange={handleChange} value={values.city} />
@@ -503,10 +519,27 @@ const UserManagementList = () => {
                   <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={handleChange} value={values.phoneNumber} />
                   {errors.phoneNumber && touched.phoneNumber && <div className="d-block invalid-tooltip">{errors.phoneNumber}</div>}
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
-                  {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
+
+                 <div className="mb-3">
+                  <Form.Label>Membership type</Form.Label>
+                  <Form.Select
+                    type="text"
+                    id="membershipTypeId"
+                    name="membershipTypeId"
+                    onChange={handleChange}
+                    value={values.membershipTypeId}
+
+                  >
+                    <option value="" disabled>
+                      Select membership type
+                    </option>
+                    {membershipsData.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                   {errors.membershipTypeId && touched.membershipTypeId && <div className="d-block invalid-tooltip">{errors.membershipTypeId}</div>}
                 </div>
 
                 <div className="border-0 mt-3 mb-5">
@@ -532,6 +565,10 @@ const UserManagementList = () => {
                   <Form.Control type="text" id="middleName" name="middleName" onChange={(e) => handleUpdateChange(e)} value={updateData.middleName} />
                 </div>
                 <div className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" id="email" name="email" onChange={(e) => handleUpdateChange(e)} value={updateData.email} />
+                </div>
+                <div className="mb-3">
                   <Form.Label>Photo</Form.Label>
                   <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleUpdateFile} />
                 </div>
@@ -552,10 +589,7 @@ const UserManagementList = () => {
                   <Form.Label>Address 1</Form.Label>
                   <Form.Control type="text" id="address1" name="address1" onChange={(e) => handleUpdateChange(e)} value={values.address1} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Address 2</Form.Label>
-                  <Form.Control type="text" id="address2" name="address2" onChange={(e) => handleUpdateChange(e)} value={updateData.address2} />
-                </div>
+
                 <div className="mb-3">
                   <Form.Label>City</Form.Label>
                   <Form.Control type="text" id="city" name="city" onChange={(e) => handleUpdateChange(e)} value={updateData.city} />
@@ -574,19 +608,26 @@ const UserManagementList = () => {
                   <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={(e) => handleUpdateChange(e)} value={updateData.phoneNumber} />
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" id="email" name="email" onChange={(e) => handleUpdateChange(e)} value={updateData.email} />
+                  <Form.Label>Membership type</Form.Label>
+                  <Form.Select
+                    type="text"
+                    id="membershipTypeId"
+                    name="membershipTypeId"
+                    onChange={(e) => handleUpdateChange(e)}
+                    value={updateData.membershipTypeId}
+
+                  >
+                    <option value={0} disabled>
+                      Select membership type
+                    </option>
+                    {membershipsData.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </div>
-                {/* <div className="mb-3">
-                <Form.Label>Twitter handle</Form.Label>
-                <Form.Control type="text" id="twitter" name="twitter" onChange={handleChange} value={values.twitter} />
-                {errors.twitter && touched.twitter && <div className="d-block invalid-tooltip">{errors.twitter}</div>}
-              </div>
-              <div className="mb-3">
-                <Form.Label>Note</Form.Label>
-                <Form.Control type="text" id="note" name="note" onChange={handleChange} value={values.note} />
-                {errors.note && touched.note && <div className="d-block invalid-tooltip">{errors.note}</div>}
-              </div> */}
+
                 <div className="border-0 mt-3 mb-5">
                   <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
                     <span>Update member</span>
@@ -633,10 +674,7 @@ const UserManagementList = () => {
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Address 1</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.address1}</td>
                     </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Address 2</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.address2}</td>
-                    </tr>
+
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">DOB</td>
                       <td className=" py-2 px-1 border-bottom">{moment(updateData.birthDate).format('l')}</td>
@@ -675,7 +713,7 @@ const UserManagementList = () => {
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editUser(updateData)}>
                     <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteUser(updateData.id)}>
+                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisMember(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
                   </Button>
                 </div>

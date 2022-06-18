@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -23,7 +23,10 @@ import {
   deactivateBranch,
   deleteBranch,
   deleteBranchSeat,
-  updateBranchstatus
+  updateBranchstatus,
+  updateBranchSeat,
+  activateSeat,
+  deactivateSeat,
 } from '../../branches/branchSlice';
 import { uploadPhoto } from '../../members/memberSlice';
 
@@ -33,7 +36,8 @@ const BranchesList = () => {
   const [branchModal, setBranchModal] = useState(false);
   const branchesData = useSelector((state) => state.branches.branches);
   const status = useSelector((state) => state.branches.status);
-    const [datas, setDatas] = useState([]);
+  const [datas, setDatas] = useState([]);
+  const  [isUploading, setIsUploading] = useState(null)
   const [seatInfo, setSeatInfo] = useState({
     image: '',
     description: '',
@@ -57,6 +61,7 @@ const BranchesList = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [isAddSeat, setIsAddSeat] = useState(false);
+  const [isSeatEditing, setIsSeatEditing] = useState(false);
   const [updateData, setUpdateData] = useState({});
   const [seats, setSeats] = useState([]);
   React.useEffect(() => {
@@ -104,21 +109,34 @@ const BranchesList = () => {
           setIsAdding(false);
           setIsViewing(false);
           setIsEditing(false);
+          setIsSeatEditing(false);
         }
       });
     }
   }
+  function editThisSeat(data) {
+    setIsAdding(false);
+    setIsViewing(false);
+    setIsEditing(false);
+    setIsSeatEditing(true);
+    setSeatInfo({ ...data, branchId: updateData.id, image: data.photo });
+  }
+
   function deleteThisSeat(id) {
     const conf = window.confirm('Are you sure?');
     if (conf) {
       dispatch(deleteBranchSeat({ seat_id: id, id: updateData.id })).then((res) => {
         if (res.status === 200) {
-          toast.success('Seat removed');
           dispatch(getBranches(page, search));
-          toggleModal();
+          const newseat = seats.filter((item) => item.id !== id);
+          setSeats(newseat);
+          setUpdateData({...updateData, seatCount: newseat.length})
+
           setIsAdding(false);
-          setIsViewing(false);
+          setIsSeatEditing(false);
           setIsEditing(false);
+          setIsViewing(true);
+          toast.success('Seat removed');
         }
       });
     }
@@ -129,7 +147,7 @@ const BranchesList = () => {
       dispatch(deactivateBranch(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Status changed');
-          dispatch(updateBranchstatus({id, value}));
+          dispatch(updateBranchstatus({ id, value }));
         }
       });
     }
@@ -142,17 +160,53 @@ const BranchesList = () => {
       });
     }
   }
+  function toggleSeatStatus(e, id) {
+    const value = e.target.checked;
+    if (!value) {
+      dispatch(deactivateSeat(id, updateData.id)).then((res) => {
+        if (res.status === 200) {
+          const newseat = seats.map((item) => {
+            if (item.id === id) {
+              item.statusId = 0;
+            }
+            return item;
+          });
+          setSeats(newseat);
+          toast.success('Status changed');
+        }
+      });
+    }
+    if (value) {
+      dispatch(activateSeat(id, updateData.id)).then((res) => {
+        if (res.status === 200) {
+          const newseat = seats.map((item) => {
+            if (item.id === id) {
+              item.statusId = 1;
+            }
+            return item;
+          });
+          setSeats(newseat);
+          toast.success('Status changed');
+        }
+      });
+    }
+  }
   function addNewBranch() {
-    setIsAdding(true);
     setIsViewing(false);
     setIsEditing(false);
+    setIsSeatEditing(false);
+      setIsAddSeat(false);
+    setIsAdding(true);
     toggleModal();
   }
 
   function editBranch(val) {
     setIsAdding(false);
     setIsViewing(false);
+    setIsSeatEditing(false);
+      setIsAddSeat(false);
     setIsEditing(true);
+
     dispatch(getBranch(val.id)).then((res) => {
       const info = res.data;
 
@@ -162,6 +216,8 @@ const BranchesList = () => {
 
   function viewBranch(val) {
     setIsAdding(false);
+    setIsSeatEditing(false);
+      setIsAddSeat(false);
     setIsViewing(true);
     setIsEditing(false);
     dispatch(getBranch(val.id)).then((res) => {
@@ -216,7 +272,9 @@ const BranchesList = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
+    setIsUploading('loading')
     dispatch(uploadPhoto(formData)).then((res) => {
+    setIsUploading('loaded')
       setSeatInfo({
         ...seatInfo,
         image: res.data.file,
@@ -228,6 +286,7 @@ const BranchesList = () => {
     setIsAdding(false);
     setIsViewing(false);
     setIsEditing(false);
+    setIsSeatEditing(false);
     setIsAddSeat(true);
     setSeatInfo({
       ...seatInfo,
@@ -245,9 +304,12 @@ const BranchesList = () => {
     dispatch(addBranchSeat(seatInfo)).then((res) => {
       if (res.status === 200) {
         dispatch(getBranches(page, search));
-        toggleModal();
+        const newseat = [res.data, ...seats]
+        setSeats(newseat);
+         setUpdateData({...updateData, seatCount: newseat.length})
         setIsAdding(false);
-        setIsViewing(false);
+        setIsViewing(true);
+        setIsSeatEditing(false);
         setIsEditing(false);
         setIsAddSeat(false);
         toast.success('Seat added');
@@ -255,7 +317,7 @@ const BranchesList = () => {
     });
   }
 
-    React.useEffect(() => {
+  React.useEffect(() => {
     const newdata = branchesData.map((item) => {
       return {
         cell1: item.name,
@@ -284,8 +346,31 @@ const BranchesList = () => {
       id: 'cell4',
       displayName: 'STATE',
     },
-
   ];
+
+  function handleSeatUpdate(e) {
+    e.preventDefault();
+    dispatch(updateBranchSeat(seatInfo)).then((res) => {
+      if (res.status === 200) {
+        const newseat = seats.map((item) => {
+          if (item.id === seatInfo.id) {
+            item.name = seatInfo.name;
+            item.photo = seatInfo.image;
+          }
+          return item;
+        });
+         setUpdateData({...updateData, seatCount: newseat.length})
+        setSeats(newseat);
+        setIsAdding(false);
+        setIsSeatEditing(false);
+        setIsEditing(false);
+        setIsAddSeat(false);
+        setIsViewing(true);
+        setSeatInfo({});
+        toast.success('Seat updated');
+      }
+    });
+  }
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -344,11 +429,11 @@ const BranchesList = () => {
                 {branchesData.length} Items
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
+            {/* <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">5 Items</Dropdown.Item>
               <Dropdown.Item href="#">10 Items</Dropdown.Item>
               <Dropdown.Item href="#">20 Items</Dropdown.Item>
-            </Dropdown.Menu>
+            </Dropdown.Menu> */}
           </Dropdown>
           {/* Length End */}
         </Col>
@@ -400,7 +485,7 @@ const BranchesList = () => {
               </Col>
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Status</div>
-                <div>{item.statusId ? <Badge bg="outline-primary">{item.status}</Badge> : <Badge bg="outline-warning">{item.status}</Badge>}</div>
+                <div>{item.statusId ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
               <Col xs="12" md="2" className="d-flex flex-column justify-content-start align-items-md-end mb-2 mb-md-0 order-5 px-1 order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
@@ -472,23 +557,7 @@ const BranchesList = () => {
                   <Form.Control type="text" name="location" onChange={handleChange} value={values.location} />
                   {errors.location && touched.location && <div className="d-block invalid-tooltip">{errors.location}</div>}
                 </div>
-                {/* <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" onChange={handleChange} value={values.description} />
-                  {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
-                </div>
 
-                <div className="mb-3">
-                  <Form.Label>Address </Form.Label>
-                  <Form.Control type="text" name="address" onChange={handleChange} value={values.address} />
-                  {errors.address && touched.address && <div className="d-block invalid-tooltip">{errors.address}</div>}
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>City</Form.Label>
-                  <Form.Control type="text" name="city" onChange={handleChange} value={values.city} />
-                  {errors.city && touched.city && <div className="d-block invalid-tooltip">{errors.city}</div>}
-                </div> */}
                 <div className="mb-3">
                   <Form.Label>State</Form.Label>
                   <Form.Control type="text" name="state" onChange={handleChange} value={values.state} />
@@ -510,18 +579,6 @@ const BranchesList = () => {
                   <Form.Control type="text" name="location" onChange={(e) => handleUpdateChange(e)} value={updateData.location} />
                 </div>
 
-                {/* <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Address </Form.Label>
-                  <Form.Control type="text" name="name" onChange={(e) => handleUpdateChange(e)} value={updateData.address} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>City</Form.Label>
-                  <Form.Control type="text" name="city" onChange={(e) => handleUpdateChange(e)} value={updateData.city} />
-                </div> */}
                 <div className="mb-3">
                   <Form.Label>State</Form.Label>
                   <Form.Control type="text" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
@@ -542,7 +599,35 @@ const BranchesList = () => {
                   <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleSeatChange(e)} value={seatInfo.location} />
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Image</Form.Label>
+                  <Form.Label>
+                    <span className="me-1">Image</span>
+                    {isUploading === 'loaded' ? <CsLineIcons icon="check" size="12" variant="primary" /> : ''}
+                    {isUploading === 'loading' ? <Spinner animation="border" role="status" className="text-success" size="sm" /> : ''}
+                  </Form.Label>
+                  <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
+                </div>
+
+                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
+                  <span>Submit</span>
+                </Button>
+              </form>
+            )}
+            {isSeatEditing && (
+              <form onSubmit={(e) => handleSeatUpdate(e)}>
+                <div className="mb-3">
+                  <Form.Label>Seat name</Form.Label>
+                  <Form.Control type="text" name="name" onChange={(e) => handleSeatChange(e)} value={seatInfo.name} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleSeatChange(e)} value={seatInfo.location} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>
+                    <span className="me-1">Image</span>
+                    {isUploading === 'loaded' ? <CsLineIcons icon="check" size="12" variant="primary" /> : ''}
+                    {isUploading === 'loading' ? <Spinner animation="border" role="status" className="text-success" size="sm" /> : ''}
+                  </Form.Label>
                   <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
                 </div>
 
@@ -570,18 +655,11 @@ const BranchesList = () => {
                       <td className=" py-2 px-1 border-bottom">{updateData.address}</td>
                     </tr>
 
-                    {/* <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">City</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.city}</td>
-                    </tr> */}
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">State</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.state}</td>
                     </tr>
-                    {/* <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
-                    </tr> */}
+
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.status}</td>
@@ -594,10 +672,10 @@ const BranchesList = () => {
                 </table>
                 <div className="text-center">
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBranch(updateData)}>
-                    <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
+                    <CsLineIcons icon="edit" size="13" /> <span className="sr-only">Edit</span>
                   </Button>
                   <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBranch(updateData.id)}>
-                    <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
+                    <CsLineIcons icon="bin" className="text-small" size="13" /> <span className="sr-only">Delete</span>
                   </Button>
                 </div>
                 <hr className="my-4" />
@@ -609,9 +687,11 @@ const BranchesList = () => {
                     <table className="mb-5 w-100 bg-light p-3 rounded-lg w-100">
                       <thead>
                         <tr>
-                          <th className="text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Id</th>
                           <th className="text-small text-muted  font-weight-bold  py-2 px-2  border-bottom text-uppercase text-muted">Image</th>
-                          <th className="text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Description</th>
+                          <th className="text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Name</th>
+
+                          <th className="text-small text-muted  font-weight-bold  py-2 px-2  border-bottom text-uppercase text-muted">Status</th>
+
                           <th className=" text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Action</th>
                         </tr>
                       </thead>
@@ -619,8 +699,7 @@ const BranchesList = () => {
                         {seats &&
                           seats.map((item, index) => (
                             <tr key={item.id} className="border-bottom ">
-                              <td className="px-3  border-bottom py-2"> {index+1}</td>
-                              <td className="px-3  border-bottom py-2">
+                              <td className="px-2  border-bottom py-2">
                                 <img
                                   src={`${process.env.REACT_APP_URL}/${item.photo}`}
                                   className="rounded-full"
@@ -628,11 +707,35 @@ const BranchesList = () => {
                                   style={{ width: '30px', height: '30px' }}
                                 />
                               </td>
-                              <td className=" py-2 px-2 border-bottom">{item.description}</td>
+                              <td className="px-2  border-bottom py-2"> {item.name}</td>
+                              <td className="px-2  border-bottom py-2">
+                                <Form.Switch
+                                  className="form-check mt-md-2 me-auto"
+                                  type="checkbox"
+                                  checked={item.statusId}
+                                  onChange={(e) => {
+                                    toggleSeatStatus(e, item.id);
+                                  }}
+                                />
+                              </td>
+
                               <td className=" py-2 px-2 border-bottom">
-                                <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisSeat(item.id)}>
-                                  <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
+                                {/* <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start me-2" onClick={() => editThisSeat(item)}>
+                                  <CsLineIcons icon="pen" className="text-small" size="12" />{' '}
                                 </Button>
+                                <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start" onClick={() => deleteThisSeat(item.id)}>
+                                  <CsLineIcons icon="bin" className="text-small" size="12" />{' '}
+                                </Button> */}
+                                <Dropdown className="">
+                                  <Dropdown.Toggle variant="light" as="div" className="text-center" bsPrefix="dot">
+                                    <CsLineIcons icon="more-vertical" className="text-small" size="12" />{' '}
+                                  </Dropdown.Toggle>
+
+                                  <Dropdown.Menu className="shadow dropdown-menu-end">
+                                    <Dropdown.Item onClick={() => editThisSeat(item)}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => deleteThisSeat(item.id)}>Drop</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
                               </td>
                             </tr>
                           ))}

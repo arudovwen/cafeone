@@ -75,9 +75,13 @@ const routesAndMenuItems = {
       label: 'User Management',
       icon: 'user',
       protected: true,
-      roles: ['SUPER_ADMIN'],
       subs: [
-        { path: '/members', label: 'Members', component: usermanagement.members },
+        {
+          path: '/members',
+          label: 'Members',
+          component: usermanagement.members,
+          roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'OPERATION_REPRESENTATIVE'],
+        },
         { path: '/admins', label: 'Admins', component: usermanagement.admins },
         // { path: '/detail', label: 'menu.detail', component: usermanagement.detail },
       ],
@@ -89,6 +93,7 @@ const routesAndMenuItems = {
       label: 'Branches',
       icon: 'list',
       protected: true,
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
     },
     {
       path: `${appRoot}/membership`,
@@ -96,9 +101,9 @@ const routesAndMenuItems = {
       label: 'Membership',
       icon: 'tag',
       protected: true,
-      roles: ['SUPER_ADMIN'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
       subs: [
-        { path: '/list', label: 'List', component: membership.list },
+        // { path: '/list', label: 'List', component: membership.list },
         { path: '/types', label: 'Types', component: membership.types },
       ],
     },
@@ -109,7 +114,7 @@ const routesAndMenuItems = {
       label: 'Bookings',
       icon: 'menu-bookmark',
       protected: true,
-      roles: ['SUPER_ADMIN'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'OPERATION_REPRESENTATIVE'],
     },
     {
       path: `${appRoot}/loyalty`,
@@ -117,7 +122,7 @@ const routesAndMenuItems = {
       label: 'Campaigns',
       icon: 'gift',
       protected: true,
-      roles: ['SUPER_ADMIN'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
     },
 
     {
@@ -126,6 +131,7 @@ const routesAndMenuItems = {
       label: 'Transactions',
       icon: 'invoice',
       protected: true,
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
     },
     {
       path: `${appRoot}/logout`,
