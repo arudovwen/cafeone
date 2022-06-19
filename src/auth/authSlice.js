@@ -43,14 +43,12 @@ export const loginAdmin = (data) => async (dispatch) => {
     window.location.href = '/dashboard';
   }
 };
-export const forgetPassword = (data) => async () => {
-  const response = await axios.post(`${SERVICE_URL}/auth/forgot-password`, data).catch(() => {
+export const forgetPassword = (data) => () => {
+  return axios.post(`${SERVICE_URL}/auth/forgot-password`, data).catch(() => {
       toast.error('Sending error');
     // toast.error(err.response.data.message);
   });
-  if (response) {
-    toast.success('Email sending successful');
-  }
+
 };
 export const resetPassword = (data) => async () => {
   const response = await axios.post(`${SERVICE_URL}/auth/reset-password`, data).catch(() => {

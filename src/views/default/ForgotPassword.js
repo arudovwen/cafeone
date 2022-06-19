@@ -8,6 +8,7 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { forgetPassword } from 'auth/authSlice';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const ForgotPassword = () => {
   const title = 'Forgot Password';
@@ -16,12 +17,14 @@ const ForgotPassword = () => {
   const validationSchema = Yup.object().shape({
     email: Yup.string().email().required('Email is required'),
   });
-  const initialValues = { email: '', returnPath: 'http://localhost:3000/reset-password' };
+  const initialValues = { email: '', returnPath: '/reset-password' };
 
   const dispatch = useDispatch();
   const onSubmit = (values, { resetForm }) => {
-    dispatch(forgetPassword(values));
-    resetForm({ values: '' });
+    dispatch(forgetPassword(values)).then((res) => {
+      toast.success('Email sending successful');
+      resetForm({ values: '' });
+    });
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });

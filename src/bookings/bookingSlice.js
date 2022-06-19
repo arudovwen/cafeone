@@ -69,12 +69,12 @@ export const deleteBooking = (data) => async () => {
   return axios.delete(`${SERVICE_URL}/bookings/${data.id}`, requestConfig);
 };
 
-export const checkinBooking = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${data}/checkin`, data, requestConfig);
+export const checkinBooking = (data, id, now) => async () => {
+  return axios.post(`${SERVICE_URL}/bookings/${data}/checkin`, {registerId: id, time:now}, requestConfig);
 };
 
-export const checkoutBooking = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${data}/checkout`, data, requestConfig);
+export const checkoutBooking = (data, id, now) => async () => {
+  return axios.post(`${SERVICE_URL}/bookings/${data}/checkout`, { registerId: id, time: now }, requestConfig);
 };
 
 export const addBooking = (data) => async (dispatch) => {

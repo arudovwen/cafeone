@@ -19,7 +19,8 @@ const ResetPassword = () => {
       .oneOf([Yup.ref('password'), null], 'Must be same with password!'),
   });
   const location = useLocation();
-  const token = new URLSearchParams(location.search).get('resetToken');
+  const token = new URLSearchParams(location.search).get('token');
+  const email = new URLSearchParams(location.search).get('email');
   const [showPassword, setShowPassword] = React.useState(false);
   function togglePassword() {
     setShowPassword(!showPassword);
@@ -28,7 +29,7 @@ const ResetPassword = () => {
     password: '',
     passwordConfirm: '',
     resetToken: token,
-    email: '',
+    email
   };
   const dispatch = useDispatch();
   const onSubmit = (values) => dispatch(resetPassword(values));

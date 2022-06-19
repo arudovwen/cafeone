@@ -324,21 +324,30 @@ const BookingTypeList = () => {
   function setSeat(val) {
     values.seatId = val;
   }
-  function handleChecking(data, stat) {
+  function similarDate(date){
+    const today = moment(new Date())
+    const varDate = moment(date)
+   const val = today.isSame(varDate, 'date');
+
+  return val
+  }
+  function handleChecking(id, stat) {
+    const now = moment().format('hh:mm')
     if (stat === 'clockOut') {
-      dispatch(checkoutBooking(data.id)).then((res) => {
+      dispatch(checkoutBooking(updateData.id, id, now)).then((res) => {
         if (res.status === 200) {
           toast.success('Checked out successful');
-          dispatch(getBooking(data.id)).then((resp) => {
+          dispatch(getBooking(updateData.id)).then((resp) => {
             setUpdateData(resp.data);
           });
         }
       });
+
     } else {
-      dispatch(checkinBooking(data.id)).then((res) => {
+      dispatch(checkinBooking(updateData.id, id, now)).then((res) => {
         if (res.status === 200) {
           toast.success('Checked in successful');
-          dispatch(getBooking(data.id)).then((resp) => {
+          dispatch(getBooking(updateData.id)).then((resp) => {
             setUpdateData(resp.data);
           });
         }
@@ -494,7 +503,7 @@ const BookingTypeList = () => {
       </div>
 
       <Row className="mb-4">
-        <Col md="12" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
+        <Col md="6" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           {/* <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -505,16 +514,16 @@ const BookingTypeList = () => {
               <CsLineIcons icon="close" />
             </span>
           </div> */}
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
-            <CsLineIcons icon="plus" /> <span className="d-none d-sm-inline">Add booking</span>
+          <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewBooking()}>
+            <CsLineIcons icon="plus" size="12" /> <span className="">Add booking</span>
           </Button>
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addEvent()}>
-            <CsLineIcons icon="plus" /> <span className="d-none d-sm-inline">Book event</span>
+          <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 " onClick={() => addEvent()}>
+            <CsLineIcons icon="plus" size="12" /> <span className="">Add event</span>
           </Button>
 
           {/* Search End */}
         </Col>
-        <Col md="12" lg="6" xxl="6" className="mb-1 d-flex justify-content-end align-items-center">
+        <Col md="6" lg="6" xxl="6" className="mb-1 d-flex justify-content-end align-items-center">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
@@ -528,7 +537,7 @@ const BookingTypeList = () => {
           {/* Export Dropdown End */}
 
           {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+          <Dropdown align={{ xs: 'end' }} className="d-none d-md-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
                 {bookingsData.length} Items
@@ -543,7 +552,7 @@ const BookingTypeList = () => {
         <Col xs="12" md="5" className="mb-2 mb-md:0">
           <div className="d-flex align-items-center">
             <DatePicker
-              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted "
+              className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2"
               selected={startTimeFrom}
               onChange={(date) => setstartTimeFrom(date)}
               selectsStart
@@ -563,12 +572,12 @@ const BookingTypeList = () => {
               minDate={startTimeFrom}
               isClearable
               placeholderText="Start Date To"
-              className="border rounded-sm px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2"
               showTimeSelect
             />
           </div>
         </Col>
-        <Col xs="12" md="4">
+        <Col xs="8" md="4">
           <SelectSearch
             filterOptions={() => fuzzySearch(membersData)}
             options={membersData}
@@ -579,7 +588,7 @@ const BookingTypeList = () => {
             placeholder="Filter by  member"
           />
         </Col>
-        <Col xs="12" md="2" className="d-flex align-items-center">
+        <Col xs="4" md="2" className="d-flex align-items-center">
           <span onClick={() => resetFilter()} className="cursor-pointer d-flex align-items-center">
             <span className="me-1">Reset filter</span> <CsLineIcons icon="refresh-horizontal" size="13" />
           </span>
@@ -614,42 +623,42 @@ const BookingTypeList = () => {
       {/* List Header End */}
 
       {/* List Items Start */}
-      <Row  className="mt-5">
+      <Row className="mt-5">
         {bookingsData.map((item) => (
-          <Col xs="12" md="4" key={item.id}  className="mb-3">
+          <Col xs="12" md="4" key={item.id} className="mb-3">
             <Card className="mb-2">
               <Card.Body className="px-3 py-3">
                 <table className="w-full">
                   <tbody>
                     <tr className="">
-                      <td className="text-muted  text-uppercase">Type</td>
-                      <td className="text-capitalize text-alternate">{item.type}</td>
+                      <td className="text-muted  text-uppercase border-bottom">Type :</td>
+                      <td className="text-capitalize text-alternate border-bottom">{item.type}</td>
                     </tr>
                     <tr className="">
-                      <td className="text-muted  text-uppercase">name</td>
-                      <td className="text-alternate">{item.member.name}</td>
+                      <td className="text-muted  text-uppercase border-bottom">name :</td>
+                      <td className="text-alternate border-bottom">{item.member.name}</td>
                     </tr>
                     <tr className="">
-                      <td className="text-muted  text-uppercase">Date</td>
-                      <td className="text-alternate">
+                      <td className="text-muted  text-uppercase border-bottom">Date :</td>
+                      <td className="text-alternate border-bottom">
                         <span>{moment(item.startDate).format('ll')}</span>
                       </td>
                     </tr>
                     <tr className="">
-                      <td className="text-muted  text-uppercase">Time</td>
-                      <td className="text-alternate text-alternate">
+                      <td className="text-muted  text-uppercase border-bottom">Time :</td>
+                      <td className="text-alternate text-alternate border-bottom">
                         <span>{item.startTime}</span>
                       </td>
                     </tr>
 
                     <tr className="">
-                      <td className="text-muted  text-uppercase">Plan</td>
-                      <td className="text-capitalize text-alternate">{item.plan.toLowerCase()}</td>
+                      <td className="text-muted  text-uppercase border-bottom">Plan :</td>
+                      <td className="text-capitalize text-alternate border-bottom">{item.plan.toLowerCase()}</td>
                     </tr>
 
                     <tr className="">
-                      <td className="text-muted  text-uppercase">Status</td>
-                      <td className="text-capitalize text-alternate"> {item.status.toLowerCase()}</td>
+                      <td className="text-muted  text-uppercase border-bottom">Status :</td>
+                      <td className="text-capitalize text-alternate border-bottom"> {item.status.toLowerCase()}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1049,12 +1058,7 @@ const BookingTypeList = () => {
                     <CsLineIcons icon="bin" className="text-small" size="13" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
                   </Button> */}
                 </div>
-                <img
-                  src={`${process.env.REACT_APP_URL}/${updateData.image}`}
-                  alt="branch"
-                  className="rounded-md mb-5"
-                  style={{ width: '80px', height: '80px' }}
-                />
+
                 <table className="mb-5 w-100">
                   <tbody>
                     <tr>
@@ -1153,31 +1157,48 @@ const BookingTypeList = () => {
                       <th className="font-weight-bold  py-2 border-bottom text-muted">Clock In-Time</th>
                       <th className="font-weight-bold  py-2 border-bottom text-muted">Clock Out-Time</th>
                       <th className="font-weight-bold  py-2 border-bottom text-muted">Date</th>
+                      <th className="font-weight-bold  py-2 border-bottom text-muted">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {updateData.registers.map((i) => (
                       <tr key={i.date}>
-                        <td className=" py-2 border-bottom">{i.clockInTime ? moment(i.clockInTime).format('hh:mm') : '-'}</td>
-                        <td className=" py-2 border-bottom">{i.clockOutTime ? moment(i.clockOutTime).format('hh:mm') : '-'}</td>
+                        <td className=" py-2 border-bottom">{i.clockInTime ? i.clockInTime : '-'}</td>
+                        <td className=" py-2 border-bottom">{i.clockOutTime ? i.clockOutTime : '-'}</td>
                         <td className=" py-2 border-bottom">{moment(i.date).format('ll')}</td>
+                        <td className=" py-2 border-bottom text-center">
+                          {similarDate(i.date) ? (
+                            <div className="text-center">
+                              {!i.clockInTime && (
+                                <Button
+                                  variant="outline-primary"
+                                  size="sm"
+                                  className="btn-icon btn-icon-start "
+                                  onClick={() => handleChecking(i.id, 'clockIn')}
+                                >
+                                  <span className="">Check in</span>
+                                </Button>
+                              )}
+                              {i.clockInTime && !i.clockOutTime && (
+                                <Button
+                                  variant="outline-primary"
+                                  size="sm"
+                                  className="btn-icon btn-icon-start"
+                                  onClick={() => handleChecking(i.id, 'clockOut')}
+                                >
+                                  <span className="">Check out</span>
+                                </Button>
+                              )}
+                              {i.clockInTime && i.clockOutTime && <CsLineIcons icon="check" size="14" />}
+                            </div>
+                          ) : (
+                            <span>-</span>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                <div className="text-center">
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="btn-icon btn-icon-start  mb-1 me-4"
-                    onClick={() => handleChecking(updateData, 'clockIn')}
-                  >
-                    <CsLineIcons icon="plus" className="text-small" /> <span className="sr-only">Clock in</span>
-                  </Button>
-                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData, 'clockOut')}>
-                    <CsLineIcons icon="minus" className="text-small" /> <span className="sr-only">Clock out</span>
-                  </Button>
-                </div>
               </div>
             )}
           </OverlayScrollbarsComponent>
