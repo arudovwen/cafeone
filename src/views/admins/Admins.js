@@ -67,7 +67,7 @@ const AdminManagementList = () => {
 
   const onSubmit = (values) => {
     dispatch(addAdmin(values));
-   
+
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -319,8 +319,8 @@ const AdminManagementList = () => {
               </Col>
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">Role</div>
-                <div className="text-alternate">
-                  <span>{item.roleName}</span>
+                <div className="text-alternate text-capitalize">
+                  <span>{item.roleName.toLowerCase()}</span>
                 </div>
               </Col>
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
@@ -479,7 +479,7 @@ const AdminManagementList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Role</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.roleName}</td>
+                      <td className=" py-2 px-1 border-bottom text-capitalize">{updateData.roleName.toLowerCase()}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Date created</td>
