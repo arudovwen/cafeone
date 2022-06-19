@@ -821,25 +821,32 @@ const BookingTypeList = () => {
               <form onSubmit={(e) => handleEventData(e)}>
                 <div className="mb-3">
                   <Form.Label>First name</Form.Label>
-                  <Form.Control type="text" name="firstName" onChange={(e) => handleEventChange(e)} value={eventData.firstName} />
+                  <Form.Control required type="text" name="firstName" onChange={(e) => handleEventChange(e)} value={eventData.firstName} />
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Last name</Form.Label>
-                  <Form.Control type="text" id="lastName" name="lastName" onChange={(e) => handleEventChange(e)} value={eventData.lastName} />
+                  <Form.Control required type="text" id="lastName" name="lastName" onChange={(e) => handleEventChange(e)} value={eventData.lastName} />
                 </div>
 
                 <div className="mb-3">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" id="email" name="email" onChange={(e) => handleEventChange(e)} value={eventData.email} />
+                  <Form.Control required type="email" id="email" name="email" onChange={(e) => handleEventChange(e)} value={eventData.email} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Phone number</Form.Label>
-                  <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={(e) => handleEventChange(e)} value={eventData.phoneNumber} />
+                  <Form.Control
+                    required
+                    type="number"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    onChange={(e) => handleEventChange(e)}
+                    value={eventData.phoneNumber}
+                  />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Amount due</Form.Label>
-                  <Form.Control type="number" id="amountDue" name="amountDue" onChange={(e) => handleEventChange(e)} value={eventData.amountDue} />
+                  <Form.Control required type="number" id="amountDue" name="amountDue" onChange={(e) => handleEventChange(e)} value={eventData.amountDue} />
                 </div>
                 {/* <div className="mb-3">
                   <Form.Label>Member</Form.Label>
@@ -858,6 +865,7 @@ const BookingTypeList = () => {
                 <div className="mb-3">
                   <Form.Label>Branch</Form.Label>
                   <SelectSearch
+                    required
                     filterOptions={() => fuzzySearch(branchesData)}
                     options={branchesData}
                     search
@@ -891,6 +899,7 @@ const BookingTypeList = () => {
                           minDate={new Date()}
                           endDate={endDate}
                           showTimeSelect
+                          required
                         />
                       </div>
                     </div>
@@ -906,13 +915,14 @@ const BookingTypeList = () => {
                         className="sw-md-8"
                         onChange={(e) => handleEventChange(e)}
                         value={eventData.duration}
+                        required
                       />
                     </div>
                   </Col>
                 </Row>
                 <div className="mb-3">
                   <Form.Label>Plan type</Form.Label>
-                  <Form.Select type="text" name="planType" onChange={(e) => handleEventChange(e)} value={eventData.planType}>
+                  <Form.Select required type="text" name="planType" onChange={(e) => handleEventChange(e)} value={eventData.planType}>
                     <option value="" disabled>
                       Select plan
                     </option>
@@ -925,7 +935,7 @@ const BookingTypeList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Payment status</Form.Label>
-                  <Form.Select type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
+                  <Form.Select required type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
                     <option value="" disabled>
                       Select status
                     </option>
