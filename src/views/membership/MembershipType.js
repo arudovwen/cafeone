@@ -2,7 +2,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -32,12 +32,14 @@ const MembershipTypeList = () => {
   const description = 'Membership Types Page';
   const [membershipModal, setMembershipModal] = useState(false);
   const membershipsData = useSelector((state) => state.membership.types);
+  const [ships, setShips] = useState([]);
   const status = useSelector((state) => state.membership.status);
   const [datas, setDatas] = useState([]);
   const [plans, setPlans] = useState([]);
   const [updatePlans, setUpdatePlans] = useState([]);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [isLoading, setisloading] = React.useState(false);
   // Create our number formatter.
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -47,7 +49,18 @@ const MembershipTypeList = () => {
     name: '',
     plans: [
       {
-        typeId: '',
+        name: 'Daily',
+        typeId: 1,
+        amount: '',
+      },
+      {
+        name: 'Weekly',
+        typeId: 2,
+        amount: '',
+      },
+      {
+        name: 'Monthly',
+        typeId: 3,
         amount: '',
       },
     ],
@@ -68,6 +81,11 @@ const MembershipTypeList = () => {
       setPlans(res.data);
     });
   }, []);
+
+  React.useEffect(() => {
+    setShips(membershipsData);
+  }, [membershipsData]);
+
   React.useEffect(() => {
     dispatch(getmembershiptypes(page, search));
   }, [dispatch, page, search]);
@@ -90,10 +108,9 @@ const MembershipTypeList = () => {
     setMembershipModal(!membershipModal);
   };
 
-  const onSubmit = (values, { resetForm }) => {
-    dispatch(addMembershipType(values)).then(() => {
-      resetForm({ values: '' });
-    });
+  const onSubmit = (values) => {
+    dispatch(addMembershipType(values));
+    setisloading(true)
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -187,13 +204,18 @@ const MembershipTypeList = () => {
     toggleModal();
   }
 
+  // highlight-ends
+  function filterData(val) {
+    const newData = membershipsData.filter((i) => i.name.toLowerCase().includes(val.toLowerCase()));
+    setShips(newData);
+  }
   // highlight-starts
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
-    debounce((nextValue) => setSearch(nextValue), 1000),
+    debounce((nextValue) => filterData(nextValue), 1000),
     []
   );
-  // highlight-ends
+
   const handleSearch = (e) => {
     debouncedSave(e.target.value);
   };
@@ -201,8 +223,32 @@ const MembershipTypeList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setMembershipModal(false);
+      setisloading(false)
+        values.name = ''
+     values.plans = [
+              {
+                name: 'Daily',
+                typeId: 1,
+                amount: '',
+              },
+              {
+                name: 'Weekly',
+                typeId: 2,
+                amount: '',
+              },
+              {
+                name: 'Monthly',
+                typeId: 3,
+                amount: '',
+              },
+               ]
+     values.description= ''
     }
+      if (status === 'error') {
+        setisloading(false);
+      }
     if (status === 'update') {
+      setisloading(false)
       dispatch(getmembershiptypes(1, ''));
       setMembershipModal(false);
       setUpdateData({
@@ -210,7 +256,18 @@ const MembershipTypeList = () => {
         description: '',
         plans: [
           {
-            planTypeId: '',
+            name: 'Daily',
+            typeId: 1,
+            amount: '',
+          },
+          {
+            name: 'Weekly',
+            typeId: 2,
+            amount: '',
+          },
+          {
+            name: 'Monthly',
+            typeId: 3,
             amount: '',
           },
         ],
@@ -233,6 +290,7 @@ const MembershipTypeList = () => {
   }
 
   function handleUpdate(e) {
+    setisloading(true)
     e.preventDefault();
     let newplans = updatePlans.map((i) => {
       return {
@@ -311,7 +369,7 @@ const MembershipTypeList = () => {
       <Row className="mb-3">
         <Col md="5" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
-          {/* <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
+          <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
             <span className="search-magnifier-icon">
               <CsLineIcons icon="search" />
@@ -319,7 +377,7 @@ const MembershipTypeList = () => {
             <span className="search-delete-icon d-none">
               <CsLineIcons icon="close" />
             </span>
-          </div> */}
+          </div>
 
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewMembership()}>
             <CsLineIcons icon="plus" /> <span>Add membership</span>
@@ -347,11 +405,6 @@ const MembershipTypeList = () => {
                 {membershipsData.length} Items
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">5 Items</Dropdown.Item>
-              <Dropdown.Item href="#">10 Items</Dropdown.Item>
-              <Dropdown.Item href="#">20 Items</Dropdown.Item>
-            </Dropdown.Menu>
           </Dropdown>
           {/* Length End */}
         </Col>
@@ -379,45 +432,46 @@ const MembershipTypeList = () => {
       {/* List Header End */}
 
       {/* List Items Start */}
-      {membershipsData.map((item) => (
-        <Card className="mb-2" key={item.id}>
-          <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="text-alternate">{item.name}</div>
-              </Col>
+      {ships.length &&
+        ships.map((item) => (
+          <Card className="mb-2" key={item.id}>
+            <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
+              <Row className="g-0 h-100 align-content-center cursor-default">
+                <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
+                  <div className="text-muted text-small d-md-none">Name</div>
+                  <div className="text-alternate">{item.name}</div>
+                </Col>
 
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4">
-                <div className="text-muted text-small d-md-none">Description</div>
-                <div className="text-alternate">{item.description}</div>
-              </Col>
+                <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4">
+                  <div className="text-muted text-small d-md-none">Description</div>
+                  <div className="text-alternate">{item.description}</div>
+                </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
-                <div className="text-muted text-small d-md-none">Status</div>
-                <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
-              </Col>
+                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
+                  <div className="text-muted text-small d-md-none">Status</div>
+                  <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
+                </Col>
 
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-5 order-md-last">
-                <div className="text-muted text-small d-md-none">Toggle Status</div>
-                <Form.Switch
-                  className=""
-                  type="checkbox"
-                  checked={item.isActive}
-                  onChange={(e) => {
-                    toggleStatus(e, item.id);
-                  }}
-                />
-              </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
-                <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
-                  View
-                </Button>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+                <Col xs="6" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-5 order-md-last">
+                  <div className="text-muted text-small d-md-none">Toggle Status</div>
+                  <Form.Switch
+                    className=""
+                    type="checkbox"
+                    checked={item.isActive}
+                    onChange={(e) => {
+                      toggleStatus(e, item.id);
+                    }}
+                  />
+                </Col>
+                <Col xs="12" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
+                  <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
+                    View
+                  </Button>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        ))}
 
       {/* List Items End */}
 
@@ -472,37 +526,20 @@ const MembershipTypeList = () => {
                 {values.plans.map((item, index) => (
                   <div key={index}>
                     <div className="mb-3">
-                      <Form.Label>Period {index + 1}</Form.Label>
-                      <Form.Select type="text" name={`plans[${index}].typeId`} onChange={handleChange} value={item.typeId} placeholder="Select validity period">
-                        <option value="" disabled>
-                          Select duration
-                        </option>
-                        {plans.map((plan) => (
-                          <option value={plan.id} key={plan.id}>
-                            {plan.name}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </div>
-                    <div className="mb-3">
-                      <Form.Label>Amount</Form.Label>
-                      <Form.Control type="number" name={`plans[${index}].amount`} onChange={handleChange} value={item.amount} />
+                      <Form.Label>{item.name} Amount</Form.Label>
+                      <Form.Control type="number" required name={`plans[${index}].amount`} onChange={handleChange} value={item.amount} />
                     </div>
                   </div>
                 ))}
-                <div className="d-flex justify-content-end">
-                  {values.plans.length > 1 && (
-                    <Button variant="link" type="button" size="sm" onClick={() => dropPlan()} className="me-3 px-0">
-                      Drop plan <CsLineIcons icon="minus" size="12" className="" />
-                    </Button>
-                  )}
-                  <Button variant="link" type="button" size="sm" onClick={() => addPlan()} className=" px-0" disabled={values.plans.length === 3}>
-                    Add plan <CsLineIcons icon="plus" size="12" className="" />
-                  </Button>
-                </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-4  mb-5">
-                  <span>Submit</span>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
                 </Button>
               </form>
             )}
@@ -518,44 +555,41 @@ const MembershipTypeList = () => {
                 </div>
                 {updatePlans.map((item, i) => (
                   <div key={i}>
-                    <div className="mb-3">
-                      <Form.Label>Period {i + 1}</Form.Label>
+                    <div className="mb-1">
                       <Form.Select
                         type="text"
                         name="planTypeId"
                         onChange={(e) => handlePlanUpdate(e, i)}
                         value={item.planTypeId || ''}
                         placeholder="Select duration"
+                        disabled
+                        readOnly
+                        className="text-capitalize"
                       >
                         <option value="" disabled>
                           Select duration
                         </option>
                         {plans.map((plan) => (
                           <option value={plan.id} key={plan.id}>
-                            {plan.name}
+                            {plan.name.toLowerCase()} amount
                           </option>
                         ))}
                       </Form.Select>
                     </div>
                     <div className="mb-3">
-                      <Form.Label>Amount</Form.Label>
                       <Form.Control type="number" name="amount" onChange={(e) => handlePlanUpdate(e, i)} value={item.amount || ''} />
                     </div>
                   </div>
                 ))}
-                <div className="d-flex justify-content-end">
-                  {updatePlans.length > 1 && (
-                    <Button variant="link" type="button" size="sm" onClick={() => dropUpdatePlan()} className="me-3 px-0">
-                      Drop plan <CsLineIcons icon="minus" size="12" className="" />
-                    </Button>
-                  )}
-                  <Button variant="link" type="button" size="sm" onClick={() => addUpdatePlan()} className=" px-0" disabled={updatePlans.length === 3}>
-                    Add plan <CsLineIcons icon="plus" size="12" className="" />
-                  </Button>
-                </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3  mb-5">
-                  <span>Submit</span>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
                 </Button>
               </form>
             )}

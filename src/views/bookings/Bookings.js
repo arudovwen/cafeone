@@ -3,7 +3,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -37,6 +37,7 @@ import { getMembers } from '../../members/memberSlice';
 import { getBranches, getBranch } from '../../branches/branchSlice';
 
 const BookingTypeList = () => {
+   const [isLoading, setisloading] = React.useState(false);
   const title = 'Bookings ';
   const description = 'Bookings Page';
   const [bookingModal, setBookingModal] = useState(false);
@@ -141,7 +142,8 @@ const BookingTypeList = () => {
 
   const onSubmit = (values, { resetForm }) => {
     dispatch(addBooking(values));
-    resetForm({ values: '' });
+
+    setisloading(true)
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -252,6 +254,7 @@ const BookingTypeList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setBookingModal(false);
+      setisloading(false)
       values.seats = [];
       values.memberId = '';
       values.branchId = '';
@@ -262,6 +265,7 @@ const BookingTypeList = () => {
       values.paymentStatus = '';
     }
     if (status === 'update') {
+       setisloading(false)
       dispatch(getBookings(1, ''));
       setBookingModal(false);
       setUpdateData({
@@ -271,6 +275,9 @@ const BookingTypeList = () => {
         validityPeriodTypeId: 1,
         description: '',
       });
+    }
+     if (status === 'error') {
+       setisloading(false)
     }
   }, [status, dispatch]);
 
@@ -282,6 +289,7 @@ const BookingTypeList = () => {
   }
   function handleUpdate(e) {
     e.preventDefault();
+     setisloading(true)
     dispatch(updateBooking(updateData));
   }
   function handleEventChange(e) {
@@ -291,6 +299,7 @@ const BookingTypeList = () => {
     });
   }
   function handleEventData(e) {
+     setisloading(true)
     e.preventDefault();
     dispatch(addEventBooking(eventData));
   }
@@ -655,6 +664,10 @@ const BookingTypeList = () => {
                       <td className="text-muted  text-uppercase border-bottom py-2">Plan :</td>
                       <td className="text-capitalize text-alternate border-bottom py-2">{item.plan.toLowerCase()}</td>
                     </tr>
+                      <tr className="">
+                      <td className="text-muted  text-uppercase border-bottom py-2">Payment Status :</td>
+                      <td className="text-capitalize text-alternate border-bottom py-2"> {item.paymentStatus.toLowerCase()}</td>
+                    </tr>
 
                     <tr className="">
                       <td className="text-muted  text-uppercase border-bottom py-2">Status :</td>
@@ -799,7 +812,7 @@ const BookingTypeList = () => {
                   </Form.Select>
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Payment type</Form.Label>
+                  <Form.Label>Payment status</Form.Label>
                   <Form.Select type="text" name="paymentStatus" onChange={handleChange} value={values.paymentStatus}>
                     <option value="" disabled>
                       Select type
@@ -812,9 +825,15 @@ const BookingTypeList = () => {
                   </Form.Select>
                 </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                'Submit'
+              ) : (
+                <Spinner animation="border" role="status" size="sm">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              )}
+                  </Button>
               </form>
             )}
             {isEvent && (
@@ -947,9 +966,15 @@ const BookingTypeList = () => {
                   </Form.Select>
                 </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                'Submit'
+              ) : (
+                <Spinner animation="border" role="status" size="sm">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              )}
+                  </Button>
               </form>
             )}
             {isEditing && (
@@ -1052,9 +1077,15 @@ const BookingTypeList = () => {
                   </Form.Select>
                 </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                'Submit'
+              ) : (
+                <Spinner animation="border" role="status" size="sm">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              )}
+                  </Button>
               </form>
             )}
 
@@ -1088,10 +1119,7 @@ const BookingTypeList = () => {
                       <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Type</td>
                       <td className=" py-2 border-bottom">{updateData.type}</td>
                     </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Plan</td>
-                      <td className=" py-2 border-bottom">{updateData.plan}</td>
-                    </tr>
+
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Plan</td>
                       <td className=" py-2 border-bottom">{updateData.plan}</td>

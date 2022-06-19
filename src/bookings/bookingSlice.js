@@ -50,6 +50,19 @@ export const getBookings =
     }
   };
 
+
+  export const getBookingByMember =
+    ( MemberId = null) =>
+     (dispatch) => {
+     return axios
+        .get(`${SERVICE_URL}/bookings?MemberId=${MemberId}`, requestConfig)
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        });
+
+  
+    };
+
 export const  getPlanTypes  = () => async () => {
   return axios.get(`${SERVICE_URL}/bookings/plan-types`, requestConfig);
 };
@@ -90,6 +103,8 @@ export const addBooking = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
+       dispatch(updatestatus('error'));
+        dispatch(resetstatus());
     });
 };
 
@@ -106,6 +121,8 @@ export const addEventBooking = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
+       dispatch(updatestatus('error'));
+        dispatch(resetstatus());
     });
 };
 

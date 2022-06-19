@@ -80,6 +80,8 @@ export const updateCampaign = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
+       dispatch(updatestatus('error'));
+        dispatch(resetstatus());
     });
 };
 
@@ -108,6 +110,8 @@ export const addCampaign = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
+       dispatch(updatestatus('error'));
+       dispatch(resetstatus());
     });
 };
 

@@ -52,7 +52,7 @@ const BranchesList = () => {
     city: '',
     state: '',
   };
-
+   const [isLoading, setisloading] = React.useState(false);
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -92,7 +92,8 @@ const BranchesList = () => {
 
   const onSubmit = (values, { resetForm }) => {
     dispatch(addBranch(values));
-    resetForm({ values: '' });
+
+    setisloading(true)
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -242,8 +243,21 @@ const BranchesList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setBranchModal(false);
+      setisloading(false)
+       values.name= ''
+    values.location= ''
+    values.description= ''
+    values.address= ''
+    values.city= ''
+    values.state= ''
+     setIsUploading(null);
     }
+      if (status === 'error') {
+        setisloading(false);
+      }
     if (status === 'update') {
+      setisloading(false)
+       setIsUploading(null);
       dispatch(getBranches(1, ''));
       setBranchModal(false);
       setUpdateData({
@@ -264,6 +278,7 @@ const BranchesList = () => {
     });
   }
   function handleUpdate(e) {
+    setisloading(true)
     e.preventDefault();
     dispatch(updateBranch(updateData));
   }
@@ -301,8 +316,10 @@ const BranchesList = () => {
   }
   function handleSeatAdd(e) {
     e.preventDefault();
+    setisloading(true)
     dispatch(addBranchSeat(seatInfo)).then((res) => {
       if (res.status === 200) {
+         setisloading(false)
         dispatch(getBranches(page, search));
         const newseat = [res.data, ...seats]
         setSeats(newseat);
@@ -350,8 +367,10 @@ const BranchesList = () => {
 
   function handleSeatUpdate(e) {
     e.preventDefault();
+    setisloading(true)
     dispatch(updateBranchSeat(seatInfo)).then((res) => {
       if (res.status === 200) {
+        setisloading(false)
         const newseat = seats.map((item) => {
           if (item.id === seatInfo.id) {
             item.name = seatInfo.name;
@@ -440,25 +459,25 @@ const BranchesList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
+          <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
+          <div className="text-muted text-small cursor-pointer ">LOCATION</div>
         </Col>
 
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">SEATS</div>
+          <div className="text-muted text-small cursor-pointer ">SEATS</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
+          <div className="text-muted text-small cursor-pointer ">STATUS</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">TOGGLE</div>
+          <div className="text-muted text-small cursor-pointer ">TOGGLE</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
-          <div className="text-muted text-small cursor-pointer sort text-right">Action</div>
+          <div className="text-muted text-small cursor-pointer  text-right">Action</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -563,10 +582,17 @@ const BranchesList = () => {
                   <Form.Control type="text" name="state" onChange={handleChange} value={values.state} />
                   {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
                 </div>
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
+                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                      'Submit'
+                    ) : (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    )}
+                  </Button>
               </form>
+
             )}
             {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)}>
@@ -583,10 +609,17 @@ const BranchesList = () => {
                   <Form.Label>State</Form.Label>
                   <Form.Control type="text" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
                 </div>
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                      'Submit'
+                    ) : (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    )}
+                  </Button>
               </form>
+
             )}
             {isAddSeat && (
               <form onSubmit={(e) => handleSeatAdd(e)}>
@@ -607,10 +640,17 @@ const BranchesList = () => {
                   <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
                 </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                      'Submit'
+                    ) : (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    )}
+                  </Button>
               </form>
+
             )}
             {isSeatEditing && (
               <form onSubmit={(e) => handleSeatUpdate(e)}>
@@ -631,9 +671,15 @@ const BranchesList = () => {
                   <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
                 </div>
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
-                  <span>Submit</span>
-                </Button>
+               <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                      'Submit'
+                    ) : (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    )}
+                  </Button>
               </form>
             )}
 

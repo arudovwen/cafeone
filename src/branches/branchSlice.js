@@ -64,6 +64,9 @@ export const updateBranch = (data) => async (dispatch) => {
       dispatch(updatestatus('update'));
       dispatch(resetstatus());
     }
+  }).catch(()=>{
+     dispatch(updatestatus('error'));
+     dispatch(resetstatus());
   });
 };
 
@@ -99,6 +102,8 @@ export const addBranch = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
+       dispatch(updatestatus('error'));
+       dispatch(resetstatus());
     });
 };
 

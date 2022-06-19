@@ -51,6 +51,9 @@ export const updateMember = (data) => async (dispatch) => {
     toast.success('User updated');
     dispatch(updatestatus('update'));
     dispatch(resetstatus());
+  }).catch(()=>{
+     dispatch(updatestatus('error'));
+     dispatch(resetstatus());
   });
 };
 
@@ -67,6 +70,8 @@ export const addMember = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
+       dispatch(updatestatus('error'));
+        dispatch(resetstatus());
     });
 };
 

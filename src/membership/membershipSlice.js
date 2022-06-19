@@ -29,7 +29,7 @@ const membershipSlice = createSlice({
       state.status = action.payload;
     },
       updatemembershipstatus(state, action) {
-    
+
       state.types = state.types.map((v) => {
         if (v.id === action.payload.id) {
           v.isActive = action.payload.value;
@@ -74,6 +74,9 @@ export const updateMembership = (data) => async (dispatch) => {
       dispatch(updatestatus('update'));
       dispatch(resetstatus());
     }
+  }).catch(()=>{
+     dispatch(updatestatus('error'));
+        dispatch(resetstatus());
   });
 };
 
@@ -102,6 +105,8 @@ export const addMembershipType = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
+       dispatch(updatestatus('error'));
+        dispatch(resetstatus());
     });
 };
 

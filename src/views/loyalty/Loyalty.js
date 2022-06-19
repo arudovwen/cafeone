@@ -4,7 +4,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -42,6 +42,7 @@ import {
 } from '../../membership/membershipSlice';
 
 const CampaignTypeList = () => {
+  const [isLoading, setisloading] = React.useState(false);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [datas, setDatas] = useState([]);
@@ -128,6 +129,7 @@ const CampaignTypeList = () => {
 
   const onSubmit = (values, { resetForm }) => {
     dispatch(addCampaign(values));
+    setisloading(true);
     // resetForm({ values: '' });
   };
 
@@ -256,8 +258,14 @@ const CampaignTypeList = () => {
       values.branchId = '';
       setStartDate(null);
       setEndDate(null);
+      setisloading(false);
     }
+      if (status === 'error') {
+        setisloading(false);
+      }
     if (status === 'update') {
+      setisloading(false);
+
       dispatch(getCampaigns(1, ''));
       setCampaignModal(false);
       setUpdateData({
@@ -287,6 +295,7 @@ const CampaignTypeList = () => {
     });
   }
   function handleUpdate(e) {
+    setisloading(true);
     e.preventDefault();
     dispatch(updateCampaign(updateData));
   }
@@ -314,7 +323,7 @@ const CampaignTypeList = () => {
   }, [startDateFrom, startDateTo, branchId, membershipId]);
 
   React.useEffect(() => {
-    if(!campaignsData.length) return
+    if (!campaignsData.length) return;
     const newdata = campaignsData.map((item) => {
       return {
         cell1: item.description,
@@ -735,9 +744,14 @@ const CampaignTypeList = () => {
                 ) : (
                   ''
                 )}
-
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3 mb-5">
-                  <span>Submit</span>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
                 </Button>
               </form>
             )}
@@ -880,8 +894,14 @@ const CampaignTypeList = () => {
                   ''
                 )}
 
-                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3 mb-5">
-                  <span>Submit</span>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
                 </Button>
               </form>
             )}

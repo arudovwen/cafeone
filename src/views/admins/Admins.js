@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -26,6 +26,7 @@ const AdminManagementList = () => {
   const total = useSelector((state) => state.admins.total);
   const status = useSelector((state) => state.admins.status);
   const roles = useSelector((state) => state.admins.roles);
+   const [isLoading, setisloading] = React.useState(false);
   const initialValues = {
     email: '',
     firstName: '',
@@ -66,6 +67,7 @@ const AdminManagementList = () => {
   };
 
   const onSubmit = (values) => {
+        setisloading(true);
     dispatch(addAdmin(values));
 
   };
@@ -142,6 +144,7 @@ const AdminManagementList = () => {
 
   React.useEffect(() => {
     if (status === 'success') {
+          setisloading(false);
       setAdminModal(false);
       values.firstName= ''
       values.lastName = ''
@@ -149,8 +152,12 @@ const AdminManagementList = () => {
       values.email = ''
     }
     if (status === 'update') {
+          setisloading(false);
       dispatch(getAdmins(1, ''));
       setAdminModal(false);
+    }
+      if (status === 'error') {
+       setisloading(false)
     }
   }, [status, dispatch]);
 
@@ -161,6 +168,7 @@ const AdminManagementList = () => {
     });
   }
   function handleUpdate(e) {
+    setisloading(true)
     e.preventDefault();
     dispatch(updateAdmin(updateData));
   }
@@ -220,7 +228,7 @@ const AdminManagementList = () => {
           {/* Top Buttons Start */}
           {/* <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
             <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
-              <CsLineIcons icon="sort" />
+              <CsLineIcons icon="" />
             </Button>
           </Col> */}
           {/* Top Buttons End */}
@@ -277,25 +285,25 @@ const AdminManagementList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
+          <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Email</div>
+          <div className="text-muted text-small cursor-pointer ">Email</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Role</div>
+          <div className="text-muted text-small cursor-pointer ">Role</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Status</div>
+          <div className="text-muted text-small cursor-pointer ">Status</div>
         </Col>
 
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Toggle</div>
+          <div className="text-muted text-small cursor-pointer ">Toggle</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <span className="text-muted text-small cursor-pointer sort">Action</span>
+          <span className="text-muted text-small cursor-pointer ">Action</span>
         </Col>
       </Row>
       {/* List Header End */}
@@ -405,19 +413,25 @@ const AdminManagementList = () => {
                       Select role
                     </option>
                     {roles.map((item) => (
-                      <>
+
                         <option value={item.id} key={item.id}>
                           {item.name}
                         </option>
-                      </>
+
                     ))}
                   </Form.Select>
                   {errors.role && touched.role && <div className="d-block invalid-tooltip">{errors.role}</div>}
                 </div>
 
                 <div className="border-0 mt-3 mb-5">
-                  <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
-                    <span>Submit</span>
+                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                'Submit'
+              ) : (
+                <Spinner animation="border" role="status" size="sm">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              )}
                   </Button>
                 </div>
               </form>
@@ -445,19 +459,25 @@ const AdminManagementList = () => {
                       Select role
                     </option>
                     {roles.map((item) => (
-                      <>
+
                         <option value={item.id} key={item.id}>
                           {item.name}
                         </option>
-                      </>
+
                     ))}
                   </Form.Select>
                   {errors.role && touched.role && <div className="d-block invalid-tooltip">{errors.role}</div>}
                 </div>
 
                 <div className="border-0 mt-3 mb-5">
-                  <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
-                    <span>Update admin</span>
+                  <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                      'Update admin'
+                    ) : (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    )}
                   </Button>
                 </div>
               </form>

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -14,12 +14,13 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
+import { Dialog, Transition } from '@headlessui/react';
 import {
   getmembershiptypes,
   // eslint-disable-next-line import/extensions
 } from '../../membership/membershipSlice';
-
 import { getMembers, addMember, uploadPhoto, getMember, updateMember, subscribeMember, deleteMember } from '../../members/memberSlice';
+import { getBookingByMember } from '../../bookings/bookingSlice';
 
 const UserManagementList = () => {
   const [userModal, setUserModal] = useState(false);
@@ -30,7 +31,9 @@ const UserManagementList = () => {
   const total = useSelector((state) => state.members.total);
   const status = useSelector((state) => state.members.status);
   const membershipsData = useSelector((state) => state.membership.types);
-
+  const [isLoading, setisloading] = React.useState(false);
+  const [isUploading, setIsUploading] = useState(null);
+  const [bookingModal, setBookingModal] = useState(false);
   const initialValues = {
     email: '',
     firstName: '',
@@ -46,7 +49,7 @@ const UserManagementList = () => {
     phoneNumber: '',
     note: '',
     membershipTypeId: '',
-    gender:'',
+    gender: '',
   };
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -93,6 +96,7 @@ const UserManagementList = () => {
   };
 
   const onSubmit = (values) => {
+    setisloading(true);
     dispatch(addMember(values));
   };
 
@@ -103,8 +107,10 @@ const UserManagementList = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
+    setIsUploading('loading');
     dispatch(uploadPhoto(formData)).then((res) => {
       values.photo = res.data.file;
+      setIsUploading('loaded');
     });
   };
   const handleUpdateFile = (e) => {
@@ -115,6 +121,12 @@ const UserManagementList = () => {
       updateData.photo = res.data.file;
     });
   };
+
+  function getMyBookings(id) {
+    dispatch(getBookingByMember(id)).the((res) => {
+      setBookingModal(true);
+    });
+  }
 
   function deleteThisMember(id) {
     const conf = window.confirm('Are you sure?');
@@ -182,6 +194,7 @@ const UserManagementList = () => {
   }
   function handleUpdate(e) {
     e.preventDefault();
+    setisloading(true);
     dispatch(updateMember(updateData));
   }
 
@@ -238,13 +251,19 @@ const UserManagementList = () => {
       values.twitter = '';
       values.note = '';
       values.phoneNumber = '';
-      values.membershipTypeId= ''
-
+      values.membershipTypeId = '';
+      setisloading(false);
       setUserModal(false);
+      setIsUploading(null);
+    }
+    if (status === 'error') {
+      setisloading(false);
     }
     if (status === 'update') {
       dispatch(getMembers(1, ''));
       setUserModal(false);
+      setisloading(false);
+      setIsUploading(null);
     }
   }, [status, dispatch]);
 
@@ -294,11 +313,10 @@ const UserManagementList = () => {
             </h1>
           </Col>
           {/* Title End */}
-
           {/* Top Buttons Start */}
           {/* <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
             <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
-              <CsLineIcons icon="sort" />
+              <CsLineIcons icon="" />
             </Button>
           </Col> */}
           Top Buttons End
@@ -354,21 +372,21 @@ const UserManagementList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
+          <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Email</div>
+          <div className="text-muted text-small cursor-pointer ">Email</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Phone</div>
+          <div className="text-muted text-small cursor-pointer ">Phone</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Membership Type</div>
+          <div className="text-muted text-small cursor-pointer ">Membership Type</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-md-end">
-          <div className="text-muted text-small cursor-pointer sort text-md-right">Action</div>
+          <div className="text-muted text-small cursor-pointer  text-md-right">Action</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -473,13 +491,19 @@ const UserManagementList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Photo</Form.Label>
+                  <Form.Label>
+                    <span className="me-1">Photo</span>
+                    {isUploading === 'loaded' ? <CsLineIcons icon="check" size="12" variant="primary" /> : ''}
+                    {isUploading === 'loading' ? <Spinner animation="border" role="status" className="text-success" size="sm" /> : ''}
+                  </Form.Label>
                   <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleFile} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Gender</Form.Label>
                   <Form.Select type="select" name="gender" onChange={handleChange} value={values.gender} placeholder="Select gender">
-                    <option disabled value=''>Select gender</option>
+                    <option disabled value="">
+                      Select gender
+                    </option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
@@ -535,8 +559,14 @@ const UserManagementList = () => {
                 </div>
 
                 <div className="border-0 mt-3 mb-5">
-                  <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
-                    <span>Submit</span>
+                  <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                      'Submit'
+                    ) : (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    )}
                   </Button>
                 </div>
               </form>
@@ -567,7 +597,9 @@ const UserManagementList = () => {
                 <div className="mb-3">
                   <Form.Label>Gender</Form.Label>
                   <Form.Select type="select" name="gender" onChange={(e) => handleUpdateChange(e)} value={updateData.gender} placeholder="Select gender">
-                    <option disabled value=''>Select gender</option>
+                    <option disabled value="">
+                      Select gender
+                    </option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
@@ -620,8 +652,14 @@ const UserManagementList = () => {
                 </div>
 
                 <div className="border-0 mt-3 mb-5">
-                  <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100">
-                    <span>Update member</span>
+                  <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                    {!isLoading ? (
+                      'Update member'
+                    ) : (
+                      <Spinner animation="border" role="status" size="sm">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    )}
                   </Button>
                 </div>
               </form>
@@ -750,6 +788,22 @@ const UserManagementList = () => {
         </Modal.Body>
       </Modal>
       {/* User Detail Modal End */}
+
+      <Modal className="modal-center scroll-out-negative" show={bookingModal} onHide={() => setBookingModal(false)} scrollable dialogClassName="full">
+        <Modal.Header closeButton>
+          <Modal.Title as="h5">
+            {' '}
+            {isAdding && 'Add new member'}
+            {isEditing && 'Update new member'}
+            {isViewing && 'Member Information'}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
+            <div>Name</div>
+          </OverlayScrollbarsComponent>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };
