@@ -38,6 +38,11 @@ const MembershipTypeList = () => {
   const [updatePlans, setUpdatePlans] = useState([]);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
+  // Create our number formatter.
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'NGN',
+  });
   const initialValues = {
     name: '',
     plans: [
@@ -235,11 +240,10 @@ const MembershipTypeList = () => {
         amount: i.amount,
       };
     });
-  
-    let newdata = { ...updateData,
-      plans: newplans}
-    console.log(newdata)
-   dispatch(updateMembership(newdata));
+
+    let newdata = { ...updateData, plans: newplans };
+    console.log(newdata);
+    dispatch(updateMembership(newdata));
   }
 
   React.useEffect(() => {
@@ -587,10 +591,7 @@ const MembershipTypeList = () => {
                     {updateData.plans.map((item, index) => (
                       <tr key={index}>
                         <td className=" py-2 px-1 border-bottom">{item.planType}</td>
-                        <td className=" py-2 px-1 border-bottom">
-                          {' '}
-                          <span className="">₦</span> {item.amount}
-                        </td>
+                        <td className=" py-2 px-1 border-bottom"> {formatter.format(item.amount)}</td>
                       </tr>
                     ))}
                   </tbody>

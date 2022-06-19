@@ -65,9 +65,9 @@ const AdminManagementList = () => {
     setAdminModal(!adminModal);
   };
 
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = (values) => {
     dispatch(addAdmin(values));
-    resetForm({ values: '' });
+   
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -143,6 +143,10 @@ const AdminManagementList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setAdminModal(false);
+      values.firstName= ''
+      values.lastName = ''
+      values.role = ''
+      values.email = ''
     }
     if (status === 'update') {
       dispatch(getAdmins(1, ''));

@@ -3,7 +3,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Badge, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -29,6 +29,7 @@ import {
   checkoutBooking,
   getPaymentStatusTypes,
   getPlanTypes,
+  addEventBooking,
 
   // eslint-disable-next-line import/extensions
 } from '../../bookings/bookingSlice';
@@ -48,6 +49,21 @@ const BookingTypeList = () => {
   });
   const [datas, setDatas] = useState([]);
   const [seatData, setSeatData] = React.useState([]);
+  const [isEvent, setIsEvent] = React.useState(false);
+  const [eventData, setEventData] = React.useState({
+    email: '',
+    phoneNumber: '',
+    firstName: '',
+    lastName: '',
+    amountDue: '',
+    memberId: '',
+    branchId: '',
+    startTime: '',
+    duration: '',
+    planType: '',
+    startDate: '',
+    paymentStatus: '',
+  });
   const membersData = useSelector((state) => state.members.items).map((item) => {
     const fullname = `${item.firstName} ${item.lastName}`;
     const data = { value: item.id, name: fullname };
@@ -57,18 +73,18 @@ const BookingTypeList = () => {
   const status = useSelector((state) => state.bookings.status);
   const initialValues = {
     seats: [],
-    memberId: 0,
-    branchId: 0,
+    memberId: '',
+    branchId: '',
     startTime: '',
-    duration: 0,
-    planType: 1,
+    duration: '',
+    planType: '',
     startDate: null,
-    paymentStatus: 0,
+    paymentStatus: '',
   };
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [planTypes, setPlanTypes] = useState([])
-  const [paymentTypes, setPaymentTypes] = useState([])
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [planTypes, setPlanTypes] = useState([]);
+  const [paymentTypes, setPaymentTypes] = useState([]);
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -92,13 +108,12 @@ const BookingTypeList = () => {
     dispatch(getBookings(page, search));
     dispatch(getMembers(page, search, 50));
     dispatch(getBranches(page, search, 50));
-    dispatch(  getPaymentStatusTypes).then(res=>{
-      setPaymentTypes(res.data)
-    })
-        dispatch(
-  getPlanTypes).then(res=>{
-    setPlanTypes(res.data)
-  })
+    dispatch(getPaymentStatusTypes()).then((res) => {
+      setPaymentTypes(res.data);
+    });
+    dispatch(getPlanTypes()).then((res) => {
+      setPlanTypes(res.data);
+    });
   }, [dispatch, page, search]);
 
   function nextPage() {
@@ -111,10 +126,13 @@ const BookingTypeList = () => {
     setPage(page - 1);
   }
   const validationSchema = Yup.object().shape({
-   
-    fromTime: Yup.string().required('From Time  is required'),
-    toTime: Yup.string().required('To Time is required'),
-    memberId: Yup.string().required('MemberId is required'),
+    startTime: Yup.string().required('Start Time  is required'),
+    startDate: Yup.string().required('Start date is required'),
+    memberId: Yup.string().required('Member is required'),
+    duration: Yup.string().required('Duration is required'),
+    planType: Yup.string().required('Plan type is required'),
+    paymentStatus: Yup.string().required('Payment status is required'),
+    seats: Yup.array().required('Seats is required'),
   });
 
   const toggleModal = () => {
@@ -127,7 +145,7 @@ const BookingTypeList = () => {
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
-  const { handleSubmit, values, touched, errors } = formik;
+  const { handleSubmit, handleChange, values, touched, errors } = formik;
 
   // Retrieve seats
   React.useEffect(() => {
@@ -135,11 +153,19 @@ const BookingTypeList = () => {
 
     dispatch(getBranch(values.branchId)).then((res) => {
       if (res.status === 200) {
-        setSeatData(res.data.seats);
+        setSeatData(
+          res.data.seats.map((item) => {
+            return {
+              name: item.name,
+              value: item.id,
+            };
+          })
+        );
       }
     });
+    values.seats = [];
     // setSeatData(newbranch.seats);
-  }, [values]);
+  }, [values.branchId]);
 
   // function deleteThisBooking(id) {
   //   const conf = window.confirm('Are you sure?');
@@ -158,16 +184,25 @@ const BookingTypeList = () => {
   // }
 
   function addNewBooking() {
-    setIsAdding(true);
     setIsViewing(false);
     setIsEditing(false);
+    setIsEvent(false);
+    setIsAdding(true);
+    toggleModal();
+  }
 
+  function addEvent() {
+    setIsAdding(false);
+    setIsViewing(false);
+    setIsEditing(false);
+    setIsEvent(true);
     toggleModal();
   }
 
   function editBooking(val) {
     setIsAdding(false);
     setIsViewing(false);
+    setIsEvent(false);
     setIsEditing(true);
 
     setUpdateData(val);
@@ -176,9 +211,10 @@ const BookingTypeList = () => {
   }
 
   function viewBooking(val) {
-    dispatch(getBooking(val.bookingId)).then((res) => {
+    dispatch(getBooking(val.id)).then((res) => {
       setIsAdding(false);
       setIsEditing(false);
+      setIsEvent(false);
       setUpdateData(res.data);
       setIsViewing(true);
       toggleModal();
@@ -215,6 +251,14 @@ const BookingTypeList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setBookingModal(false);
+      values.seats = [];
+      values.memberId = '';
+      values.branchId = '';
+      values.startTime = '';
+      values.duration = '';
+      values.planType = '';
+      values.startDate = null;
+      values.paymentStatus = '';
     }
     if (status === 'update') {
       dispatch(getBookings(1, ''));
@@ -239,13 +283,23 @@ const BookingTypeList = () => {
     e.preventDefault();
     dispatch(updateBooking(updateData));
   }
+  function handleEventChange(e) {
+    setEventData({
+      ...eventData,
+      [e.target.name]: e.target.value,
+    });
+  }
+  function handleEventData(e) {
+    e.preventDefault();
+    dispatch(addEventBooking(eventData));
+  }
 
-  React.useEffect(() => {
-    values.toTime = startDate;
-    values.fromTime = endDate;
-    updateData.toTime = startDate;
-    updateData.fromTime = endDate;
-  }, [startDate, endDate]);
+  // React.useEffect(() => {
+  //   values.fromTime = startDate;
+  //   values.toTime = endDate;
+  //   updateData.fromTime = startDate;
+  //   updateData.toTime = endDate;
+  // }, [startDate, endDate]);
 
   function setBranch(val) {
     values.branchId = val;
@@ -269,21 +323,21 @@ const BookingTypeList = () => {
   function setSeat(val) {
     values.seatId = val;
   }
-  function handleChecking(data) {
-    if (data.status.toLowerCase() === 'in use') {
-      dispatch(checkoutBooking(data.bookingId)).then((res) => {
+  function handleChecking(data, stat) {
+    if (stat === 'clockOut') {
+      dispatch(checkoutBooking(data.id)).then((res) => {
         if (res.status === 200) {
-          toast.success('Checked in successful');
-          dispatch(getBooking(data.bookingId)).then((resp) => {
+          toast.success('Checked out successful');
+          dispatch(getBooking(data.id)).then((resp) => {
             setUpdateData(resp.data);
           });
         }
       });
     } else {
-      dispatch(checkinBooking(data.bookingId)).then((res) => {
+      dispatch(checkinBooking(data.id)).then((res) => {
         if (res.status === 200) {
-          toast.success('Checked out successful');
-          dispatch(getBooking(data.bookingId)).then((resp) => {
+          toast.success('Checked in successful');
+          dispatch(getBooking(data.id)).then((resp) => {
             setUpdateData(resp.data);
           });
         }
@@ -294,16 +348,19 @@ const BookingTypeList = () => {
   React.useEffect(() => {
     const newdata = bookingsData.map((item) => {
       return {
-        cell1: item.bookingId,
-        cell2: item.memberId,
-        cell3: item.name,
-        cell4: item.branch,
-        cell5: item.fromTime,
-        cell6: item.toTime,
-        cell7: item.seat,
-        cell8: item.clockInTime,
-        cell9: item.clockOutTime,
-        cell10: item.status,
+        cell1: item.id,
+        cell2: item.member.id,
+        cell3: item.member.name,
+        cell4: `${item.duration} hours`,
+        cell5: item.startDate,
+        cell6: item.startTime,
+        cell7: item.endDate,
+        cell8: item.endTime,
+        cell9: item.seatCount,
+        cell10: item.plan,
+         cell11: item.type,
+          cell12: item.status,
+        cell13: moment(item.dateCreated).format('llll'),
       };
     });
     setDatas(newdata);
@@ -324,34 +381,51 @@ const BookingTypeList = () => {
     },
     {
       id: 'cell4',
-      displayName: 'BRANCH',
+      displayName: 'DURATION',
     },
     {
       id: 'cell5',
-      displayName: 'FROM-TIME',
+      displayName: 'START-DATE',
     },
     {
       id: 'cell6',
-      displayName: 'TO-TIME',
+      displayName: 'START-TIME',
     },
     {
       id: 'cell7',
-      displayName: 'SEAT',
+      displayName: 'END-DATE',
     },
     {
       id: 'cell8',
-      displayName: 'CLOCK-IN-TIME',
+      displayName: 'END-TIME',
     },
     {
       id: 'cell9',
-      displayName: 'CLOCK-OUT-TIME',
+      displayName: 'SEATS',
     },
     {
       id: 'cell10',
+      displayName: 'PLAN',
+    },
+     {
+      id: 'cell11',
+      displayName: 'TYPE',
+    },
+     {
+      id: 'cell12',
       displayName: 'STATUS',
+    },
+     {
+      id: 'cell13',
+      displayName: 'DATE CREATED',
     },
   ];
 
+
+  function handleSeats(val) {
+    values.seats = val;
+    updateData.seats = val;
+  }
   React.useEffect(() => {
     if (fromDate && toDate) {
       dispatch(getBookings(page, search, moment(fromDate).format('YYYY-MM-DD'), moment(toDate).format('YYYY-MM-DD')));
@@ -430,20 +504,19 @@ const BookingTypeList = () => {
               <CsLineIcons icon="close" />
             </span>
           </div> */}
-    <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
             <CsLineIcons icon="plus" /> <span className="d-none d-sm-inline">Add booking</span>
           </Button>
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addNewBooking()}>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-md-3" onClick={() => addEvent()}>
             <CsLineIcons icon="plus" /> <span className="d-none d-sm-inline">Book event</span>
           </Button>
-
 
           {/* Search End */}
         </Col>
         <Col md="12" lg="6" xxl="6" className="mb-1 d-flex justify-content-end align-items-center">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
                 <CsvDownloader filename="bookings" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
                   <CsLineIcons icon="download" />
@@ -541,12 +614,12 @@ const BookingTypeList = () => {
 
       {/* List Items Start */}
       {bookingsData.map((item) => (
-        <Card key={item.bookingId} className="mb-2">
+        <Card key={item.id} className="mb-2">
           <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
                 <div className="text-muted text-small d-md-none">name</div>
-                <div className="text-alternate">{item.name}</div>
+                <div className="text-alternate">{item.member.name}</div>
               </Col>
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1 px-1">
                 <div className="text-muted text-small d-md-none">Date</div>
@@ -561,7 +634,7 @@ const BookingTypeList = () => {
               </Col> */}
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Plan</div>
-                <div>{item.branch}</div>
+                <div>{item.plan}</div>
               </Col>
               {/* <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Seat</div>
@@ -570,12 +643,7 @@ const BookingTypeList = () => {
 
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
-                <div>
-                  {' '}
-                  <Badge bg="outline-primary">{item.statusId == 1 ? 'Available' : ''}</Badge>
-                  <Badge bg="outline-primary">{item.statusId == 2 ? 'Not checked in' : ''}</Badge>
-                  <Badge bg="outline-primary">{item.statusId == 3 ? 'In use' : ''}</Badge>
-                </div>
+                <div> {item.status}</div>
               </Col>
 
               <Col
@@ -619,6 +687,7 @@ const BookingTypeList = () => {
             {isAdding && 'Add new booking'}
             {isEditing && 'Update new booking'}
             {isViewing && 'Booking Information'}
+            {isEvent && 'Event Booking'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -660,42 +729,199 @@ const BookingTypeList = () => {
                     filterOptions={() => fuzzySearch(seatData)}
                     options={seatData}
                     search
-                    name="seat"
-                    value={values.seatId}
+                    name="seats"
+                    value={values.seats}
+                    multiple
                     placeholder="Select seat"
-                    onChange={(val) => setSeat(val)}
+                    printOptions="on-focus"
+                    onChange={(val) => handleSeats(val)}
                   />
 
-                  {errors.seatId && touched.seatId && <div className="d-block invalid-tooltip">{errors.seatId}</div>}
+                  {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
+                </div>
+
+                <Row>
+                  <Col md="5">
+                    <div className="mb-3">
+                      <Form.Label>Start Date</Form.Label>
+
+                      <div className="d-flex justify-content-between align-items-center">
+                        <DatePicker
+                          className="border rounded-sm px-2 py-1"
+                          selected={startDate}
+                          onChange={(date) => {
+                            values.startTime = moment(date).format('hh:mm');
+                            values.startDate = date;
+                            setStartDate(date);
+                          }}
+                          selectsStart
+                          startDate={startDate}
+                          minDate={new Date()}
+                          endDate={endDate}
+                          showTimeSelect
+                        />
+                      </div>
+                      {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
+                    </div>
+                  </Col>
+                  <Col md="5">
+                    <div className="mb-3">
+                      <Form.Label>Duration (hrs)</Form.Label>
+                      <Form.Control type="number" min="1" max="24" name="duration" className="sw-md-8" onChange={handleChange} value={values.duration} />
+                      {errors.duration && touched.duration && <div className="d-block invalid-tooltip">{errors.duration}</div>}
+                    </div>
+                  </Col>
+                </Row>
+                <div className="mb-3">
+                  <Form.Label>Plan type</Form.Label>
+                  <Form.Select type="text" name="planType" onChange={handleChange} value={values.planType}>
+                    <option value="" disabled>
+                      Select plan
+                    </option>
+                    {planTypes.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Payment type</Form.Label>
+                  <Form.Select type="text" name="paymentStatus" onChange={handleChange} value={values.paymentStatus}>
+                    <option value="" disabled>
+                      Select type
+                    </option>
+                    {paymentTypes.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+
+                <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
+                  <span>Submit</span>
+                </Button>
+              </form>
+            )}
+            {isEvent && (
+              <form onSubmit={(e) => handleEventData(e)}>
+                <div className="mb-3">
+                  <Form.Label>First name</Form.Label>
+                  <Form.Control type="text" name="firstName" onChange={(e) => handleEventChange(e)} value={eventData.firstName} />
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Duration</Form.Label>
+                  <Form.Label>Last name</Form.Label>
+                  <Form.Control type="text" id="lastName" name="lastName" onChange={(e) => handleEventChange(e)} value={eventData.lastName} />
+                </div>
 
-                  <div className="d-flex justify-content-between align-items-center">
-                    <DatePicker
-                      className="border rounded-sm px-2 py-1"
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      selectsStart
-                      startDate={startDate}
-                      minDate={new Date()}
-                      endDate={endDate}
-                      showTimeSelect
-                    />
+                <div className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" id="email" name="email" onChange={(e) => handleEventChange(e)} value={eventData.email} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Phone number</Form.Label>
+                  <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={(e) => handleEventChange(e)} value={eventData.phoneNumber} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Amount due</Form.Label>
+                  <Form.Control type="number" id="amountDue" name="amountDue" onChange={(e) => handleEventChange(e)} value={eventData.amountDue} />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Member</Form.Label>
+                  <SelectSearch
+                    filterOptions={() => fuzzySearch(membersData)}
+                    options={membersData}
+                    search
+                    name="members"
+                    value={eventData.memberId}
+                    onChange={(val) => {
+                      eventData.memberId = val;
+                    }}
+                    placeholder="Select  member"
+                  />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Branch</Form.Label>
+                  <SelectSearch
+                    filterOptions={() => fuzzySearch(branchesData)}
+                    options={branchesData}
+                    search
+                    name="branch"
+                    value={eventData.branchId}
+                    placeholder="Select  branch"
+                    onChange={(val) => {
+                      setBranch(val);
+                      eventData.branchId = val;
+                    }}
+                  />
+                </div>
 
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      selectsEnd
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                      className="border rounded-sm px-2 py-1"
-                      showTimeSelect
-                    />
-                  </div>
-                  {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
+                <Row>
+                  <Col md="5">
+                    <div className="mb-3">
+                      <Form.Label>Start Date</Form.Label>
+
+                      <div className="d-flex justify-content-between align-items-center">
+                        <DatePicker
+                          className="border rounded-sm px-2 py-1"
+                          selected={startDate}
+                          onChange={(date) => {
+                            eventData.startTime = moment(date).format('hh:mm');
+                            eventData.startDate = date;
+
+                            setStartDate(date);
+                          }}
+                          selectsStart
+                          startDate={startDate}
+                          minDate={new Date()}
+                          endDate={endDate}
+                          showTimeSelect
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col md="5">
+                    <div className="mb-3">
+                      <Form.Label>Duration (hrs)</Form.Label>
+                      <Form.Control
+                        type="number"
+                        min="1"
+                        max="24"
+                        name="duration"
+                        className="sw-md-8"
+                        onChange={(e) => handleEventChange(e)}
+                        value={eventData.duration}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <div className="mb-3">
+                  <Form.Label>Plan type</Form.Label>
+                  <Form.Select type="text" name="planType" onChange={(e) => handleEventChange(e)} value={eventData.planType}>
+                    <option value="" disabled>
+                      Select plan
+                    </option>
+                    {planTypes.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Payment status</Form.Label>
+                  <Form.Select type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
+                    <option value="" disabled>
+                      Select status
+                    </option>
+                    {paymentTypes.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </div>
 
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
@@ -706,55 +932,101 @@ const BookingTypeList = () => {
             {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)}>
                 <div className="mb-3">
-                  <Form.Label>Code</Form.Label>
-                  <Form.Control type="text" name="code" onChange={(e) => handleUpdateChange(e)} value={updateData.code} />
+                  <Form.Label>Branch</Form.Label>
+                  <SelectSearch
+                    filterOptions={() => fuzzySearch(branchesData)}
+                    options={branchesData}
+                    search
+                    name="branch"
+                    value={updateData.branchId}
+                    placeholder="Select  branch"
+                    onChange={(val) => {
+                      setBranch(val);
+                      updateData.branchId = val;
+                    }}
+                  />
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Percentage Value(%)</Form.Label>
-                  <Form.Control type="number" name="value" onChange={(e) => handleUpdateChange(e)} value={updateData.value} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Total usage</Form.Label>
-                  <Form.Control type="number" name="totalUsage" onChange={(e) => handleUpdateChange(e)} value={updateData.totalUsage} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Usage per-user </Form.Label>
-                  <Form.Control type="number" name="usagePerUser" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerUser} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Duration</Form.Label>
-
-                  <div className="d-flex justify-content-between align-items-center">
-                    <DatePicker
-                      className="border rounded-sm px-2 py-1"
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      selectsStart
-                      minDate={new Date()}
-                      startDate={startDate}
-                      endDate={endDate}
-                      showTimeSelect
-                    />
-
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      selectsEnd
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                      showTimeSelect
-                      className="border rounded-sm px-2 py-1"
-                    />
-                  </div>
+                  <Form.Label>Select seat</Form.Label>
+                  <SelectSearch
+                    filterOptions={() => fuzzySearch(seatData)}
+                    options={seatData}
+                    search
+                    name="seats"
+                    value={updateData.seats}
+                    multiple
+                    placeholder="Select seat"
+                    printOptions="on-focus"
+                    onChange={(val) => handleSeats(val)}
+                  />
                 </div>
 
+                <Row>
+                  <Col md="5">
+                    <div className="mb-3">
+                      <Form.Label>Start Date</Form.Label>
+
+                      <div className="d-flex justify-content-between align-items-center">
+                        <DatePicker
+                          className="border rounded-sm px-2 py-1"
+                          selected={startDate}
+                          onChange={(date) => {
+                            values.startTime = moment(date).format('hh:mm');
+                            values.startDate = date;
+                            updateData.startTime = moment(date).format('hh:mm');
+                            updateData.startDate = date;
+                            setStartDate(date);
+                          }}
+                          selectsStart
+                          startDate={startDate}
+                          minDate={new Date()}
+                          endDate={endDate}
+                          showTimeSelect
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col md="5">
+                    <div className="mb-3">
+                      <Form.Label>Duration (hrs)</Form.Label>
+                      <Form.Control
+                        type="number"
+                        min="1"
+                        max="24"
+                        name="duration"
+                        className="sw-md-8"
+                        onChange={(e) => handleUpdateChange(e)}
+                        value={updateData.duration}
+                      />
+                    </div>
+                  </Col>
+                </Row>
                 <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleUpdateChange(e)} value={updateData.description} />
+                  <Form.Label>Plan type</Form.Label>
+                  <Form.Select type="text" name="planType" onChange={(e) => handleUpdateChange(e)} value={updateData.planType}>
+                    <option value="" disabled>
+                      Select plan
+                    </option>
+                    {planTypes.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Payment status</Form.Label>
+                  <Form.Select type="text" name="paymentStatus" onChange={(e) => handleUpdateChange(e)} value={updateData.paymentStatus}>
+                    <option value="" disabled>
+                      Select status
+                    </option>
+                    {paymentTypes.map((item) => (
+                      <option value={Number(item.id)} key={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </div>
 
                 <Button variant="primary" type="submit" className="btn-icon btn-icon-start w-100 mt-3">
@@ -765,6 +1037,14 @@ const BookingTypeList = () => {
 
             {isViewing && updateData && (
               <div className="">
+                <div className="d-flex justify-content-end">
+                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBooking(updateData)}>
+                    <CsLineIcons icon="edit" size="13" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
+                  </Button>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
+                    <CsLineIcons icon="bin" className="text-small" size="13" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
+                  </Button> */}
+                </div>
                 <img
                   src={`${process.env.REACT_APP_URL}/${updateData.image}`}
                   alt="branch"
@@ -774,43 +1054,59 @@ const BookingTypeList = () => {
                 <table className="mb-5 w-100">
                   <tbody>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Booking Id</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.bookingId}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Member</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.member.name}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Member Id</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.memberId}</td>
-                    </tr>
-
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">name</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.name}</td>
-                    </tr>
-
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">from Time </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.fromTime).format('llll')}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Email</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.member.email}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">to Time</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.toTime).format('llll')}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-In Time </td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('llll') : '-'}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">clock-Out Time</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('llll') : '-'}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Phone</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.member.phoneNumber}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">seat</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.seat}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Type</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.type}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">branch</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.branch}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Plan</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.plan}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Plan</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.plan}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Duration</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.duration} hours</td>
+                    </tr>
+
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('ll')}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start Time</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.startTime}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">End Date</td>
+                      <td className=" py-2 px-1 border-bottom">{moment(updateData.endDate).format('ll')}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">End time</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.endTime}</td>
+                    </tr>
+
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Seat count</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.seatCount}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Payment status</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.paymentStatus}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
@@ -818,21 +1114,63 @@ const BookingTypeList = () => {
                     </tr>
                   </tbody>
                 </table>
+
+                <h5 className="mt-5">Booked seats</h5>
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Image</th>
+                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {updateData.seats.map((i) => (
+                      <tr key={i.id}>
+                        <td className=" py-2 px-1 border-bottom">
+                          <img
+                            src={`${process.env.REACT_APP_URL}/${i.photo}`}
+                            alt="avatar"
+                            className="avatar avatar-sm me-2 rounded d-none d-md-inline"
+                            style={{ width: '30px', height: '30px' }}
+                          />
+                        </td>
+                        <td className=" py-2 px-1 border-bottom">{i.name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <h5 className="mt-5">Calendar</h5>
+                <table className="w-full mb-5">
+                  <thead>
+                    <tr>
+                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Clock In-Time</th>
+                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Clock Out-Time</th>
+                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {updateData.registers.map((i) => (
+                      <tr key={i.id}>
+                        <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('hh:mm') : '-'}</td>
+                        <td className=" py-2 px-1 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('hh:mm') : '-'}</td>
+                        <td className=" py-2 px-1 border-bottom">{moment(updateData.date).format('ll')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
                 <div className="text-center">
-                  {/* <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBooking(updateData)}>
-                    <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
-                  </Button> */}
-                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
-                    <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
-                  </Button> */}
-                  {updateData.statusId == 2 || updateData.statusId == 3 ? (
-                    <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData)}>
-                      <CsLineIcons icon={updateData.clockInTime ? 'minus' : 'plus'} className="text-small" style={{ width: '13px', height: '13px' }} />{' '}
-                      <span className="sr-only">{updateData.clockInTime ? 'Clock out' : 'Clock in'}</span>
-                    </Button>
-                  ) : (
-                    ''
-                  )}
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    className="btn-icon btn-icon-start  mb-1 me-4"
+                    onClick={() => handleChecking(updateData, 'clockIn')}
+                  >
+                    <CsLineIcons icon="plus" className="text-small" /> <span className="sr-only">Clock in</span>
+                  </Button>
+                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => handleChecking(updateData, 'clockOut')}>
+                    <CsLineIcons icon="minus" className="text-small" /> <span className="sr-only">Clock out</span>
+                  </Button>
                 </div>
               </div>
             )}

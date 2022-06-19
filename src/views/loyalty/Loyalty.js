@@ -313,21 +313,21 @@ const CampaignTypeList = () => {
     dispatch(getCampaigns(1, ''));
   }, [startDateFrom, startDateTo, branchId, membershipId]);
 
-  // React.useEffect(() => {
-  //   if(!campaignsData.length) return
-  //   const newdata = campaignsData.map((item) => {
-  //     return {
-  //       cell1: item.description,
-  //       cell2: item.totalUsage,
-  //       cell3: item.usagePerMember,
-  //       cell4: item.value,
-  //       cell5: moment(item.startDate).format('llll'),
-  //       cell6: moment(item.expiryDate).format('llll'),
-  //       cell7: item.status,
-  //     };
-  //   });
-  //   setDatas(newdata);
-  // }, [campaignsData]);
+  React.useEffect(() => {
+    if(!campaignsData.length) return
+    const newdata = campaignsData.map((item) => {
+      return {
+        cell1: item.description,
+        cell2: item.totalUsage,
+        cell3: item.usagePerMember,
+        cell4: item.value,
+        cell5: moment(item.startDate).format('llll'),
+        cell6: moment(item.expiryDate).format('llll'),
+        cell7: item.status,
+      };
+    });
+    setDatas(newdata);
+  }, [campaignsData]);
 
   const columns = [
     {
@@ -407,15 +407,15 @@ const CampaignTypeList = () => {
         </Col>
         <Col md="7" lg="5" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
+          {/* <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
                 <CsvDownloader filename="campaigns" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
                   <CsLineIcons icon="download" />
                 </CsvDownloader>
               </Dropdown.Toggle>
             </OverlayTrigger>
-          </Dropdown>
+          </Dropdown> */}
           {/* Export Dropdown End */}
 
           {/* Length Start */}

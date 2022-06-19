@@ -38,7 +38,7 @@ export const getBookings =
   async (dispatch) => {
     const response = await axios
       .get(
-        `${SERVICE_URL}/bookings?search=${search}&page=${page}&startTimeFrom=${startTimeFrom}&startTimeTo=${startTimeTo}&endTimeFrom=${endTimeFrom}&endTimeTo=${endTimeTo}&SeatId=${SeatId}}&MemberId=${MemberId}`,
+        `${SERVICE_URL}/bookings?search=${search}&page=${page}&fromDate=${startTimeFrom}&toDate=${startTimeTo}&MemberId=${MemberId}`,
         requestConfig
       )
       .catch((err) => {
@@ -50,11 +50,11 @@ export const getBookings =
     }
   };
 
-export const getPaymentStatusTypes  = () => async () => {
+export const  getPlanTypes  = () => async () => {
   return axios.get(`${SERVICE_URL}/bookings/plan-types`, requestConfig);
 };
 
-export const getPlanTypes = () => async () => {
+export const getPaymentStatusTypes = () => async () => {
   return axios.get(`${SERVICE_URL}/bookings/payment-status-types`, requestConfig);
 };
 export const  getBooking = (data) => async () => {
@@ -62,7 +62,7 @@ export const  getBooking = (data) => async () => {
 };
 
 export const updateBooking = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${data.id}`, data, requestConfig);
+  return axios.post(`${SERVICE_URL}/bookings/${data}`, data, requestConfig);
 };
 
 export const deleteBooking = (data) => async () => {
@@ -79,7 +79,23 @@ export const checkoutBooking = (data) => async () => {
 
 export const addBooking = (data) => async (dispatch) => {
   axios
-    .post(`${SERVICE_URL}/bookings`, data, requestConfig)
+    .post(`${SERVICE_URL}/bookings/book-coworking`, data, requestConfig)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(addbooking(response.data));
+        toast.success('Booking created');
+        dispatch(updatestatus('success'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
+};
+
+export const addEventBooking = (data) => async (dispatch) => {
+  axios
+    .post(`${SERVICE_URL}/bookings/book-event`, data, requestConfig)
     .then((response) => {
       if (response.status === 200) {
         dispatch(addbooking(response.data));

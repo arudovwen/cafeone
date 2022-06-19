@@ -18,6 +18,11 @@ const Dashboard = () => {
    const [seatUsage, setSeatUsage] = React.useState([]);
   const transactions = useSelector((state) => state.transactions.items);
   const dispatch = useDispatch();
+   // Create our number formatter.
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'NGN',
+  });
   React.useEffect(() => {
     axios.get(`${SERVICE_URL}/reports`, requestConfig).then((res) => {
       if (res.status === 200) {
@@ -114,16 +119,13 @@ const Dashboard = () => {
                 <Card.Body className="pt-0 pb-0 h-100">
                   <Row className="g-0 h-100 align-content-center justify-content-between">
                     <Col xs="10" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100">
-                      <span className="body-link stretched-link">{item.name}</span>
+                      <span className="body-link stretched-link">{item.member.name}</span>
                     </Col>
 
                     <Col xs="12" md="3" className="d-flex align-items-center mb-1 mb-md-0 text-alternate">
-                      <Badge>
-                        <span className="">₦</span>
-                        {item.amountPaid}
-                      </Badge>
+                      <Badge>{formatter.format(item.subTotal)}</Badge>
                     </Col>
-                    <Col xs="12" md="4" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate">
+                    <Col xs="12" md="4" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate text-small">
                       {item.narration}
                     </Col>
                   </Row>
@@ -152,10 +154,9 @@ const Dashboard = () => {
         {/* Top Selling f Items Start */}
         <Col>
           <h2 className="small-title">Top Booked Spaces</h2>
-           <div className="mb-2">
-
+          <div className="mb-2">
             {seatUsage.length ? (
-               seatUsage.map((item) => (
+              seatUsage.map((item) => (
                 <Card className="mb-2 overflow-hidden" key={item.id}>
                   <Row className="g-0 sh-14 sh-md-10 overflow-hidden">
                     <Col className="col-auto h-100">

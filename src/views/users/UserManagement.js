@@ -46,6 +46,7 @@ const UserManagementList = () => {
     phoneNumber: '',
     note: '',
     membershipTypeId: '',
+    gender:'',
   };
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -84,7 +85,7 @@ const UserManagementList = () => {
     gender: Yup.string().required('Gender is required'),
     birthDate: Yup.string().required('Dob is required'),
     phoneNumber: Yup.string().required('Phone number is required'),
-     membershipTypeId: Yup.string().required('Field is required'),
+    membershipTypeId: Yup.string().required('Field is required'),
   });
 
   const toggleModal = () => {
@@ -134,6 +135,7 @@ const UserManagementList = () => {
     dispatch(getMember(val.id)).then((res) => {
       const info = res.data;
       info.birthDate = moment(res.data.birthDate).format('yyyy-MM-DD');
+      info.photo = res.data.avatar;
       setUpdateData(info);
       setIsAdding(false);
       setIsViewing(false);
@@ -232,10 +234,11 @@ const UserManagementList = () => {
       values.birthDate = '';
       values.occupation = '';
       values.photo = '';
-      values.gender = 'male';
+      values.gender = '';
       values.twitter = '';
       values.note = '';
       values.phoneNumber = '';
+      values.membershipTypeId= ''
 
       setUserModal(false);
     }
@@ -251,7 +254,7 @@ const UserManagementList = () => {
         cell1: `${item.firstName} ${item.lastName}`,
         cell2: item.email,
         cell3: item.phone,
-        cell4: item.membershipStatus,
+        cell4: item.membershipType,
       };
     });
     setDatas(newdata);
@@ -272,7 +275,7 @@ const UserManagementList = () => {
     },
     {
       id: 'cell4',
-      displayName: 'MEMBERSHIP STATUS',
+      displayName: 'MEMBERSHIP TYPE',
     },
   ];
   return (
@@ -362,7 +365,7 @@ const UserManagementList = () => {
           <div className="text-muted text-small cursor-pointer sort">Phone</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Membership Status</div>
+          <div className="text-muted text-small cursor-pointer sort">Membership Type</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-md-end">
           <div className="text-muted text-small cursor-pointer sort text-md-right">Action</div>
@@ -398,13 +401,9 @@ const UserManagementList = () => {
                 <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
               </Col>
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5">
-                <div className="text-muted text-small d-md-none">Status</div>
+                <div className="text-muted text-small d-md-none">Membership Type</div>
                 <div>
-                  {item.membershipStatusId ? (
-                    <Badge bg="outline-primary">{item.membershipStatus}</Badge>
-                  ) : (
-                    <Badge bg="outline-secondary">{item.membershipStatus}</Badge>
-                  )}
+                  <Badge bg="outline-secondary">{item.membershipType}</Badge>
                 </div>
               </Col>
               <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-last order-md-last">
@@ -480,7 +479,7 @@ const UserManagementList = () => {
                 <div className="mb-3">
                   <Form.Label>Gender</Form.Label>
                   <Form.Select type="select" name="gender" onChange={handleChange} value={values.gender} placeholder="Select gender">
-                    <option disabled>Select gender</option>
+                    <option disabled value=''>Select gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
@@ -520,16 +519,9 @@ const UserManagementList = () => {
                   {errors.phoneNumber && touched.phoneNumber && <div className="d-block invalid-tooltip">{errors.phoneNumber}</div>}
                 </div>
 
-                 <div className="mb-3">
+                <div className="mb-3">
                   <Form.Label>Membership type</Form.Label>
-                  <Form.Select
-                    type="text"
-                    id="membershipTypeId"
-                    name="membershipTypeId"
-                    onChange={handleChange}
-                    value={values.membershipTypeId}
-
-                  >
+                  <Form.Select type="text" id="membershipTypeId" name="membershipTypeId" onChange={handleChange} value={values.membershipTypeId}>
                     <option value="" disabled>
                       Select membership type
                     </option>
@@ -539,7 +531,7 @@ const UserManagementList = () => {
                       </option>
                     ))}
                   </Form.Select>
-                   {errors.membershipTypeId && touched.membershipTypeId && <div className="d-block invalid-tooltip">{errors.membershipTypeId}</div>}
+                  {errors.membershipTypeId && touched.membershipTypeId && <div className="d-block invalid-tooltip">{errors.membershipTypeId}</div>}
                 </div>
 
                 <div className="border-0 mt-3 mb-5">
@@ -575,7 +567,7 @@ const UserManagementList = () => {
                 <div className="mb-3">
                   <Form.Label>Gender</Form.Label>
                   <Form.Select type="select" name="gender" onChange={(e) => handleUpdateChange(e)} value={updateData.gender} placeholder="Select gender">
-                    <option disabled>Select gender</option>
+                    <option disabled value=''>Select gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
@@ -587,7 +579,7 @@ const UserManagementList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Address 1</Form.Label>
-                  <Form.Control type="text" id="address1" name="address1" onChange={(e) => handleUpdateChange(e)} value={values.address1} />
+                  <Form.Control type="text" id="address1" name="address1" onChange={(e) => handleUpdateChange(e)} value={updateData.address1} />
                 </div>
 
                 <div className="mb-3">
@@ -615,7 +607,6 @@ const UserManagementList = () => {
                     name="membershipTypeId"
                     onChange={(e) => handleUpdateChange(e)}
                     value={updateData.membershipTypeId}
-
                   >
                     <option value={0} disabled>
                       Select membership type
@@ -645,13 +636,13 @@ const UserManagementList = () => {
                     className="rounded-circle"
                     style={{ width: '80px', height: '80px' }}
                   />
-                  {!updateData.membershipStatusId ? (
+                  {/* {!updateData.membershipStatusId ? (
                     <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => subscribeUser(updateData.id)}>
                       <span className="">Subscribe</span>
                     </Button>
                   ) : (
                     ''
-                  )}
+                  )} */}
                 </div>
                 <table className="mb-5">
                   <tbody>
@@ -692,8 +683,8 @@ const UserManagementList = () => {
                       <td className=" py-2 px-1 border-bottom">{updateData.occupation}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership status</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.membershipStatus}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership type</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.membershipType}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership start date</td>
@@ -703,10 +694,13 @@ const UserManagementList = () => {
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership expiry date</td>
                       <td className=" py-2 px-1 border-bottom">{moment(updateData.membershipExpiryDate).format('l')}</td>
                     </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Note</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.note}</td>
-                    </tr>
+
+                    {updateData.note && (
+                      <tr>
+                        <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Note</td>
+                        <td className=" py-2 px-1 border-bottom">{updateData.note}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
                 <div className="text-center">
