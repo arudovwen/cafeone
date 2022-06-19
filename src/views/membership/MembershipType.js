@@ -321,7 +321,7 @@ const MembershipTypeList = () => {
             </span>
           </div> */}
 
-          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewMembership()}>
+          <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewMembership()}>
             <CsLineIcons icon="plus" /> <span>Add membership</span>
           </Button>
 
@@ -393,15 +393,15 @@ const MembershipTypeList = () => {
                 <div className="text-alternate">{item.description}</div>
               </Col>
 
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
 
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-5 order-md-last">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-5 order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
-                  className="form-check mt-2 ps-5 ps-md-2"
+                  className=""
                   type="checkbox"
                   checked={item.isActive}
                   onChange={(e) => {

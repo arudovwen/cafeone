@@ -296,12 +296,12 @@ const UserManagementList = () => {
           {/* Title End */}
 
           {/* Top Buttons Start */}
-          <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
+          {/* <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
             <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
               <CsLineIcons icon="sort" />
             </Button>
-          </Col>
-          {/* Top Buttons End */}
+          </Col> */}
+          Top Buttons End
         </Row>
       </div>
 

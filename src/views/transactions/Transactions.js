@@ -142,7 +142,7 @@ const TransactionList = () => {
         </Row>
       </div>
 
-      <Row className="mb-3">
+      <Row className="mb-3 gap-1">
         <Col md="5" lg="4" xxl="4" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start mb-1 search-input-container w-100 shadow bg-foreground">
@@ -157,7 +157,7 @@ const TransactionList = () => {
 
           {/* Search End */}
         </Col>
-        <Col md="7" lg="8" xxl="8" className="mb-1 text-end">
+        <Col md="7" lg="8" xxl="8" className="mb-1 text-end d-none d-md-inline">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
@@ -181,7 +181,7 @@ const TransactionList = () => {
           {/* Length End */}
         </Col>
       </Row>
-      <Row className="mb-3">
+      <Row className="mb-3 gap-1">
         <Col sm="12" md="5"  className="mb-1 d-flex align-items-center ">
           {/* TOGGLE Start */}
           <div className="d-flex align-items-center me-4 mb-1  w-100 ">
@@ -199,9 +199,9 @@ const TransactionList = () => {
         </Col>
         <Col sm="12" md="5">
           {' '}
-          <div className="d-flex justify-content-end  align-items-center px-3">
+          <div className="d-flex justify-content-end  align-items-center px-md-3 gap-1">
             <DatePicker
-              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted me-2"
+              className="border rounded-sm  px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
               selected={fromDate}
               onChange={(date) => setFromDate(date)}
               selectsStart
@@ -221,7 +221,7 @@ const TransactionList = () => {
               minDate={fromDate}
               isClearable
               placeholderText="Filter to"
-              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              className="border rounded-sm  px-2 px-lg-3 py-2 py-lg-2 text-muted w-100"
             />
           </div>
         </Col>
@@ -277,26 +277,27 @@ const TransactionList = () => {
                     <span>{item.member.name}</span>
                   </div>
                 </Col>
-                <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Amount </div>
                   <div className="text-alternate text-medium"> {formatter.format(item.amountPayable)}</div>
                 </Col>
-                <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Discount</div>
                   <div className="text-alternate text-medium">{formatter.format(item.discount)}</div>
                 </Col>
 
-                <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Subtotal</div>
                   <div className="text-alternate text-medium"> {formatter.format(item.subTotal)}</div>
                 </Col>
-                <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Status</div>
                   <div className="text-alternate text-medium text-capitalize">{item.status.toLowerCase()}</div>
                 </Col>
                 <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Narration</div>
-                  <div className="text-alternate text-small">{item.narration}</div>
+                  <div className="text-alternate text-small d-none d-md-inline">{item.narration}</div>
+                   <div className="text-alternate text-medium d-md-none">{item.narration}</div>
                 </Col>
               </Row>
             </Card.Body>

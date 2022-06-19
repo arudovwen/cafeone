@@ -330,7 +330,7 @@ const AdminManagementList = () => {
               <Col xs="6" md="1" className="d-flex flex-column justify-content-end align-items-md-start mb-2 mb-md-0 order-4 text-md-end order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
-                  className="form-check mt-md-2 "
+                  className=""
                   type="checkbox"
                   checked={item.isActive}
                   onChange={(e) => {

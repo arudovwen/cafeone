@@ -523,7 +523,7 @@ const BookingTypeList = () => {
 
           {/* Search End */}
         </Col>
-        <Col md="6" lg="6" xxl="6" className="mb-1 d-flex justify-content-end align-items-center">
+        <Col md="6" lg="6" xxl="6" className="mb-1 d-none d-md-flex justify-content-end align-items-center">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
@@ -550,9 +550,9 @@ const BookingTypeList = () => {
       {/* Date filter starts   */}
       <Row className="mb-4 justify-content-between mb-2 mb-lg-1">
         <Col xs="12" md="5" className="mb-2 mb-md:0">
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center gap-1">
             <DatePicker
-              className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2"
+              className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
               selected={startTimeFrom}
               onChange={(date) => setstartTimeFrom(date)}
               selectsStart
@@ -572,7 +572,7 @@ const BookingTypeList = () => {
               minDate={startTimeFrom}
               isClearable
               placeholderText="Start Date To"
-              className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2"
+              className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
               showTimeSelect
             />
           </div>
@@ -631,34 +631,34 @@ const BookingTypeList = () => {
                 <table className="w-full">
                   <tbody>
                     <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom">Type :</td>
-                      <td className="text-capitalize text-alternate border-bottom">{item.type}</td>
+                      <td className="text-muted  text-uppercase border-bottom py-2">Type :</td>
+                      <td className="text-capitalize text-alternate border-bottom py-2">{item.type}</td>
                     </tr>
                     <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom">name :</td>
-                      <td className="text-alternate border-bottom">{item.member.name}</td>
+                      <td className="text-muted  text-uppercase border-bottom py-2">name :</td>
+                      <td className="text-alternate border-bottom py-2">{item.member.name}</td>
                     </tr>
                     <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom">Date :</td>
-                      <td className="text-alternate border-bottom">
+                      <td className="text-muted  text-uppercase border-bottom py-2">Date :</td>
+                      <td className="text-alternate border-bottom py-2">
                         <span>{moment(item.startDate).format('ll')}</span>
                       </td>
                     </tr>
                     <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom">Time :</td>
-                      <td className="text-alternate text-alternate border-bottom">
+                      <td className="text-muted  text-uppercase border-bottom py-2">Time :</td>
+                      <td className="text-alternate text-alternate border-bottom py-2">
                         <span>{item.startTime}</span>
                       </td>
                     </tr>
 
                     <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom">Plan :</td>
-                      <td className="text-capitalize text-alternate border-bottom">{item.plan.toLowerCase()}</td>
+                      <td className="text-muted  text-uppercase border-bottom py-2">Plan :</td>
+                      <td className="text-capitalize text-alternate border-bottom py-2">{item.plan.toLowerCase()}</td>
                     </tr>
 
                     <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom">Status :</td>
-                      <td className="text-capitalize text-alternate border-bottom"> {item.status.toLowerCase()}</td>
+                      <td className="text-muted  text-uppercase border-bottom py-2">Status :</td>
+                      <td className="text-capitalize text-alternate border-bottom py-2"> {item.status.toLowerCase()}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -760,7 +760,7 @@ const BookingTypeList = () => {
 
                       <div className="d-flex justify-content-between align-items-center">
                         <DatePicker
-                          className="border rounded-sm px-2 py-1"
+                          className="border rounded-sm px-2 py-1 w-100"
                           selected={startDate}
                           onChange={(date) => {
                             values.startTime = moment(date).format('hh:mm');

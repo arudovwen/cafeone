@@ -419,7 +419,7 @@ const CampaignTypeList = () => {
           {/* Export Dropdown End */}
 
           {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+          <Dropdown align={{ xs: 'end' }} className="d-none d-md-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
                 {campaignsData.length} Items
@@ -430,11 +430,11 @@ const CampaignTypeList = () => {
         </Col>
       </Row>
       {/* Date filter starts   */}
-      <Row className="mb-5 justify-content-between mb-2 mb-lg-1">
+      <Row className="mb-5 justify-content-between mb-2 mb-lg-1 gap-1 gap-md-0">
         <Col xs="12" md="5" className="mb-2 mb-md:0">
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center gap-3">
             <DatePicker
-              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted me-3"
+              className="border rounded-sm  px-2 px-lg-3 py-2 py-lg-2 text-muted w-100"
               selected={startDateFrom}
               onChange={(date) => setStartDateFrom(date)}
               selectsStart
@@ -453,7 +453,7 @@ const CampaignTypeList = () => {
               minDate={startDateFrom}
               isClearable
               placeholderText="Start Date To"
-              className="border rounded-sm px-2 px-lg-3 py-1 py-lg-2 text-muted"
+              className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted w-100"
               showTimeSelect
             />
           </div>
@@ -478,7 +478,7 @@ const CampaignTypeList = () => {
             placeholder="Filter by membership"
           />
         </Col>
-        <Col xs="12" md="2" className="d-flex align-items-center">
+        <Col xs="12" md="2" className="d-flex align-items-center mt-2 mt-md-0">
           <span onClick={() => resetFilter()} className="cursor-pointer d-flex align-items-center">
             <span className="me-1">Reset filter</span> <CsLineIcons icon="refresh-horizontal" size="13" />
           </span>
@@ -517,7 +517,7 @@ const CampaignTypeList = () => {
           <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
-                <div className="text-muted text-small d-md-none">{item.branch ?'Branch':'Membership type'}</div>
+                <div className="text-muted text-small d-md-none">{item.branch ? 'Branch' : 'Membership type'}</div>
                 <div className="text-alternate">{item.branch ? item.branch : item.membershipType}</div>
               </Col>
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
@@ -536,15 +536,15 @@ const CampaignTypeList = () => {
                 <div className="text-alternate">{item.usagePerMember ? item.usagePerMember : '-'}</div>
               </Col>
 
-              <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-6">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5 px-0">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.statusId ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
 
-              <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-6 order-md-5">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last order-md-5 px-0">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
-                  className="form-check ps-md-2"
+                  className=""
                   type="checkbox"
                   checked={item.statusId}
                   onChange={(e) => {
@@ -707,7 +707,7 @@ const CampaignTypeList = () => {
 
                     <div className="d-flex justify-content-between align-items-center">
                       <DatePicker
-                        className="border rounded-sm px-2 py-1 text-muted"
+                        className="border rounded-sm px-2 py-1 text-muted w-100"
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
                         selectsStart
@@ -725,7 +725,7 @@ const CampaignTypeList = () => {
                         startDate={startDate}
                         endDate={endDate}
                         minDate={startDate}
-                        className="border rounded-sm px-2 py-1 text-muted"
+                        className="border rounded-sm px-2 py-1 text-muted w-100"
                         placeholder="Expiry date"
                         showTimeSelect
                       />

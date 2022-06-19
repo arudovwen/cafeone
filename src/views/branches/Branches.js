@@ -483,14 +483,14 @@ const BranchesList = () => {
                 <div className="text-muted text-small d-md-none">Seats</div>
                 <div className="text-alternate">{item.seatCount}</div>
               </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.statusId ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-start align-items-md-end mb-2 mb-md-0 order-5 px-1 order-md-last">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-start align-items-md-end mb-2 mb-md-0 order-5 px-1 order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
-                  className="form-check mt-md-2 me-auto"
+                  className=""
                   type="checkbox"
                   checked={item.statusId}
                   onChange={(e) => {
@@ -710,7 +710,7 @@ const BranchesList = () => {
                               <td className="px-2  border-bottom py-2"> {item.name}</td>
                               <td className="px-2  border-bottom py-2">
                                 <Form.Switch
-                                  className="form-check mt-md-2 me-auto"
+                                  className=""
                                   type="checkbox"
                                   checked={item.statusId}
                                   onChange={(e) => {
