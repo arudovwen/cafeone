@@ -389,7 +389,7 @@ const CampaignTypeList = () => {
       <Row className="mb-3">
         <Col md="5" lg="7" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
-          <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
+          {/* <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
             <span className="search-magnifier-icon">
               <CsLineIcons icon="search" />
@@ -397,7 +397,7 @@ const CampaignTypeList = () => {
             <span className="search-delete-icon d-none">
               <CsLineIcons icon="close" />
             </span>
-          </div>
+          </div> */}
 
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewCampaign()}>
             <CsLineIcons icon="plus" /> <span>Add campaign</span>
@@ -487,7 +487,7 @@ const CampaignTypeList = () => {
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
+          <div className="text-muted text-small cursor-pointer sort">BRANCH / MEMBERSHIP</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">START DATE</div>
@@ -517,8 +517,8 @@ const CampaignTypeList = () => {
           <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
-                <div className="text-muted text-small d-md-none">Description</div>
-                <div className="text-alternate">{item.description}</div>
+                <div className="text-muted text-small d-md-none">{item.branch ?'Branch':'Membership type'}</div>
+                <div className="text-alternate">{item.branch ? item.branch : item.membershipType}</div>
               </Col>
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
                 <div className="text-muted text-small d-md-none">Start Date</div>

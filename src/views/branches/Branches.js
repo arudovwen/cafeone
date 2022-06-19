@@ -692,7 +692,7 @@ const BranchesList = () => {
 
                           <th className="text-small text-muted  font-weight-bold  py-2 px-2  border-bottom text-uppercase text-muted">Status</th>
 
-                          <th className=" text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Action</th>
+                          <th className=" text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-center">Action</th>
                         </tr>
                       </thead>
                       <tbody>

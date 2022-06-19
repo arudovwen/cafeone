@@ -56,7 +56,7 @@ const BookingTypeList = () => {
     firstName: '',
     lastName: '',
     amountDue: '',
-    memberId: '',
+    // memberId: '',
     branchId: '',
     startTime: '',
     duration: '',
@@ -220,6 +220,7 @@ const BookingTypeList = () => {
       toggleModal();
     });
   }
+
 
   // highlight-starts
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -542,7 +543,7 @@ const BookingTypeList = () => {
         <Col xs="12" md="5" className="mb-2 mb-md:0">
           <div className="d-flex align-items-center">
             <DatePicker
-              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted me-3"
+              className="border rounded-sm  px-2 px-lg-3 py-1 py-lg-2 text-muted "
               selected={startTimeFrom}
               onChange={(date) => setstartTimeFrom(date)}
               selectsStart
@@ -586,80 +587,83 @@ const BookingTypeList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">Name</div>
+      <Row className="g-0 h-100 align-content-center d-none d-lg-none ps-5 pe-5 mb-2 custom-sort">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
 
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">DATE</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PLAN</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PAID STATUS</div>
         </Col>
-        {/* <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
+        {/* <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Seat</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">Status</div>
         </Col> */}
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
       </Row>
       {/* List Header End */}
 
       {/* List Items Start */}
-      {bookingsData.map((item) => (
-        <Card key={item.id} className="mb-2">
-          <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2 px-1">
-                <div className="text-muted text-small d-md-none">name</div>
-                <div className="text-alternate">{item.member.name}</div>
-              </Col>
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1 px-1">
-                <div className="text-muted text-small d-md-none">Date</div>
-                <div className="text-alternate">
-                  <span>{moment(item.fromTime).format('llll')}</span>
+      <Row  className="mt-5">
+        {bookingsData.map((item) => (
+          <Col xs="12" md="4" key={item.id}  className="mb-3">
+            <Card className="mb-2">
+              <Card.Body className="px-3 py-3">
+                <table className="w-full">
+                  <tbody>
+                    <tr className="">
+                      <td className="text-muted  text-uppercase">Type</td>
+                      <td className="text-capitalize text-alternate">{item.type}</td>
+                    </tr>
+                    <tr className="">
+                      <td className="text-muted  text-uppercase">name</td>
+                      <td className="text-alternate">{item.member.name}</td>
+                    </tr>
+                    <tr className="">
+                      <td className="text-muted  text-uppercase">Date</td>
+                      <td className="text-alternate">
+                        <span>{moment(item.startDate).format('ll')}</span>
+                      </td>
+                    </tr>
+                    <tr className="">
+                      <td className="text-muted  text-uppercase">Time</td>
+                      <td className="text-alternate text-alternate">
+                        <span>{item.startTime}</span>
+                      </td>
+                    </tr>
+
+                    <tr className="">
+                      <td className="text-muted  text-uppercase">Plan</td>
+                      <td className="text-capitalize text-alternate">{item.plan.toLowerCase()}</td>
+                    </tr>
+
+                    <tr className="">
+                      <td className="text-muted  text-uppercase">Status</td>
+                      <td className="text-capitalize text-alternate"> {item.status.toLowerCase()}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div className="d-flex  justify-content-end align-items-md-center mt-2">
+                  <Button variant="primary" type="button" size="sm" onClick={() => viewBooking(item)} className="">
+                    View
+                  </Button>
                 </div>
-              </Col>
-
-              {/* <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4 px-1 px-1">
-                <div className="text-muted text-small d-md-none">toTime</div>
-                <div className="text-alternate">{moment(item.toTime).format('llll')}</div>
-              </Col> */}
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
-                <div className="text-muted text-small d-md-none">Plan</div>
-                <div>{item.plan}</div>
-              </Col>
-              {/* <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5 px-1">
-                <div className="text-muted text-small d-md-none">Seat</div>
-                <div>{item.seat}</div>
-              </Col> */}
-
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-6 order-md-5">
-                <div className="text-muted text-small d-md-none">Status</div>
-                <div> {item.status}</div>
-              </Col>
-
-              <Col
-                xs="12"
-                md="1"
-                className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end px-1 order-md-last"
-              >
-                <Button variant="primary" type="button" size="sm" onClick={() => viewBooking(item)} className="">
-                  View
-                </Button>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
-
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
       {/* List Items End */}
 
       {/* Pagination Start */}
@@ -828,7 +832,7 @@ const BookingTypeList = () => {
                   <Form.Label>Amount due</Form.Label>
                   <Form.Control type="number" id="amountDue" name="amountDue" onChange={(e) => handleEventChange(e)} value={eventData.amountDue} />
                 </div>
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   <Form.Label>Member</Form.Label>
                   <SelectSearch
                     filterOptions={() => fuzzySearch(membersData)}
@@ -841,7 +845,7 @@ const BookingTypeList = () => {
                     }}
                     placeholder="Select  member"
                   />
-                </div>
+                </div> */}
                 <div className="mb-3">
                   <Form.Label>Branch</Form.Label>
                   <SelectSearch
@@ -1038,7 +1042,7 @@ const BookingTypeList = () => {
             {isViewing && updateData && (
               <div className="">
                 <div className="d-flex justify-content-end">
-                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBooking(updateData)}>
+                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 " onClick={() => editBooking(updateData)}>
                     <CsLineIcons icon="edit" size="13" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
                   </Button>
                   {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
@@ -1054,63 +1058,65 @@ const BookingTypeList = () => {
                 <table className="mb-5 w-100">
                   <tbody>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Member</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.member.name}</td>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Member</td>
+                      <td className=" py-2 border-bottom">{updateData.member.name}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Email</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.member.email}</td>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Email</td>
+                      <td className=" py-2 border-bottom">{updateData.member.email}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Phone</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.member.phoneNumber}</td>
-                    </tr>
-
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Type</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.type}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Plan</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.plan}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Plan</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.plan}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom py-2 px-1 border-bottom text-uppercase text-muted"> Duration</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.duration} hours</td>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Phone</td>
+                      <td className=" py-2 border-bottom">{updateData.member.phoneNumber}</td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.startDate).format('ll')}</td>
+                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Type</td>
+                      <td className=" py-2 border-bottom">{updateData.type}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start Time</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.startTime}</td>
+                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Plan</td>
+                      <td className=" py-2 border-bottom">{updateData.plan}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">End Date</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.endDate).format('ll')}</td>
+                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Plan</td>
+                      <td className=" py-2 border-bottom">{updateData.plan}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">End time</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.endTime}</td>
+                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Duration</td>
+                      <td className=" py-2 border-bottom">
+                        {updateData.duration} {updateData.duration > 1 ? 'hours' : 'hour'}
+                      </td>
                     </tr>
 
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Seat count</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.seatCount}</td>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Start date </td>
+                      <td className=" py-2 border-bottom">{moment(updateData.startDate).format('ll')}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Payment status</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.paymentStatus}</td>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Start Time</td>
+                      <td className=" py-2 border-bottom">{updateData.startTime}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.status === '2' ? 'Not checked in' : updateData.status}</td>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">End Date</td>
+                      <td className=" py-2 border-bottom">{moment(updateData.endDate).format('ll')}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">End time</td>
+                      <td className=" py-2 border-bottom">{updateData.endTime}</td>
+                    </tr>
+
+                    <tr>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Seat count</td>
+                      <td className=" py-2 border-bottom">{updateData.seatCount}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Payment status</td>
+                      <td className=" py-2 border-bottom">{updateData.paymentStatus}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">status</td>
+                      <td className=" py-2 border-bottom">{updateData.status === '2' ? 'Not checked in' : updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1119,14 +1125,14 @@ const BookingTypeList = () => {
                 <table className="w-full">
                   <thead>
                     <tr>
-                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Image</th>
-                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Name</th>
+                      <th className="font-weight-bold  py-2 border-bottom text-muted">Image</th>
+                      <th className="font-weight-bold  py-2 border-bottom text-muted">Name</th>
                     </tr>
                   </thead>
                   <tbody>
                     {updateData.seats.map((i) => (
                       <tr key={i.id}>
-                        <td className=" py-2 px-1 border-bottom">
+                        <td className=" py-2 border-bottom">
                           <img
                             src={`${process.env.REACT_APP_URL}/${i.photo}`}
                             alt="avatar"
@@ -1134,7 +1140,7 @@ const BookingTypeList = () => {
                             style={{ width: '30px', height: '30px' }}
                           />
                         </td>
-                        <td className=" py-2 px-1 border-bottom">{i.name}</td>
+                        <td className=" py-2 border-bottom">{i.name}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1144,17 +1150,17 @@ const BookingTypeList = () => {
                 <table className="w-full mb-5">
                   <thead>
                     <tr>
-                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Clock In-Time</th>
-                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Clock Out-Time</th>
-                      <th className="font-weight-bold  py-2 px-1 border-bottom text-muted">Date</th>
+                      <th className="font-weight-bold  py-2 border-bottom text-muted">Clock In-Time</th>
+                      <th className="font-weight-bold  py-2 border-bottom text-muted">Clock Out-Time</th>
+                      <th className="font-weight-bold  py-2 border-bottom text-muted">Date</th>
                     </tr>
                   </thead>
                   <tbody>
                     {updateData.registers.map((i) => (
                       <tr key={i.id}>
-                        <td className=" py-2 px-1 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('hh:mm') : '-'}</td>
-                        <td className=" py-2 px-1 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('hh:mm') : '-'}</td>
-                        <td className=" py-2 px-1 border-bottom">{moment(updateData.date).format('ll')}</td>
+                        <td className=" py-2 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('hh:mm') : '-'}</td>
+                        <td className=" py-2 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('hh:mm') : '-'}</td>
+                        <td className=" py-2 border-bottom">{moment(updateData.date).format('ll')}</td>
                       </tr>
                     ))}
                   </tbody>
