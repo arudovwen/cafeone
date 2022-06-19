@@ -1157,10 +1157,10 @@ const BookingTypeList = () => {
                   </thead>
                   <tbody>
                     {updateData.registers.map((i) => (
-                      <tr key={i.id}>
-                        <td className=" py-2 border-bottom">{updateData.clockInTime ? moment(updateData.clockInTime).format('hh:mm') : '-'}</td>
-                        <td className=" py-2 border-bottom">{updateData.clockOutTime ? moment(updateData.clockOutTime).format('hh:mm') : '-'}</td>
-                        <td className=" py-2 border-bottom">{moment(updateData.date).format('ll')}</td>
+                      <tr key={i.date}>
+                        <td className=" py-2 border-bottom">{i.clockInTime ? moment(i.clockInTime).format('hh:mm') : '-'}</td>
+                        <td className=" py-2 border-bottom">{i.clockOutTime ? moment(i.clockOutTime).format('hh:mm') : '-'}</td>
+                        <td className=" py-2 border-bottom">{moment(i.date).format('ll')}</td>
                       </tr>
                     ))}
                   </tbody>
