@@ -21,7 +21,7 @@ const ForgotPassword = () => {
 
   const dispatch = useDispatch();
   const onSubmit = (values, { resetForm }) => {
-    dispatch(forgetPassword(values)).then((res) => {
+    dispatch(forgetPassword(values)).then(() => {
       toast.success('Email sending successful');
       resetForm({ values: '' });
     });

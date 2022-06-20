@@ -25,7 +25,7 @@ const campaignSlice = createSlice({
     updatestatus(state, action) {
       state.status = action.payload;
     },
-     updatecampaignstatus(state, action) {
+    updatecampaignstatus(state, action) {
       state.items = state.items.map((v) => {
         if (v.id === action.payload.id) {
           v.statusId = action.payload.value;
@@ -80,8 +80,8 @@ export const updateCampaign = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
-       dispatch(updatestatus('error'));
-        dispatch(resetstatus());
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
     });
 };
 
@@ -110,8 +110,8 @@ export const addCampaign = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
-       dispatch(updatestatus('error'));
-       dispatch(resetstatus());
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
     });
 };
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
 import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -18,10 +19,10 @@ import moment from 'moment';
 import { getAdmins, addAdmin, updateAdmin, activateAdmin, deactivateAdmin, getRoles, removeadmin, updateAdminStatus } from '../../admin/adminSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
-   const adminsData = useSelector((state) => state.admins.items);
+  const adminsData = useSelector((state) => state.admins.items);
   return (
     <div ref={ref} style={{ padding: '20px' }}>
-      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+      <table align="left" border="1" cellSpacing="5" cellPadding="15" style={{ border: '1px solid #ccc' }}>
         <thead className="">
           <tr align="left">
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -37,7 +38,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Date created</div>
             </th>
           </tr>
@@ -56,12 +57,12 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{item.roleName }</div>
+                <div className="text-alternate">{item.roleName}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.isActive?'Active':'Inactive'}</div>
+                <div>{item.isActive ? 'Active' : 'Inactive'}</div>
               </td>
-               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{moment(item.dateCreated).format('llll')}</div>
               </td>
             </tr>
@@ -73,7 +74,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 });
 
 const AdminManagementList = () => {
-   const componentRef = useRef();
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -344,18 +345,13 @@ const AdminManagementList = () => {
                 {total} {total > 1 ? 'items' : 'item'}
               </Dropdown.Toggle>
             </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              {/* <Dropdown.Item href="#">5 Items</Dropdown.Item>
-              <Dropdown.Item href="#">10 Items</Dropdown.Item>
-              <Dropdown.Item href="#">20 Items</Dropdown.Item> */}
-            </Dropdown.Menu>
           </Dropdown>
           {/* Length End */}
         </Col>
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>

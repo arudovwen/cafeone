@@ -15,10 +15,10 @@ const Dashboard = () => {
   const title = 'Dashboard';
   const description = 'Ecommerce Dashboard Page';
   const [data, setData] = React.useState({});
-   const [seatUsage, setSeatUsage] = React.useState([]);
+  const [seatUsage, setSeatUsage] = React.useState([]);
   const transactions = useSelector((state) => state.transactions.items);
   const dispatch = useDispatch();
-   // Create our number formatter.
+  // Create our number formatter.
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'NGN',
@@ -27,7 +27,7 @@ const Dashboard = () => {
     axios.get(`${SERVICE_URL}/reports`, requestConfig).then((res) => {
       if (res.status === 200) {
         setData(res.data);
-        setSeatUsage(res.data.seatUsage)
+        setSeatUsage(res.data.seatUsage);
       }
     });
     dispatch(getRecentDashboardTransactions());

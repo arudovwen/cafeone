@@ -28,8 +28,7 @@ const membershipSlice = createSlice({
     updatestatus(state, action) {
       state.status = action.payload;
     },
-      updatemembershipstatus(state, action) {
-
+    updatemembershipstatus(state, action) {
       state.types = state.types.map((v) => {
         if (v.id === action.payload.id) {
           v.isActive = action.payload.value;
@@ -44,7 +43,6 @@ const membershipSlice = createSlice({
 });
 
 export const { setmembership, addmembership, updatestatus, resetstatus, setmembershiptypes, updatemembershipstatus } = membershipSlice.actions;
-
 
 export const updatemembershipStatus = (data) => async (dispatch) => {
   dispatch(updatemembershipstatus(data));
@@ -68,16 +66,19 @@ export const getPlanType = () => async () => {
 };
 
 export const updateMembership = (data) => async (dispatch) => {
-  return axios.post(`${SERVICE_URL}/membership-types/${data.id}`, data, requestConfig).then((res) => {
-    if (res.status === 200) {
-      toast.success('Update successful');
-      dispatch(updatestatus('update'));
-      dispatch(resetstatus());
-    }
-  }).catch(()=>{
-     dispatch(updatestatus('error'));
+  return axios
+    .post(`${SERVICE_URL}/membership-types/${data.id}`, data, requestConfig)
+    .then((res) => {
+      if (res.status === 200) {
+        toast.success('Update successful');
+        dispatch(updatestatus('update'));
         dispatch(resetstatus());
-  });
+      }
+    })
+    .catch(() => {
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
+    });
 };
 
 export const deleteMembership = (data) => async () => {
@@ -105,8 +106,8 @@ export const addMembershipType = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
-       dispatch(updatestatus('error'));
-        dispatch(resetstatus());
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
     });
 };
 

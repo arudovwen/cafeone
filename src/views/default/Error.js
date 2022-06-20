@@ -11,7 +11,7 @@ const Error = () => {
   const rightSide = (
     <div className="sw-lg-80 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-60 px-5">
-         <div className="">
+        <div className="">
           <NavLink to="/">
             <img src="/img/logo/cafeone-black.png" alt="logo" className="gray-logo mx-auto" />
           </NavLink>

@@ -2,7 +2,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
-import React, { useState, useCallback, useRef, forwardRef } from 'react';
+import React, { useState, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -11,7 +11,7 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { debounce } from 'lodash';
+// import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SelectSearch from 'react-select-search';
@@ -43,10 +43,10 @@ import {
 } from '../../membership/membershipSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
-   const campaignsData = useSelector((state) => state.campaigns.items);
+  const campaignsData = useSelector((state) => state.campaigns.items);
   return (
     <div ref={ref} style={{ padding: '20px' }}>
-      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+      <table align="left" border="1" cellSpacing="5" cellPadding="15" style={{ border: '1px solid #ccc' }}>
         <thead className="">
           <tr align="left">
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -55,7 +55,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Membership</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Description</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -68,50 +68,48 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Usage per member</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Value</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status </div>
             </th>
-           
           </tr>
         </thead>
         <tbody>
-        
           {campaignsData.map((item) => (
             <tr key={item.id} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate ">
-                  {item.branch ? item.branch : '-'}
-                </div>
+                <div className="text-alternate ">{item.branch ? item.branch : '-'}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">
                   <span>{item.membershipType ? item.membershipType : '-'}</span>
                 </div>
               </td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.description}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{ moment(item.startDate).format('llll')}</div>
+                <div className="text-alternate">{moment(item.startDate).format('llll')}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{moment(item.expiryDate).format('llll')}</div>
               </td>
 
-           
-                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.usagePerMember}</div>
               </td>
-                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.value}{item.typeId===1?'':'%'}</div>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>
+                  {item.value}
+                  {item.typeId === 1 ? '' : '%'}
+                </div>
               </td>
-               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.status?'Active':'Inactive'}</div>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.status ? 'Active' : 'Inactive'}</div>
               </td>
-                         </tr>
+            </tr>
           ))}
         </tbody>
       </table>
@@ -120,13 +118,11 @@ const ComponentToPrint = forwardRef((props, ref) => {
 });
 
 const CampaignTypeList = () => {
-   const componentRef = useRef();
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
   const [isLoading, setisloading] = React.useState(false);
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
   const [datas, setDatas] = useState([]);
   const title = 'Campaigns ';
   const description = 'Campaigns Page';
@@ -167,12 +163,11 @@ const CampaignTypeList = () => {
 
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [updateData, setUpdateData] = useState({});
-  const [members, setmembers] = useState([]);
   const [discountTypes, setDiscountTypes] = useState([]);
 
   React.useEffect(() => {
@@ -184,11 +179,6 @@ const CampaignTypeList = () => {
       setDiscountTypes(res.data);
     });
   }, [dispatch, page, search]);
-  const usersData = useSelector((state) => state.members.items).map((item) => {
-    const fullname = `${item.firstName} ${item.lastName}`;
-    const data = { value: item.id, name: fullname };
-    return data;
-  });
 
   function nextPage() {
     if (campaignsData.length / page > page) {
@@ -209,10 +199,9 @@ const CampaignTypeList = () => {
     setCampaignModal(!campaignModal);
   };
 
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = (values) => {
     dispatch(addCampaign(values));
     setisloading(true);
-    // resetForm({ values: '' });
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -288,10 +277,10 @@ const CampaignTypeList = () => {
 
   // highlight-starts
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(
-    debounce((nextValue) => setSearch(nextValue), 1000),
-    []
-  );
+  // const debouncedSave = useCallback(
+  //   debounce((nextValue) => setSearch(nextValue), 1000),
+  //   []
+  // );
   // eslint-disable-next-line no-shadow
   function fuzzySearch(options) {
     const fuse = new Fuse(options, {
@@ -308,23 +297,10 @@ const CampaignTypeList = () => {
     };
   }
 
-  function addMember(val) {
-    if (values.members.includes(val)) return;
-
-    values.members.push(val);
-    const user = usersData.find((item) => Number(item.value) === Number(val));
-
-    const userarr = [user, ...members];
-    setmembers(userarr);
-  }
-  function removeMember(id, index) {
-    values.members.splice(index, 1);
-    setmembers(members.filter((item) => item.value !== id));
-  }
   // highlight-ends
-  const handleSearch = (e) => {
-    debouncedSave(e.target.value);
-  };
+  // const handleSearch = (e) => {
+  //   debouncedSave(e.target.value);
+  // };
 
   React.useEffect(() => {
     if (status === 'success') {
@@ -359,17 +335,7 @@ const CampaignTypeList = () => {
       });
     }
   }, [status, dispatch]);
-  function selectAllMembers(e) {
-    if (e.target.checked) {
-      const users = usersData.map((item) => item.value);
-      values.members = [...users];
-      setmembers([...usersData]);
-      return;
-    }
 
-    values.members = [];
-    setmembers([]);
-  }
   function handleUpdateChange(e) {
     setUpdateData({
       ...updateData,
@@ -391,7 +357,6 @@ const CampaignTypeList = () => {
   }, [startDate, endDate]);
 
   React.useEffect(() => {
-   
     if (startDateFrom && startDateTo) {
       dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD')));
       return;
@@ -597,7 +562,7 @@ const CampaignTypeList = () => {
         </Col>
       </Row>
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">BRANCH / MEMBERSHIP</div>
         </Col>
@@ -792,7 +757,6 @@ const CampaignTypeList = () => {
                           name="duration"
                           onChange={(e) => {
                             setDuration(e.target.value);
-                            forceUpdate();
                           }}
                           value={duration}
                         >
@@ -943,7 +907,6 @@ const CampaignTypeList = () => {
                           name="duration"
                           onChange={(e) => {
                             setDuration(e.target.value);
-                            forceUpdate();
                           }}
                           value={duration}
                         >
@@ -1044,7 +1007,9 @@ const CampaignTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">{updateData.type} Value</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.value} {updateData.typeId===1?'':'%'}</td>
+                      <td className=" py-2 px-1 border-bottom">
+                        {updateData.value} {updateData.typeId === 1 ? '' : '%'}
+                      </td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>

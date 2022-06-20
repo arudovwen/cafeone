@@ -29,7 +29,7 @@ const ResetPassword = () => {
     password: '',
     passwordConfirm: '',
     resetToken: token,
-    email
+    email,
   };
   const dispatch = useDispatch();
   const onSubmit = (values) => dispatch(resetPassword(values));

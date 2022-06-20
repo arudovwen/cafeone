@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
-import React, { useState, useCallback, useRef, forwardRef } from 'react';
+import React, { useState, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -10,7 +10,7 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { debounce } from 'lodash';
+// import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SelectSearch from 'react-select-search';
@@ -128,7 +128,7 @@ const BookingTypeList = () => {
   const [datas, setDatas] = useState([]);
   const [seatData, setSeatData] = React.useState([]);
   const [isEvent, setIsEvent] = React.useState(false);
-  const [type, setType] = useState('')
+  const [type, setType] = useState('');
   const [eventData, setEventData] = React.useState({
     email: '',
     phoneNumber: '',
@@ -167,22 +167,20 @@ const BookingTypeList = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [updateData, setUpdateData] = useState({});
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+  const [fromDate] = useState(null);
+  const [toDate] = useState(null);
 
   const [startTimeFrom, setstartTimeFrom] = useState(null);
   const [startTimeTo, setstartTimeTo] = useState(null);
-  const [endTimeFrom, setEndDateFrom] = useState(null);
-  const [endTimeTo, setEndDateTo] = useState(null);
+  const [, setEndDateFrom] = useState(null);
+  const [, setEndDateTo] = useState(null);
   const [memberId, setMemberId] = useState(null);
   const [branchId, setBranchId] = useState(null);
-  const [statusId, setStatusId] = useState(null);
-  const [seatSearchId, setSeatSearchId] = useState(null);
 
   React.useEffect(() => {
     dispatch(getBookings(page, search));
@@ -303,10 +301,10 @@ const BookingTypeList = () => {
 
   // highlight-starts
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(
-    debounce((nextValue) => setSearch(nextValue), 1000),
-    []
-  );
+  // const debouncedSave = useCallback(
+  //   debounce((nextValue) => setSearch(nextValue), 1000),
+  //   []
+  // );
   // eslint-disable-next-line no-shadow
   function fuzzySearch(options) {
     const fuse = new Fuse(options, {
@@ -324,9 +322,9 @@ const BookingTypeList = () => {
   }
 
   // highlight-ends
-  const handleSearch = (e) => {
-    debouncedSave(e.target.value);
-  };
+  // const handleSearch = (e) => {
+  //   debouncedSave(e.target.value);
+  // };
 
   React.useEffect(() => {
     if (status === 'success') {
@@ -407,9 +405,7 @@ const BookingTypeList = () => {
   function setMember(val) {
     values.memberId = val;
   }
-  function setSeat(val) {
-    values.seatId = val;
-  }
+
   function similarDate(date) {
     const today = moment(new Date());
     const varDate = moment(date);
@@ -538,10 +534,8 @@ const BookingTypeList = () => {
     setEndDateFrom(null);
     setEndDateTo(null);
     setMemberId(null);
-    setStatusId(null);
-    setSeatSearchId(null);
     setBranchId(null);
-    setType('')
+    setType('');
   }
 
   return (
@@ -569,7 +563,6 @@ const BookingTypeList = () => {
 
       <Row className="mb-4">
         <Col xs="7" md="6" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
-
           <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewBooking()}>
             <CsLineIcons icon="plus" size="12" /> <span className="">Add booking</span>
           </Button>
@@ -582,16 +575,16 @@ const BookingTypeList = () => {
         <Col xs="5" md="6" lg="6" xxl="6" className="mb-1  d-flex justify-content-end align-items-center">
           {/* Export Dropdown Start */}
 
-<div>
-  <Form.Select value={type} onChange={(e)=> setType(e.target.value)}>
-    <option disabled value=''>Filter by type </option>
-     <option value=''>Both</option>
-     <option value={1}>Coworking </option>
-      <option value={2}>Event </option>
-
-     </Form.Select>
-
-</div>
+          <div>
+            <Form.Select value={type} onChange={(e) => setType(e.target.value)}>
+              <option disabled value="">
+                Filter by type{' '}
+              </option>
+              <option value="">Both</option>
+              <option value={1}>Coworking </option>
+              <option value={2}>Event </option>
+            </Form.Select>
+          </div>
           <Dropdown align={{ xs: 'end' }} className="d-none d-md-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">

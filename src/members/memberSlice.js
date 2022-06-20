@@ -47,14 +47,17 @@ export const getMember = (data) => async () => {
 };
 
 export const updateMember = (data) => async (dispatch) => {
-  axios.post(`${SERVICE_URL}/members/${data.id}`, data, requestConfig).then(() => {
-    toast.success('User updated');
-    dispatch(updatestatus('update'));
-    dispatch(resetstatus());
-  }).catch(()=>{
-     dispatch(updatestatus('error'));
-     dispatch(resetstatus());
-  });
+  axios
+    .post(`${SERVICE_URL}/members/${data.id}`, data, requestConfig)
+    .then(() => {
+      toast.success('User updated');
+      dispatch(updatestatus('update'));
+      dispatch(resetstatus());
+    })
+    .catch(() => {
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
+    });
 };
 
 export const addMember = (data) => async (dispatch) => {
@@ -70,8 +73,8 @@ export const addMember = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
-       dispatch(updatestatus('error'));
-        dispatch(resetstatus());
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
     });
 };
 

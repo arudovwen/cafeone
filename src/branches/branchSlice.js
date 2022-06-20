@@ -23,8 +23,7 @@ const branchSlice = createSlice({
     updatestatus(state, action) {
       state.status = action.payload;
     },
-     updateBranchstatus(state, action) {
-
+    updateBranchstatus(state, action) {
       state.branches = state.branches.map((v) => {
         if (v.id === action.payload.id) {
           v.statusId = action.payload.value;
@@ -58,16 +57,19 @@ export const getBranch = (data) => async () => {
 };
 
 export const updateBranch = (data) => async (dispatch) => {
-  axios.post(`${SERVICE_URL}/branches/${data.id}`, data, requestConfig).then((res) => {
-    if (res.status === 200) {
-      toast.success('Branch updated');
-      dispatch(updatestatus('update'));
+  axios
+    .post(`${SERVICE_URL}/branches/${data.id}`, data, requestConfig)
+    .then((res) => {
+      if (res.status === 200) {
+        toast.success('Branch updated');
+        dispatch(updatestatus('update'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch(() => {
+      dispatch(updatestatus('error'));
       dispatch(resetstatus());
-    }
-  }).catch(()=>{
-     dispatch(updatestatus('error'));
-     dispatch(resetstatus());
-  });
+    });
 };
 
 export const deleteBranch = (data) => async () => {
@@ -81,7 +83,7 @@ export const activateBranch = (data) => async () => {
 export const deactivateBranch = (data) => async () => {
   return axios.post(`${SERVICE_URL}/branches/${data}/deactivate`, data, requestConfig);
 };
-export const activateSeat =  (seatId, branchId) => async () => {
+export const activateSeat = (seatId, branchId) => async () => {
   return axios.post(`${SERVICE_URL}/branches/${branchId}/seats/${seatId}/activate`, seatId, requestConfig);
 };
 
@@ -102,8 +104,8 @@ export const addBranch = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
-       dispatch(updatestatus('error'));
-       dispatch(resetstatus());
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
     });
 };
 

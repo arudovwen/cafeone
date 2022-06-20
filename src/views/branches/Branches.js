@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
-import React, { useState, useCallback,  useRef, forwardRef } from 'react';
+import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -12,7 +13,6 @@ import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
-import moment from 'moment';
 import { useReactToPrint } from 'react-to-print';
 import {
   getBranches,
@@ -35,7 +35,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
   const branchesData = useSelector((state) => state.branches.branches);
   return (
     <div ref={ref} style={{ padding: '20px' }}>
-      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+      <table align="left" border="1" cellSpacing="5" cellPadding="15" style={{ border: '1px solid #ccc' }}>
         <thead className="">
           <tr align="left">
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -51,16 +51,13 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status</div>
             </th>
-           
           </tr>
         </thead>
         <tbody>
           {branchesData.map((item) => (
             <tr key={item.id} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate ">
-                  {item.name}
-                </div>
+                <div className="text-alternate ">{item.name}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">
@@ -68,12 +65,12 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{item.seatCount }</div>
+                <div className="text-alternate">{item.seatCount}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.status}</div>
               </td>
-                         </tr>
+            </tr>
           ))}
         </tbody>
       </table>
@@ -82,7 +79,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 });
 
 const BranchesList = () => {
-   const componentRef = useRef();
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -92,7 +89,7 @@ const BranchesList = () => {
   const branchesData = useSelector((state) => state.branches.branches);
   const status = useSelector((state) => state.branches.status);
   const [datas, setDatas] = useState([]);
-  const  [isUploading, setIsUploading] = useState(null)
+  const [isUploading, setIsUploading] = useState(null);
   const [seatInfo, setSeatInfo] = useState({
     image: '',
     description: '',
@@ -107,7 +104,7 @@ const BranchesList = () => {
     city: '',
     state: '',
   };
-   const [isLoading, setisloading] = React.useState(false);
+  const [isLoading, setisloading] = React.useState(false);
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -135,20 +132,17 @@ const BranchesList = () => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Branch name is required'),
     location: Yup.string().required('Location name is required'),
-    // address: Yup.string().required('Address is required'),
-    // city: Yup.string().required('City is required'),
     state: Yup.string().required('State is required'),
-    // description: Yup.string().required('Description is required'),
   });
 
   const toggleModal = () => {
     setBranchModal(!branchModal);
   };
 
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = (values) => {
     dispatch(addBranch(values));
 
-    setisloading(true)
+    setisloading(true);
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -186,7 +180,7 @@ const BranchesList = () => {
           dispatch(getBranches(page, search));
           const newseat = seats.filter((item) => item.id !== id);
           setSeats(newseat);
-          setUpdateData({...updateData, seatCount: newseat.length})
+          setUpdateData({ ...updateData, seatCount: newseat.length });
 
           setIsAdding(false);
           setIsSeatEditing(false);
@@ -251,7 +245,7 @@ const BranchesList = () => {
     setIsViewing(false);
     setIsEditing(false);
     setIsSeatEditing(false);
-      setIsAddSeat(false);
+    setIsAddSeat(false);
     setIsAdding(true);
     toggleModal();
   }
@@ -260,7 +254,7 @@ const BranchesList = () => {
     setIsAdding(false);
     setIsViewing(false);
     setIsSeatEditing(false);
-      setIsAddSeat(false);
+    setIsAddSeat(false);
     setIsEditing(true);
 
     dispatch(getBranch(val.id)).then((res) => {
@@ -273,7 +267,7 @@ const BranchesList = () => {
   function viewBranch(val) {
     setIsAdding(false);
     setIsSeatEditing(false);
-      setIsAddSeat(false);
+    setIsAddSeat(false);
     setIsViewing(true);
     setIsEditing(false);
     dispatch(getBranch(val.id)).then((res) => {
@@ -298,21 +292,21 @@ const BranchesList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setBranchModal(false);
-      setisloading(false)
-       values.name= ''
-    values.location= ''
-    values.description= ''
-    values.address= ''
-    values.city= ''
-    values.state= ''
-     setIsUploading(null);
+      setisloading(false);
+      values.name = '';
+      values.location = '';
+      values.description = '';
+      values.address = '';
+      values.city = '';
+      values.state = '';
+      setIsUploading(null);
     }
-      if (status === 'error') {
-        setisloading(false);
-      }
+    if (status === 'error') {
+      setisloading(false);
+    }
     if (status === 'update') {
-      setisloading(false)
-       setIsUploading(null);
+      setisloading(false);
+      setIsUploading(null);
       dispatch(getBranches(1, ''));
       setBranchModal(false);
       setUpdateData({
@@ -333,7 +327,7 @@ const BranchesList = () => {
     });
   }
   function handleUpdate(e) {
-    setisloading(true)
+    setisloading(true);
     e.preventDefault();
     dispatch(updateBranch(updateData));
   }
@@ -342,9 +336,9 @@ const BranchesList = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    setIsUploading('loading')
+    setIsUploading('loading');
     dispatch(uploadPhoto(formData)).then((res) => {
-    setIsUploading('loaded')
+      setIsUploading('loaded');
       setSeatInfo({
         ...seatInfo,
         image: res.data.file,
@@ -371,14 +365,14 @@ const BranchesList = () => {
   }
   function handleSeatAdd(e) {
     e.preventDefault();
-    setisloading(true)
+    setisloading(true);
     dispatch(addBranchSeat(seatInfo)).then((res) => {
       if (res.status === 200) {
-         setisloading(false)
+        setisloading(false);
         dispatch(getBranches(page, search));
-        const newseat = [res.data, ...seats]
+        const newseat = [res.data, ...seats];
         setSeats(newseat);
-         setUpdateData({...updateData, seatCount: newseat.length})
+        setUpdateData({ ...updateData, seatCount: newseat.length });
         setIsAdding(false);
         setIsViewing(true);
         setIsSeatEditing(false);
@@ -422,10 +416,10 @@ const BranchesList = () => {
 
   function handleSeatUpdate(e) {
     e.preventDefault();
-    setisloading(true)
+    setisloading(true);
     dispatch(updateBranchSeat(seatInfo)).then((res) => {
       if (res.status === 200) {
-        setisloading(false)
+        setisloading(false);
         const newseat = seats.map((item) => {
           if (item.id === seatInfo.id) {
             item.name = seatInfo.name;
@@ -433,7 +427,7 @@ const BranchesList = () => {
           }
           return item;
         });
-         setUpdateData({...updateData, seatCount: newseat.length})
+        setUpdateData({ ...updateData, seatCount: newseat.length });
         setSeats(newseat);
         setIsAdding(false);
         setIsSeatEditing(false);
@@ -449,7 +443,7 @@ const BranchesList = () => {
     <>
       <HtmlHead title={title} description={description} />
       <div className="page-title-container">
-         <div style={{ display: 'none' }}>
+        <div style={{ display: 'none' }}>
           <ComponentToPrint ref={componentRef} />
         </div>
 
@@ -489,7 +483,7 @@ const BranchesList = () => {
         </Col>
         <Col md="7" lg="8" xxl="8" className="mb-1 text-end">
           {/* Export Dropdown Start */}
-         <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
                 <CsLineIcons icon="download" />
@@ -514,18 +508,13 @@ const BranchesList = () => {
                 {branchesData.length} Items
               </Dropdown.Toggle>
             </OverlayTrigger>
-            {/* <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">5 Items</Dropdown.Item>
-              <Dropdown.Item href="#">10 Items</Dropdown.Item>
-              <Dropdown.Item href="#">20 Items</Dropdown.Item>
-            </Dropdown.Menu> */}
           </Dropdown>
           {/* Length End */}
         </Col>
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
@@ -648,17 +637,16 @@ const BranchesList = () => {
                   <Form.Control type="text" name="state" onChange={handleChange} value={values.state} />
                   {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
                 </div>
-                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                    {!isLoading ? (
-                      'Submit'
-                    ) : (
-                      <Spinner animation="border" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
-                    )}
-                  </Button>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                </Button>
               </form>
-
             )}
             {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)}>
@@ -676,16 +664,15 @@ const BranchesList = () => {
                   <Form.Control type="text" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
                 </div>
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                    {!isLoading ? (
-                      'Submit'
-                    ) : (
-                      <Spinner animation="border" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
-                    )}
-                  </Button>
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                </Button>
               </form>
-
             )}
             {isAddSeat && (
               <form onSubmit={(e) => handleSeatAdd(e)}>
@@ -707,16 +694,15 @@ const BranchesList = () => {
                 </div>
 
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                    {!isLoading ? (
-                      'Submit'
-                    ) : (
-                      <Spinner animation="border" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
-                    )}
-                  </Button>
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                </Button>
               </form>
-
             )}
             {isSeatEditing && (
               <form onSubmit={(e) => handleSeatUpdate(e)}>
@@ -737,15 +723,15 @@ const BranchesList = () => {
                   <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
                 </div>
 
-               <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                    {!isLoading ? (
-                      'Submit'
-                    ) : (
-                      <Spinner animation="border" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
-                    )}
-                  </Button>
+                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                </Button>
               </form>
             )}
 
@@ -809,7 +795,7 @@ const BranchesList = () => {
                       </thead>
                       <tbody>
                         {seats &&
-                          seats.map((item, index) => (
+                          seats.map((item) => (
                             <tr key={item.id} className="border-bottom ">
                               <td className="px-2  border-bottom py-2">
                                 <img

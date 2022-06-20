@@ -9,7 +9,6 @@ import { logout } from 'auth/authSlice';
 
 const NavUserMenuContent = ({ dispatch }) => (
   <div>
- 
     <Row className="mb-1 ms-0 me-0">
       <Col xs="12" className="p-1 mb-3 pt-3">
         <div className="separator-light" />

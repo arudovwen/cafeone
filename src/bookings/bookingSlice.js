@@ -34,7 +34,7 @@ const bookingSlice = createSlice({
 export const { setbooking, addbooking, updatestatus, resetstatus } = bookingSlice.actions;
 
 export const getBookings =
-  (page, search, startTimeFrom = null, startTimeTo = null,  MemberId = null, branchId = null, type = null) =>
+  (page, search, startTimeFrom = null, startTimeTo = null, MemberId = null, branchId = null, type = null) =>
   async (dispatch) => {
     const response = await axios
       .get(
@@ -50,27 +50,22 @@ export const getBookings =
     }
   };
 
+export const getBookingByMember =
+  (MemberId = null) =>
+  () => {
+    return axios.get(`${SERVICE_URL}/bookings?MemberId=${MemberId}`, requestConfig).catch((err) => {
+      toast.error(err.response.data.message);
+    });
+  };
 
-  export const getBookingByMember =
-    ( MemberId = null) =>
-     (dispatch) => {
-     return axios
-        .get(`${SERVICE_URL}/bookings?MemberId=${MemberId}`, requestConfig)
-        .catch((err) => {
-          toast.error(err.response.data.message);
-        });
-
-
-    };
-
-export const  getPlanTypes  = () => async () => {
+export const getPlanTypes = () => async () => {
   return axios.get(`${SERVICE_URL}/bookings/plan-types`, requestConfig);
 };
 
 export const getPaymentStatusTypes = () => async () => {
   return axios.get(`${SERVICE_URL}/bookings/payment-status-types`, requestConfig);
 };
-export const  getBooking = (data) => async () => {
+export const getBooking = (data) => async () => {
   return axios.get(`${SERVICE_URL}/bookings/${data}`, requestConfig);
 };
 
@@ -83,7 +78,7 @@ export const deleteBooking = (data) => async () => {
 };
 
 export const checkinBooking = (data, id, now) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${data}/checkin`, {registerId: id, time:now}, requestConfig);
+  return axios.post(`${SERVICE_URL}/bookings/${data}/checkin`, { registerId: id, time: now }, requestConfig);
 };
 
 export const checkoutBooking = (data, id, now) => async () => {
@@ -103,8 +98,8 @@ export const addBooking = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
-       dispatch(updatestatus('error'));
-        dispatch(resetstatus());
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
     });
 };
 
@@ -121,8 +116,8 @@ export const addEventBooking = (data) => async (dispatch) => {
     })
     .catch((err) => {
       toast.error(err.response.data.message);
-       dispatch(updatestatus('error'));
-        dispatch(resetstatus());
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
     });
 };
 

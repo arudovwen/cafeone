@@ -24,9 +24,12 @@ const transactionSlice = createSlice({
 });
 
 export const { settransactions, setrecenttransactions } = transactionSlice.actions;
-export const getTransactions = (page, search, fromDate, toDate) => async (dispatch) => {
+export const getTransactions = (page, search, fromDate, toDate, memberId, branchId) => async (dispatch) => {
   const response = await axios
-    .get(`${SERVICE_URL}/payments?page=${page}&search=${search}&size=15&fromDate=${fromDate}&toDate=${toDate}`, requestConfig)
+    .get(
+      `${SERVICE_URL}/payments?page=${page}&search=${search}&size=15&fromDate=${fromDate}&toDate=${toDate}&memberId=${memberId}&branchId=${branchId}`,
+      requestConfig
+    )
     .catch((err) => {
       toast.error(err.response.data.message);
     });

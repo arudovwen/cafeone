@@ -34,7 +34,6 @@ const Login = () => {
   const { handleSubmit, handleChange, values, touched, errors } = formik;
   const [showPassword, setShowPassword] = React.useState(false);
   function togglePassword() {
-
     setShowPassword(!showPassword);
   }
   const rightSide = (
@@ -59,13 +58,14 @@ const Login = () => {
             <div className="mb-3 filled form-group tooltip-end-top">
               <CsLineIcons icon="lock-off" />
               <Form.Control type={!showPassword ? 'password' : 'text'} name="password" onChange={handleChange} value={values.password} placeholder="Password" />
-              <span className="position-absolute  e-3 cursor-pointer" style={{ top: '.7rem' }} color="black
-              " onClick={() => togglePassword()}>
-                {!showPassword ? (
-                  <CsLineIcons icon="eye" className="text-small"  size="14" />
-                ) : (
-                  <CsLineIcons icon="eye-off" className="text-small"  size="14" />
-                )}
+              <span
+                className="position-absolute  e-3 cursor-pointer"
+                style={{ top: '.7rem' }}
+                color="black
+              "
+                onClick={() => togglePassword()}
+              >
+                {!showPassword ? <CsLineIcons icon="eye" className="text-small" size="14" /> : <CsLineIcons icon="eye-off" className="text-small" size="14" />}
               </span>
               {errors.password && touched.password && <div className="d-block invalid-tooltip">{errors.password}</div>}
             </div>

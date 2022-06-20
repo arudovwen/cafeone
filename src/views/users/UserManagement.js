@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -22,67 +23,56 @@ import {
 import { getMembers, addMember, uploadPhoto, getMember, updateMember, subscribeMember, deleteMember } from '../../members/memberSlice';
 import { getBookingByMember } from '../../bookings/bookingSlice';
 
-
 const ComponentToPrint = forwardRef((props, ref) => {
   const usersData = useSelector((state) => state.members.items);
   return (
-  <div ref={ref}  style={{padding:'20px'}} >
-
-   
-      <table style={{border:'1px solid #ccc'}}>
+    <div ref={ref} style={{ padding: '20px' }}>
+      <table style={{ border: '1px solid #ccc' }}>
         <thead className="">
           <tr>
-            <th style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium">NAME</div>
             </th>
-            <th style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium ">Email</div>
             </th>
-            <th style={{borderBottom:'1px solid #ccc' ,padding:'3px 2px'}}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium ">Phone</div>
             </th>
-           
-            <th style={{borderBottom:'1px solid #ccc' ,padding:'3px 2px'}}>
+
+            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium ">Membership Type</div>
             </th>
           </tr>
         </thead>
         <tbody>
-         {usersData.map((item) => (
+          {usersData.map((item) => (
             <tr key={item.id} className="mb-2">
-
-                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
-
-                    <div className="text-alternate ">
-                     
-                      {item.firstName} {item.lastName}
-                    </div>
-                  </td>
-                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
-
-                    <div className="text-alternate">
-                      <span>{item.email}</span>
-                    </div>
-                  </td>
-                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
-
-                    <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
-                  </td>
-                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
-
-                    <div>
-                    {item.membershipType}
-                    </div>
-                  </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate ">
+                  {item.firstName} {item.lastName}
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate">
+                  <span>{item.email}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div>{item.membershipType}</div>
+              </td>
             </tr>
           ))}
-          </tbody>
+        </tbody>
       </table>
-  </div>
+    </div>
   );
 });
 const UserManagementList = () => {
-   const componentRef = useRef();
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -190,7 +180,7 @@ const UserManagementList = () => {
   function getMyBookings(id) {
     dispatch(getBookingByMember(id)).then((res) => {
       setMyBookings(res.data.items);
-      setUserModal(false)
+      setUserModal(false);
       setBookingModal(true);
     });
   }
@@ -263,13 +253,6 @@ const UserManagementList = () => {
     e.preventDefault();
     setisloading(true);
     dispatch(updateMember(updateData));
-  }
-
-  function subscribeUser() {
-    setIsAdding(false);
-    setIsViewing(false);
-    setIsEditing(false);
-    setIsSubscribing(true);
   }
 
   function handlSubscription(e) {
@@ -413,22 +396,21 @@ const UserManagementList = () => {
           <div style={{ display: 'none' }}>
             <ComponentToPrint ref={componentRef} />
           </div>
-      
+
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-              
-                  <CsLineIcons icon="download" />
-                
+                <CsLineIcons icon="download" />
               </Dropdown.Toggle>
             </OverlayTrigger>
-              <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">   <CsvDownloader filename="members" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
-                Export csv
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item href="#">
+                {' '}
+                <CsvDownloader filename="members" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  Export csv
                 </CsvDownloader>
               </Dropdown.Item>
               <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
-            
             </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
@@ -451,7 +433,7 @@ const UserManagementList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
@@ -927,7 +909,7 @@ const UserManagementList = () => {
             </div>
           </OverlayScrollbarsComponent>
         </Modal.Body>
-    </Modal>
+      </Modal>
     </>
   );
 };

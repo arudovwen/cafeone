@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prefer-const */
 /* eslint-disable no-alert */
-import React, { useState, useCallback,  useRef, forwardRef  } from 'react';
+import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -14,7 +15,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
 import { useReactToPrint } from 'react-to-print';
-import moment from 'moment';
+// import moment from 'moment';
 import {
   getmembershiptypes,
   addMembershipType,
@@ -29,10 +30,10 @@ import {
 } from '../../membership/membershipSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
-   const membershipsData = useSelector((state) => state.membership.types);
+  const membershipsData = useSelector((state) => state.membership.types);
   return (
     <div ref={ref} style={{ padding: '20px' }}>
-      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+      <table align="left" border="1" cellSpacing="5" cellPadding="15" style={{ border: '1px solid #ccc' }}>
         <thead className="">
           <tr align="left">
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -44,26 +45,23 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Daily amount</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Weekly amount</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Monthly amount</div>
             </th>
 
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status</div>
             </th>
-           
           </tr>
         </thead>
         <tbody>
           {membershipsData.map((item) => (
             <tr key={item.id} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate ">
-                  {item.name}
-                </div>
+                <div className="text-alternate ">{item.name}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">
@@ -71,18 +69,18 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 1) ? item.plans.find((v) => v.planTypeId === 1).amount : 0 }</div>
-              </td>
-               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 2) ? item.plans.find((v) => v.planTypeId === 2).amount : 0 }</div>
-              </td>
-               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 3) ? item.plans.find((v) => v.planTypeId === 3).amount : 0 }</div>
+                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 1) ? item.plans.find((v) => v.planTypeId === 1).amount : 0}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.isActive?'Active':'Inactive'}</div>
+                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 2) ? item.plans.find((v) => v.planTypeId === 2).amount : 0}</div>
               </td>
-                         </tr>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 3) ? item.plans.find((v) => v.planTypeId === 3).amount : 0}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.isActive ? 'Active' : 'Inactive'}</div>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
@@ -90,9 +88,8 @@ const ComponentToPrint = forwardRef((props, ref) => {
   );
 });
 
-
 const MembershipTypeList = () => {
-   const componentRef = useRef();
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -105,8 +102,7 @@ const MembershipTypeList = () => {
   const [datas, setDatas] = useState([]);
   const [plans, setPlans] = useState([]);
   const [updatePlans, setUpdatePlans] = useState([]);
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
+
   const [isLoading, setisloading] = React.useState(false);
   // Create our number formatter.
   const formatter = new Intl.NumberFormat('en-US', {
@@ -138,7 +134,7 @@ const MembershipTypeList = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
@@ -178,7 +174,7 @@ const MembershipTypeList = () => {
 
   const onSubmit = (values) => {
     dispatch(addMembershipType(values));
-    setisloading(true)
+    setisloading(true);
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -218,32 +214,6 @@ const MembershipTypeList = () => {
         }
       });
     }
-  }
-
-  function addPlan() {
-    values.plans.push({
-      typeId: '',
-      amount: '',
-    });
-    forceUpdate();
-  }
-
-  function dropPlan() {
-    values.plans.pop();
-    forceUpdate();
-  }
-
-  function addUpdatePlan() {
-    updatePlans.push({
-      typeId: '',
-      amount: '',
-    });
-    forceUpdate();
-  }
-
-  function dropUpdatePlan() {
-    updatePlans.pop();
-    forceUpdate();
   }
 
   function addNewMembership() {
@@ -291,32 +261,32 @@ const MembershipTypeList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setMembershipModal(false);
-      setisloading(false)
-        values.name = ''
-     values.plans = [
-              {
-                name: 'Daily',
-                typeId: 1,
-                amount: '',
-              },
-              {
-                name: 'Weekly',
-                typeId: 2,
-                amount: '',
-              },
-              {
-                name: 'Monthly',
-                typeId: 3,
-                amount: '',
-              },
-               ]
-     values.description= ''
+      setisloading(false);
+      values.name = '';
+      values.plans = [
+        {
+          name: 'Daily',
+          typeId: 1,
+          amount: '',
+        },
+        {
+          name: 'Weekly',
+          typeId: 2,
+          amount: '',
+        },
+        {
+          name: 'Monthly',
+          typeId: 3,
+          amount: '',
+        },
+      ];
+      values.description = '';
     }
-      if (status === 'error') {
-        setisloading(false);
-      }
+    if (status === 'error') {
+      setisloading(false);
+    }
     if (status === 'update') {
-      setisloading(false)
+      setisloading(false);
       dispatch(getmembershiptypes(1, ''));
       setMembershipModal(false);
       setUpdateData({
@@ -358,7 +328,7 @@ const MembershipTypeList = () => {
   }
 
   function handleUpdate(e) {
-    setisloading(true)
+    setisloading(true);
     e.preventDefault();
     let newplans = updatePlans.map((i) => {
       return {
@@ -458,7 +428,7 @@ const MembershipTypeList = () => {
         </Col>
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
-           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
                 <CsLineIcons icon="download" />
@@ -489,22 +459,22 @@ const MembershipTypeList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
+          <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
 
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
+          <div className="text-muted text-small cursor-pointer ">DESCRIPTION</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
+          <div className="text-muted text-small cursor-pointer ">STATUS</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
-          <div className="text-muted text-small cursor-pointer sort">TOGGLE</div>
+          <div className="text-muted text-small cursor-pointer ">TOGGLE</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
-          <div className="text-muted text-small cursor-pointer sort">Action</div>
+          <div className="text-muted text-small cursor-pointer ">Action</div>
         </Col>
       </Row>
       {/* List Header End */}

@@ -29,7 +29,7 @@ const authSlice = createSlice({
 
 export const { setCurrentUser, updatestatus, resetstatus } = authSlice.actions;
 export const loginAdmin = (data) => async (dispatch) => {
-  const response = await axios.post(`${SERVICE_URL}/auth/login`, data).catch((err) => {
+  const response = await axios.post(`${SERVICE_URL}/auth/login`, data).catch(() => {
     toast.error('Login failed');
     dispatch(updatestatus('failed'));
     dispatch(resetstatus(null));
@@ -45,10 +45,9 @@ export const loginAdmin = (data) => async (dispatch) => {
 };
 export const forgetPassword = (data) => () => {
   return axios.post(`${SERVICE_URL}/auth/forgot-password`, data).catch(() => {
-      toast.error('Sending error');
+    toast.error('Sending error');
     // toast.error(err.response.data.message);
   });
-
 };
 export const resetPassword = (data) => async () => {
   const response = await axios.post(`${SERVICE_URL}/auth/reset-password`, data).catch(() => {
