@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -14,7 +14,7 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
-import { Dialog, Transition } from '@headlessui/react';
+import { useReactToPrint } from 'react-to-print';
 import {
   getmembershiptypes,
   // eslint-disable-next-line import/extensions
@@ -22,7 +22,72 @@ import {
 import { getMembers, addMember, uploadPhoto, getMember, updateMember, subscribeMember, deleteMember } from '../../members/memberSlice';
 import { getBookingByMember } from '../../bookings/bookingSlice';
 
+
+const ComponentToPrint = forwardRef((props, ref) => {
+  const usersData = useSelector((state) => state.members.items);
+  return (
+  <div ref={ref}  style={{padding:'20px'}} >
+
+   
+      <table style={{border:'1px solid #ccc'}}>
+        <thead className="">
+          <tr>
+            <th style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+              <div className="text-muted text-medium">NAME</div>
+            </th>
+            <th style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+              <div className="text-muted text-medium ">Email</div>
+            </th>
+            <th style={{borderBottom:'1px solid #ccc' ,padding:'3px 2px'}}>
+              <div className="text-muted text-medium ">Phone</div>
+            </th>
+           
+            <th style={{borderBottom:'1px solid #ccc' ,padding:'3px 2px'}}>
+              <div className="text-muted text-medium ">Membership Type</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+         {usersData.map((item) => (
+            <tr key={item.id} className="mb-2">
+
+                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+
+                    <div className="text-alternate ">
+                     
+                      {item.firstName} {item.lastName}
+                    </div>
+                  </td>
+                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+
+                    <div className="text-alternate">
+                      <span>{item.email}</span>
+                    </div>
+                  </td>
+                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+
+                    <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
+                  </td>
+                  <td style={{borderBottom:'1px solid #ccc',padding:'3px 2px'}}>
+
+                    <div>
+                    {item.membershipType}
+                    </div>
+                  </td>
+            </tr>
+          ))}
+          </tbody>
+      </table>
+  </div>
+  );
+});
 const UserManagementList = () => {
+   const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+  const [myBookings, setMyBookings] = useState([]);
   const [userModal, setUserModal] = useState(false);
   const dispatch = useDispatch();
   const title = 'Users List';
@@ -123,7 +188,9 @@ const UserManagementList = () => {
   };
 
   function getMyBookings(id) {
-    dispatch(getBookingByMember(id)).the((res) => {
+    dispatch(getBookingByMember(id)).then((res) => {
+      setMyBookings(res.data.items);
+      setUserModal(false)
       setBookingModal(true);
     });
   }
@@ -343,14 +410,26 @@ const UserManagementList = () => {
         </Col>
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
+          <div style={{ display: 'none' }}>
+            <ComponentToPrint ref={componentRef} />
+          </div>
+      
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsvDownloader filename="users" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+              
                   <CsLineIcons icon="download" />
-                </CsvDownloader>
+                
               </Dropdown.Toggle>
             </OverlayTrigger>
+              <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item href="#">   <CsvDownloader filename="members" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                Export csv
+                </CsvDownloader>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
+            
+            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -674,13 +753,10 @@ const UserManagementList = () => {
                     className="rounded-circle"
                     style={{ width: '80px', height: '80px' }}
                   />
-                  {/* {!updateData.membershipStatusId ? (
-                    <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => subscribeUser(updateData.id)}>
-                      <span className="">Subscribe</span>
-                    </Button>
-                  ) : (
-                    ''
-                  )} */}
+
+                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => getMyBookings(updateData.id)}>
+                    <span className="">View bookings</span>
+                  </Button>
                 </div>
                 <table className="mb-5">
                   <tbody>
@@ -789,21 +865,69 @@ const UserManagementList = () => {
       </Modal>
       {/* User Detail Modal End */}
 
-      <Modal className="modal-center scroll-out-negative" show={bookingModal} onHide={() => setBookingModal(false)} scrollable dialogClassName="full">
+      <Modal size="xl" className="modal-center scroll-out-negative" show={bookingModal} onHide={() => setBookingModal(false)} scrollable dialogClassName="full">
         <Modal.Header closeButton>
-          <Modal.Title as="h5">
-            {' '}
-            {isAdding && 'Add new member'}
-            {isEditing && 'Update new member'}
-            {isViewing && 'Member Information'}
-          </Modal.Title>
+          <Modal.Title as="h5">Booking History</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
-            <div>Name</div>
+            <div>
+              {myBookings.length ? (
+                <Row className="mt-5">
+                  {myBookings.map((item) => (
+                    <Col xs="12" md="4" key={item.id} className="mb-3">
+                      <Card className="mb-2">
+                        <Card.Body className="px-3 py-3">
+                          <table className="w-full">
+                            <tbody>
+                              <tr className="">
+                                <td className="text-muted  text-uppercase border-bottom py-2">Type :</td>
+                                <td className="text-capitalize text-alternate border-bottom py-2">{item.type}</td>
+                              </tr>
+                              <tr className="">
+                                <td className="text-muted  text-uppercase border-bottom py-2">name :</td>
+                                <td className="text-alternate border-bottom py-2">{item.member.name}</td>
+                              </tr>
+                              <tr className="">
+                                <td className="text-muted  text-uppercase border-bottom py-2">Date :</td>
+                                <td className="text-alternate border-bottom py-2">
+                                  <span>{moment(item.startDate).format('ll')}</span>
+                                </td>
+                              </tr>
+                              <tr className="">
+                                <td className="text-muted  text-uppercase border-bottom py-2">Time :</td>
+                                <td className="text-alternate text-alternate border-bottom py-2">
+                                  <span>{item.startTime}</span>
+                                </td>
+                              </tr>
+
+                              <tr className="">
+                                <td className="text-muted  text-uppercase border-bottom py-2">Plan :</td>
+                                <td className="text-capitalize text-alternate border-bottom py-2">{item.plan.toLowerCase()}</td>
+                              </tr>
+                              <tr className="">
+                                <td className="text-muted  text-uppercase border-bottom py-2">Payment Status :</td>
+                                <td className="text-capitalize text-alternate border-bottom py-2"> {item.paymentStatus.toLowerCase()}</td>
+                              </tr>
+
+                              <tr className="">
+                                <td className="text-muted  text-uppercase border-bottom py-2">Status :</td>
+                                <td className="text-capitalize text-alternate border-bottom py-2"> {item.status.toLowerCase()}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                <div className="p-4 text-center">No booking available</div>
+              )}
+            </div>
           </OverlayScrollbarsComponent>
         </Modal.Body>
-      </Modal>
+    </Modal>
     </>
   );
 };

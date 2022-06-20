@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -12,9 +12,93 @@ import CsvDownloader from 'react-csv-downloader';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
+import { useReactToPrint } from 'react-to-print';
 import { getTransactions, getRecentTransactions } from '../../transactions/transactionSlice';
 
+const ComponentToPrint = forwardRef((props, ref) => {
+   const transactionsData = useSelector((state) => state.transactions.items);
+  return (
+    <div ref={ref} style={{ padding: '20px' }}>
+      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+        <thead className="">
+          <tr align="left">
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium">Branch</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Membership</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Description</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Start date</div>
+            </th>
+
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">End date</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Usage per member</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Value</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Status </div>
+            </th>
+           
+          </tr>
+        </thead>
+        <tbody>
+        
+          {transactionsData.map((item) => (
+            <tr key={item.id} className="mb-2">
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate ">
+                  {item.branch ? item.branch : '-'}
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">
+                  <span>{item.membershipType ? item.membershipType : '-'}</span>
+                </div>
+              </td>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.description}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{ moment(item.startDate).format('llll')}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{moment(item.expiryDate).format('llll')}</div>
+              </td>
+
+           
+                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.usagePerMember}</div>
+              </td>
+                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.value}{item.typeId===1?'':'%'}</div>
+              </td>
+               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.status?'Active':'Inactive'}</div>
+              </td>
+                         
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+});
+
+
 const TransactionList = () => {
+    const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   const title = 'Transactions List';
   const description = 'Transactions List Page';
   const [page, setPage] = useState(1);
@@ -127,6 +211,10 @@ const TransactionList = () => {
     <>
       <HtmlHead title={title} description={description} />
       <div className="page-title-container">
+       <div style={{ display: 'none' }}>
+          <ComponentToPrint ref={componentRef} />
+        </div>
+
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
@@ -142,8 +230,8 @@ const TransactionList = () => {
         </Row>
       </div>
 
-      <Row className="mb-3 gap-1">
-        <Col md="5" lg="4" xxl="4" className="mb-1 d-flex align-items-center ">
+      <Row className="mb-3">
+        <Col md="5" lg="4"  className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -157,16 +245,23 @@ const TransactionList = () => {
 
           {/* Search End */}
         </Col>
-        <Col md="7" lg="8" xxl="8" className="mb-1 text-end d-none d-md-inline">
+        <Col md="7" lg="8" className="mb-1 text-end d-none d-md-inline">
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsvDownloader filename="transactions" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
-                  <CsLineIcons icon="download" />
-                </CsvDownloader>
+                <CsLineIcons icon="download" />
               </Dropdown.Toggle>
             </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item href="#">
+                {' '}
+                <CsvDownloader filename="transactions" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  Export csv
+                </CsvDownloader>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
+            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 
@@ -181,7 +276,7 @@ const TransactionList = () => {
           {/* Length End */}
         </Col>
       </Row>
-      <Row className="mb-3 gap-1">
+      <Row className="mb-3 justify-content-between align-items-center">
         <Col sm="12" md="5"  className="mb-1 d-flex align-items-center ">
           {/* TOGGLE Start */}
           <div className="d-flex align-items-center me-4 mb-1  w-100 ">
@@ -233,28 +328,28 @@ const TransactionList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">DATE</div>
+          <div className="text-muted text-small cursor-pointer ">DATE</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
+          <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">AMOUNT </div>
+          <div className="text-muted text-small cursor-pointer ">AMOUNT </div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">DISCOUNT</div>
+          <div className="text-muted text-small cursor-pointer ">DISCOUNT</div>
         </Col>
 
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
-          <div className="text-muted text-small cursor-pointer sort text-left">SUBTOTAL</div>
+          <div className="text-muted text-small cursor-pointer  text-left">SUBTOTAL</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
-          <div className="text-muted text-small cursor-pointer sort text-left">STATUS </div>
+          <div className="text-muted text-small cursor-pointer  text-left">STATUS </div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer sort">NARATION</div>
+          <div className="text-muted text-small cursor-pointer ">NARATION</div>
         </Col>
       </Row>
       {/* List Header End */}

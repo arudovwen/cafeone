@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-alert */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback,  useRef, forwardRef  } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -13,6 +13,7 @@ import { debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
+import { useReactToPrint } from 'react-to-print';
 import moment from 'moment';
 import {
   getmembershiptypes,
@@ -27,7 +28,74 @@ import {
   // eslint-disable-next-line import/extensions
 } from '../../membership/membershipSlice';
 
+const ComponentToPrint = forwardRef((props, ref) => {
+   const membershipsData = useSelector((state) => state.membership.types);
+  return (
+    <div ref={ref} style={{ padding: '20px' }}>
+      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+        <thead className="">
+          <tr align="left">
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium">Name</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Description</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Daily amount</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Weekly amount</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Monthly amount</div>
+            </th>
+
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Status</div>
+            </th>
+           
+          </tr>
+        </thead>
+        <tbody>
+          {membershipsData.map((item) => (
+            <tr key={item.id} className="mb-2">
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate ">
+                  {item.name}
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">
+                  <span>{item.description}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 1) ? item.plans.find((v) => v.planTypeId === 1).amount : 0 }</div>
+              </td>
+               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 2) ? item.plans.find((v) => v.planTypeId === 2).amount : 0 }</div>
+              </td>
+               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 3) ? item.plans.find((v) => v.planTypeId === 3).amount : 0 }</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.isActive?'Active':'Inactive'}</div>
+              </td>
+                         </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+});
+
+
 const MembershipTypeList = () => {
+   const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   const title = 'Membership Types';
   const description = 'Membership Types Page';
   const [membershipModal, setMembershipModal] = useState(false);
@@ -351,6 +419,9 @@ const MembershipTypeList = () => {
     <>
       <HtmlHead title={title} description={description} />
       <div className="page-title-container">
+        <div style={{ display: 'none' }}>
+          <ComponentToPrint ref={componentRef} />
+        </div>
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
@@ -387,14 +458,21 @@ const MembershipTypeList = () => {
         </Col>
         <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
+           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsvDownloader filename="membership" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
-                  <CsLineIcons icon="download" />
-                </CsvDownloader>
+                <CsLineIcons icon="download" />
               </Dropdown.Toggle>
             </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item href="#">
+                {' '}
+                <CsvDownloader filename="membershiptypes" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  Export csv
+                </CsvDownloader>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
+            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback,  useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
 import moment from 'moment';
+import { useReactToPrint } from 'react-to-print';
 import {
   getBranches,
   addBranch,
@@ -30,7 +31,61 @@ import {
 } from '../../branches/branchSlice';
 import { uploadPhoto } from '../../members/memberSlice';
 
+const ComponentToPrint = forwardRef((props, ref) => {
+  const branchesData = useSelector((state) => state.branches.branches);
+  return (
+    <div ref={ref} style={{ padding: '20px' }}>
+      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+        <thead className="">
+          <tr align="left">
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium">NAME</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Location</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Seats</div>
+            </th>
+
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Status</div>
+            </th>
+           
+          </tr>
+        </thead>
+        <tbody>
+          {branchesData.map((item) => (
+            <tr key={item.id} className="mb-2">
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate ">
+                  {item.name}
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">
+                  <span>{item.location}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{item.seatCount }</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.status}</div>
+              </td>
+                         </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+});
+
 const BranchesList = () => {
+   const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   const title = 'Branches List';
   const description = 'Branches List Page';
   const [branchModal, setBranchModal] = useState(false);
@@ -394,6 +449,10 @@ const BranchesList = () => {
     <>
       <HtmlHead title={title} description={description} />
       <div className="page-title-container">
+         <div style={{ display: 'none' }}>
+          <ComponentToPrint ref={componentRef} />
+        </div>
+
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
@@ -430,14 +489,21 @@ const BranchesList = () => {
         </Col>
         <Col md="7" lg="8" xxl="8" className="mb-1 text-end">
           {/* Export Dropdown Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
+         <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsvDownloader filename="branches" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
-                  <CsLineIcons icon="download" />
-                </CsvDownloader>
+                <CsLineIcons icon="download" />
               </Dropdown.Toggle>
             </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item href="#">
+                {' '}
+                <CsvDownloader filename="branches" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  Export csv
+                </CsvDownloader>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
+            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 

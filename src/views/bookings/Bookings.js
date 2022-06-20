@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback,   useRef, forwardRef  } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -19,6 +19,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import CsvDownloader from 'react-csv-downloader';
+import { useReactToPrint } from 'react-to-print';
 import {
   addBooking,
   getBooking,
@@ -36,7 +37,87 @@ import {
 import { getMembers } from '../../members/memberSlice';
 import { getBranches, getBranch } from '../../branches/branchSlice';
 
+const ComponentToPrint = forwardRef((props, ref) => {
+const bookingsData = useSelector((state) => state.bookings.items);
+  return (
+    <div ref={ref} style={{ padding: '20px' }}>
+      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+        <thead className="">
+          <tr align="left">
+           <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium">Type</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium">Name</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Date</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Time</div>
+            </th>
+              <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Duration</div>
+            </th>
+
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Plan</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Payment status</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Status status</div>
+            </th>
+           
+          </tr>
+        </thead>
+        <tbody>
+          {bookingsData.map((item) => (
+            <tr key={item.id} className="mb-2">
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate ">
+                  {item.type}
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">
+                  <span>{item.member.name}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{moment(item.startDate).format('ll') }</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.startTime}</div>
+              </td>
+                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{`${item.duration} hours`}</div>
+              </td>
+              
+                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.plan}</div>
+              </td>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.paymentStatus}</div>
+              </td>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.status}</div>
+              </td>
+              
+                </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+});
+
 const BookingTypeList = () => {
+    const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
    const [isLoading, setisloading] = React.useState(false);
   const title = 'Bookings ';
   const description = 'Bookings Page';
@@ -496,6 +577,10 @@ const BookingTypeList = () => {
     <>
       <HtmlHead title={title} description={description} />
       <div className="page-title-container">
+        <div style={{ display: 'none' }}>
+          <ComponentToPrint ref={componentRef} />
+        </div>
+
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
@@ -534,14 +619,21 @@ const BookingTypeList = () => {
         </Col>
         <Col md="6" lg="6" xxl="6" className="mb-1 d-none d-md-flex justify-content-end align-items-center">
           {/* Export Dropdown Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
+         <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsvDownloader filename="bookings" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
-                  <CsLineIcons icon="download" />
-                </CsvDownloader>
+                <CsLineIcons icon="download" />
               </Dropdown.Toggle>
             </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item href="#">
+                {' '}
+                <CsvDownloader filename="bookings" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  Export csv
+                </CsvDownloader>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
+            </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
 

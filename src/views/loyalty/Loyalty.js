@@ -2,7 +2,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -20,6 +20,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import CsvDownloader from 'react-csv-downloader';
+import { useReactToPrint } from 'react-to-print';
 import {
   addCampaign,
   getCampaign,
@@ -41,7 +42,88 @@ import {
   // eslint-disable-next-line import/extensions
 } from '../../membership/membershipSlice';
 
+const ComponentToPrint = forwardRef((props, ref) => {
+   const campaignsData = useSelector((state) => state.campaigns.items);
+  return (
+    <div ref={ref} style={{ padding: '20px' }}>
+      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+        <thead className="">
+          <tr align="left">
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium">Branch</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Membership</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Description</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Start date</div>
+            </th>
+
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">End date</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Usage per member</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Value</div>
+            </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Status </div>
+            </th>
+           
+          </tr>
+        </thead>
+        <tbody>
+        
+          {campaignsData.map((item) => (
+            <tr key={item.id} className="mb-2">
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate ">
+                  {item.branch ? item.branch : '-'}
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">
+                  <span>{item.membershipType ? item.membershipType : '-'}</span>
+                </div>
+              </td>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.description}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div className="text-alternate">{ moment(item.startDate).format('llll')}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{moment(item.expiryDate).format('llll')}</div>
+              </td>
+
+           
+                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.usagePerMember}</div>
+              </td>
+                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.value}{item.typeId===1?'':'%'}</div>
+              </td>
+               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.status?'Active':'Inactive'}</div>
+              </td>
+                         </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+});
+
 const CampaignTypeList = () => {
+   const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   const [isLoading, setisloading] = React.useState(false);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -260,9 +342,9 @@ const CampaignTypeList = () => {
       setEndDate(null);
       setisloading(false);
     }
-      if (status === 'error') {
-        setisloading(false);
-      }
+    if (status === 'error') {
+      setisloading(false);
+    }
     if (status === 'update') {
       setisloading(false);
 
@@ -309,7 +391,7 @@ const CampaignTypeList = () => {
   }, [startDate, endDate]);
 
   React.useEffect(() => {
-    console.log('🚀 ~ file: Loyalty.js ~ line 321 ~ React.useEffect ~ startDateFrom', startDateFrom);
+   
     if (startDateFrom && startDateTo) {
       dispatch(getCampaigns(1, '', moment(startDateFrom).format('YYYY-MM-DD'), moment(startDateTo).format('YYYY-MM-DD')));
       return;
@@ -326,13 +408,15 @@ const CampaignTypeList = () => {
     if (!campaignsData.length) return;
     const newdata = campaignsData.map((item) => {
       return {
-        cell1: item.description,
-        cell2: item.totalUsage,
-        cell3: item.usagePerMember,
-        cell4: item.value,
-        cell5: moment(item.startDate).format('llll'),
-        cell6: moment(item.expiryDate).format('llll'),
-        cell7: item.status,
+        cell1: item.branch ? item.branch : '-',
+        cell2: item.membershipType ? item.membershipType : '-',
+        cell3: item.totalUsage,
+        cell4: item.usagePerMember,
+        cell5: item.value,
+        cell6: moment(item.startDate).format('llll'),
+        cell7: moment(item.expiryDate).format('llll'),
+        cell8: item.description,
+        cell9: item.status,
       };
     });
     setDatas(newdata);
@@ -341,30 +425,38 @@ const CampaignTypeList = () => {
   const columns = [
     {
       id: 'cell1',
-      displayName: 'DESCRIPTION',
+      displayName: 'BRANCH',
     },
     {
       id: 'cell2',
-      displayName: 'USAGE',
+      displayName: 'MEMBERSHIPT TYPE',
     },
     {
       id: 'cell3',
-      displayName: 'USAGE PER USER',
+      displayName: 'USAGE',
     },
     {
       id: 'cell4',
-      displayName: 'VALUE',
+      displayName: 'USAGE PER USER',
     },
     {
       id: 'cell5',
-      displayName: 'START DATE',
+      displayName: 'VALUE',
     },
     {
       id: 'cell6',
-      displayName: 'EXPIRY DATE',
+      displayName: 'START DATE',
     },
     {
       id: 'cell7',
+      displayName: 'EXPIRY DATE',
+    },
+    {
+      id: 'cell8',
+      displayName: 'DESCRIPTION',
+    },
+    {
+      id: 'cell9',
       displayName: 'STATUS',
     },
   ];
@@ -380,6 +472,10 @@ const CampaignTypeList = () => {
     <>
       <HtmlHead title={title} description={description} />
       <div className="page-title-container">
+        <div style={{ display: 'none' }}>
+          <ComponentToPrint ref={componentRef} />
+        </div>
+
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
@@ -416,15 +512,22 @@ const CampaignTypeList = () => {
         </Col>
         <Col md="7" lg="5" xxl="6" className="mb-1 text-end">
           {/* Export Dropdown Start */}
-          {/* <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export csv</Tooltip>}>
+          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
-                <CsvDownloader filename="campaigns" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
-                  <CsLineIcons icon="download" />
-                </CsvDownloader>
+                <CsLineIcons icon="download" />
               </Dropdown.Toggle>
             </OverlayTrigger>
-          </Dropdown> */}
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item href="#">
+                {' '}
+                <CsvDownloader filename="campaigns" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                  Export csv
+                </CsvDownloader>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
           {/* Export Dropdown End */}
 
           {/* Length Start */}
@@ -494,28 +597,28 @@ const CampaignTypeList = () => {
         </Col>
       </Row>
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
+      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-">
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">BRANCH / MEMBERSHIP</div>
+          <div className="text-muted text-small cursor-pointer ">BRANCH / MEMBERSHIP</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">START DATE</div>
+          <div className="text-muted text-small cursor-pointer ">START DATE</div>
         </Col>
         <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">END DATE</div>
+          <div className="text-muted text-small cursor-pointer ">END DATE</div>
         </Col>
 
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">USAGE</div>
+          <div className="text-muted text-small cursor-pointer ">USAGE</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
+          <div className="text-muted text-small cursor-pointer ">STATUS</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">TOGGLE</div>
+          <div className="text-muted text-small cursor-pointer ">TOGGLE</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
-          <div className="text-muted text-small cursor-pointer sort">Action</div>
+          <div className="text-muted text-small cursor-pointer ">Action</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -941,7 +1044,7 @@ const CampaignTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">{updateData.type} Value</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.value}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.value} {updateData.typeId===1?'':'%'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
