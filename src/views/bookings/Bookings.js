@@ -195,9 +195,9 @@ const BookingTypeList = () => {
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (bookingsData.length / page > page) {
+    if (bookingsData.length < 15) return;
       setPage(page + 1);
-    }
+
   }
   function prevPage() {
     if (page === 1) return;
@@ -766,7 +766,7 @@ const BookingTypeList = () => {
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
 
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={bookingsData.length / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={bookingsData.length < 15}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>

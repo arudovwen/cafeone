@@ -108,9 +108,8 @@ const AdminManagementList = () => {
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (total / page > page) {
-      setPage(page + 1);
-    }
+    if (total < 15) return;
+    setPage(page + 1);
   }
   function prevPage() {
     if (page === 1) return;
@@ -430,7 +429,7 @@ const AdminManagementList = () => {
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
 
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={total / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={total < 15}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>

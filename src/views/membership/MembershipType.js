@@ -155,9 +155,9 @@ const MembershipTypeList = () => {
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (membershipsData.length / page > page) {
+    if (membershipsData.length < 15) return;
       setPage(page + 1);
-    }
+
   }
   function prevPage() {
     if (page === 1) return;
@@ -535,7 +535,7 @@ const MembershipTypeList = () => {
             </Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={membershipsData.length / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={membershipsData.length < 15}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>

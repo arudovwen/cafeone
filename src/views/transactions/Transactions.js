@@ -136,9 +136,8 @@ const TransactionList = () => {
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (transactionsData.length / page > page) {
-      setPage(page + 1);
-    }
+    if (transactionsData.length < 15) return;
+    setPage(page + 1);
   }
   function prevPage() {
     if (page === 1) return;
@@ -487,7 +486,7 @@ const TransactionList = () => {
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
 
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={transactionsData.length / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={transactionsData.length < 15}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>

@@ -181,9 +181,8 @@ const CampaignTypeList = () => {
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (campaignsData.length / page > page) {
-      setPage(page + 1);
-    }
+    if (campaignsData.length < 15) return;
+    setPage(page + 1);
   }
   function prevPage() {
     if (page === 1) return;
@@ -649,7 +648,7 @@ const CampaignTypeList = () => {
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
 
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={campaignsData.length / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={campaignsData.length < 15}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>

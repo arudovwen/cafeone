@@ -125,9 +125,8 @@ const UserManagementList = () => {
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (total / page > page) {
-      setPage(page + 1);
-    }
+    if (total < 15) return;
+    setPage(page + 1);
   }
   function prevPage() {
     if (page === 1) return;
@@ -459,9 +458,10 @@ const UserManagementList = () => {
             <Row className="g-0 h-100 align-content-center cursor-default">
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-2">
                 <div className="text-muted text-small d-md-none">Name</div>
+
                 <div className="text-alternate dflex align-items-center">
                   <img
-                    src={`${process.env.REACT_APP_URL}/${item.avatar}`}
+                    src={item.avatar ? `${process.env.REACT_APP_URL}/${item.avatar}` : 'https://via.placeholder.com/150'}
                     alt="avatar"
                     className="avatar avatar-sm me-2 rounded d-none d-md-inline"
                     style={{ width: '30px', height: '30px' }}
@@ -502,7 +502,7 @@ const UserManagementList = () => {
               <CsLineIcons icon="chevron-left" />
             </Pagination.Prev>
 
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={total / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={total < 15}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>
@@ -730,7 +730,7 @@ const UserManagementList = () => {
               <div className="">
                 <div className="d-flex justify-content-between align-items-end  mb-3">
                   <img
-                    src={`${process.env.REACT_APP_URL}/${updateData.avatar}`}
+                    src={updateData.avatar ? `${process.env.REACT_APP_URL}/${updateData.avatar}` : 'https://via.placeholder.com/150'}
                     alt="avatar"
                     className="rounded-circle"
                     style={{ width: '80px', height: '80px' }}
@@ -851,7 +851,7 @@ const UserManagementList = () => {
         <Modal.Header closeButton>
           <Modal.Title as="h5">Booking History</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="bg-light">
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
             <div>
               {myBookings.length ? (

@@ -121,9 +121,9 @@ const BranchesList = () => {
   }, [dispatch, page, search]);
 
   function nextPage() {
-    if (branchesData.length / page > page) {
+    if (branchesData.length < 15) return;
       setPage(page + 1);
-    }
+
   }
   function prevPage() {
     if (page === 1) return;
@@ -596,7 +596,7 @@ const BranchesList = () => {
             </Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+1)}> {page + 1}</Pagination.Item>
             <Pagination.Item className="shadow" onClick={() = handleActive(page+2)}>{page + 2}</Pagination.Item> */}
-            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={branchesData.length / page > page}>
+            <Pagination.Next className="shadow" onClick={() => nextPage()} disabled={branchesData.length < 15}>
               <CsLineIcons icon="chevron-right" />
             </Pagination.Next>
           </Pagination>
@@ -799,7 +799,7 @@ const BranchesList = () => {
                             <tr key={item.id} className="border-bottom ">
                               <td className="px-2  border-bottom py-2">
                                 <img
-                                  src={`${process.env.REACT_APP_URL}/${item.photo}`}
+                                   src={item.photo?`${process.env.REACT_APP_URL}/${item.photo}`:'https://via.placeholder.com/150'}
                                   className="rounded-full"
                                   alt="image"
                                   style={{ width: '30px', height: '30px' }}
