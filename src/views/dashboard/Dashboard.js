@@ -119,7 +119,7 @@ const Dashboard = () => {
                 <Card.Body className="pt-0 pb-0 h-100">
                   <Row className="g-0 h-100 align-content-center justify-content-between">
                     <Col xs="12" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100 px-1">
-                      <span className="">{item.member.name}</span>
+                      <span className="">{item.member?item.member.name:'-'}</span>
                     </Col>
 
                     <Col xs="12" md="4" className="d-flex align-items-center mb-1 mb-md-0 text-alternate px-1">
