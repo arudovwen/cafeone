@@ -16,75 +16,57 @@ import { useReactToPrint } from 'react-to-print';
 import { getTransactions, getRecentTransactions } from '../../transactions/transactionSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
-   const transactionsData = useSelector((state) => state.transactions.items);
+  const transactionsData = useSelector((state) => state.transactions.items);
   return (
     <div ref={ref} style={{ padding: '20px' }}>
-      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+      <table align="left" border="1" cellSpacing="5" cellPadding="15" style={{ border: '1px solid #ccc' }}>
         <thead className="">
           <tr align="left">
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium">Branch</div>
+              <div className="text-muted text-medium">Date</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Membership</div>
-            </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Description</div>
+              <div className="text-muted text-medium ">Name</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Start date</div>
+              <div className="text-muted text-medium ">Campaign</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Amount</div>
             </th>
 
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">End date</div>
+              <div className="text-muted text-medium ">Naration</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Usage per member</div>
-            </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Value</div>
-            </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status </div>
             </th>
-
           </tr>
         </thead>
         <tbody>
-
           {transactionsData.map((item) => (
             <tr key={item.id} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate ">
-                  {item.branch ? item.branch : '-'}
-                </div>
+                <div className="text-alternate ">{moment(item.dateCreated).format('ll')}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">
-                  <span>{item.membershipType ? item.membershipType : '-'}</span>
+                  <span>{item.member.name}</span>
                 </div>
               </td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.description}</div>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.campaign}</div>
+              </td>
+
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.subTotal}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{ moment(item.startDate).format('llll')}</div>
+                <div>{item.naration}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{moment(item.expiryDate).format('llll')}</div>
+                <div>{item.status ? 'Active' : 'Inactive'}</div>
               </td>
-
-
-                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.usagePerMember}</div>
-              </td>
-                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.value}{item.typeId===1?'':'%'}</div>
-              </td>
-               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.status?'Active':'Inactive'}</div>
-              </td>
-
             </tr>
           ))}
         </tbody>
@@ -93,9 +75,8 @@ const ComponentToPrint = forwardRef((props, ref) => {
   );
 });
 
-
 const TransactionList = () => {
-    const componentRef = useRef();
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -157,7 +138,7 @@ const TransactionList = () => {
         cell4: item.discount,
         cell5: item.subTotal,
         cell6: item.status,
-         cell7: item.naration,
+        cell7: item.naration,
       };
     });
     setDatas(newdata);
@@ -188,7 +169,7 @@ const TransactionList = () => {
       id: 'cell6',
       displayName: 'STATUS',
     },
-     {
+    {
       id: 'cell7',
       displayName: 'NARATION',
     },
@@ -205,14 +186,13 @@ const TransactionList = () => {
   function resetFilter() {
     setFromDate(null);
     setToDate(null);
-    
   }
 
   return (
     <>
       <HtmlHead title={title} description={description} />
       <div className="page-title-container">
-       <div style={{ display: 'none' }}>
+        <div style={{ display: 'none' }}>
           <ComponentToPrint ref={componentRef} />
         </div>
 
@@ -232,7 +212,7 @@ const TransactionList = () => {
       </div>
 
       <Row className="mb-3">
-        <Col md="5" lg="4"  className="mb-1 d-flex align-items-center ">
+        <Col md="5" lg="4" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start mb-1 search-input-container w-100 shadow bg-foreground">
             <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
@@ -278,7 +258,7 @@ const TransactionList = () => {
         </Col>
       </Row>
       <Row className="mb-3 justify-content-between align-items-center">
-        <Col sm="12" md="5"  className="mb-1 d-flex align-items-center ">
+        <Col sm="12" md="5" className="mb-1 d-flex align-items-center ">
           {/* TOGGLE Start */}
           <div className="d-flex align-items-center me-4 mb-1  w-100 ">
             <label className="me-4 d-flex align-items-center">
@@ -393,7 +373,7 @@ const TransactionList = () => {
                 <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Narration</div>
                   <div className="text-alternate text-small d-none d-md-inline">{item.narration}</div>
-                   <div className="text-alternate text-medium d-md-none">{item.narration}</div>
+                  <div className="text-alternate text-medium d-md-none">{item.narration}</div>
                 </Col>
               </Row>
             </Card.Body>
