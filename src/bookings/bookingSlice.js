@@ -34,11 +34,11 @@ const bookingSlice = createSlice({
 export const { setbooking, addbooking, updatestatus, resetstatus } = bookingSlice.actions;
 
 export const getBookings =
-  (page, search, startTimeFrom = null, startTimeTo = null, endTimeFrom = null, endTimeTo = null, SeatId = null, MemberId = null, seatId=null) =>
+  (page, search, startTimeFrom = null, startTimeTo = null,  MemberId = null, branchId = null, type = null) =>
   async (dispatch) => {
     const response = await axios
       .get(
-        `${SERVICE_URL}/bookings?search=${search}&page=${page}&fromDate=${startTimeFrom}&toDate=${startTimeTo}&MemberId=${MemberId}`,
+        `${SERVICE_URL}/bookings?search=${search}&page=${page}&fromDate=${startTimeFrom}&toDate=${startTimeTo}&MemberId=${MemberId}&branchId=${branchId}&typeId=${type}`,
         requestConfig
       )
       .catch((err) => {
@@ -60,7 +60,7 @@ export const getBookings =
           toast.error(err.response.data.message);
         });
 
-  
+
     };
 
 export const  getPlanTypes  = () => async () => {

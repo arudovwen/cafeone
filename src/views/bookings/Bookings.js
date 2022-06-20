@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-alert */
-import React, { useState, useCallback,   useRef, forwardRef  } from 'react';
+import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal, Spinner } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -38,13 +38,13 @@ import { getMembers } from '../../members/memberSlice';
 import { getBranches, getBranch } from '../../branches/branchSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
-const bookingsData = useSelector((state) => state.bookings.items);
+  const bookingsData = useSelector((state) => state.bookings.items);
   return (
     <div ref={ref} style={{ padding: '20px' }}>
-      <table  align="left" border="1"  cellSpacing="5"  cellPadding="15" style={{ border: '1px solid #ccc' }}>
+      <table align="left" border="1" cellSpacing="5" cellPadding="15" style={{ border: '1px solid #ccc' }}>
         <thead className="">
           <tr align="left">
-           <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium">Type</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -56,29 +56,26 @@ const bookingsData = useSelector((state) => state.bookings.items);
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Time</div>
             </th>
-              <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Duration</div>
             </th>
 
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Plan</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Payment status</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status status</div>
             </th>
-           
           </tr>
         </thead>
         <tbody>
           {bookingsData.map((item) => (
             <tr key={item.id} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate ">
-                  {item.type}
-                </div>
+                <div className="text-alternate ">{item.type}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">
@@ -86,26 +83,25 @@ const bookingsData = useSelector((state) => state.bookings.items);
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{moment(item.startDate).format('ll') }</div>
+                <div className="text-alternate">{moment(item.startDate).format('ll')}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.startTime}</div>
               </td>
-                 <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{`${item.duration} hours`}</div>
               </td>
-              
-                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.plan}</div>
               </td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.paymentStatus}</div>
               </td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.status}</div>
               </td>
-              
-                </tr>
+            </tr>
           ))}
         </tbody>
       </table>
@@ -114,11 +110,11 @@ const bookingsData = useSelector((state) => state.bookings.items);
 });
 
 const BookingTypeList = () => {
-    const componentRef = useRef();
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-   const [isLoading, setisloading] = React.useState(false);
+  const [isLoading, setisloading] = React.useState(false);
   const title = 'Bookings ';
   const description = 'Bookings Page';
   const [bookingModal, setBookingModal] = useState(false);
@@ -132,6 +128,7 @@ const BookingTypeList = () => {
   const [datas, setDatas] = useState([]);
   const [seatData, setSeatData] = React.useState([]);
   const [isEvent, setIsEvent] = React.useState(false);
+  const [type, setType] = useState('')
   const [eventData, setEventData] = React.useState({
     email: '',
     phoneNumber: '',
@@ -183,6 +180,7 @@ const BookingTypeList = () => {
   const [endTimeFrom, setEndDateFrom] = useState(null);
   const [endTimeTo, setEndDateTo] = useState(null);
   const [memberId, setMemberId] = useState(null);
+  const [branchId, setBranchId] = useState(null);
   const [statusId, setStatusId] = useState(null);
   const [seatSearchId, setSeatSearchId] = useState(null);
 
@@ -221,10 +219,9 @@ const BookingTypeList = () => {
     setBookingModal(!bookingModal);
   };
 
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = (values) => {
     dispatch(addBooking(values));
-
-    setisloading(true)
+    setisloading(true);
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -304,7 +301,6 @@ const BookingTypeList = () => {
     });
   }
 
-
   // highlight-starts
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
@@ -335,7 +331,7 @@ const BookingTypeList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setBookingModal(false);
-      setisloading(false)
+      setisloading(false);
       values.seats = [];
       values.memberId = '';
       values.branchId = '';
@@ -346,7 +342,7 @@ const BookingTypeList = () => {
       values.paymentStatus = '';
     }
     if (status === 'update') {
-       setisloading(false)
+      setisloading(false);
       dispatch(getBookings(1, ''));
       setBookingModal(false);
       setUpdateData({
@@ -357,8 +353,8 @@ const BookingTypeList = () => {
         description: '',
       });
     }
-     if (status === 'error') {
-       setisloading(false)
+    if (status === 'error') {
+      setisloading(false);
     }
   }, [status, dispatch]);
 
@@ -370,7 +366,7 @@ const BookingTypeList = () => {
   }
   function handleUpdate(e) {
     e.preventDefault();
-     setisloading(true)
+    setisloading(true);
     dispatch(updateBooking(updateData));
   }
   function handleEventChange(e) {
@@ -380,7 +376,7 @@ const BookingTypeList = () => {
     });
   }
   function handleEventData(e) {
-     setisloading(true)
+    setisloading(true);
     e.preventDefault();
     dispatch(addEventBooking(eventData));
   }
@@ -414,15 +410,15 @@ const BookingTypeList = () => {
   function setSeat(val) {
     values.seatId = val;
   }
-  function similarDate(date){
-    const today = moment(new Date())
-    const varDate = moment(date)
-   const val = today.isSame(varDate, 'date');
+  function similarDate(date) {
+    const today = moment(new Date());
+    const varDate = moment(date);
+    const val = today.isSame(varDate, 'date');
 
-  return val
+    return val;
   }
   function handleChecking(id, stat) {
-    const now = moment().format('hh:mm')
+    const now = moment().format('hh:mm');
     if (stat === 'clockOut') {
       dispatch(checkoutBooking(updateData.id, id, now)).then((res) => {
         if (res.status === 200) {
@@ -432,7 +428,6 @@ const BookingTypeList = () => {
           });
         }
       });
-
     } else {
       dispatch(checkinBooking(updateData.id, id, now)).then((res) => {
         if (res.status === 200) {
@@ -458,8 +453,8 @@ const BookingTypeList = () => {
         cell8: item.endTime,
         cell9: item.seatCount,
         cell10: item.plan,
-         cell11: item.type,
-          cell12: item.status,
+        cell11: item.type,
+        cell12: item.status,
         cell13: moment(item.dateCreated).format('llll'),
       };
     });
@@ -507,20 +502,19 @@ const BookingTypeList = () => {
       id: 'cell10',
       displayName: 'PLAN',
     },
-     {
+    {
       id: 'cell11',
       displayName: 'TYPE',
     },
-     {
+    {
       id: 'cell12',
       displayName: 'STATUS',
     },
-     {
+    {
       id: 'cell13',
       displayName: 'DATE CREATED',
     },
   ];
-
 
   function handleSeats(val) {
     values.seats = val;
@@ -535,33 +529,8 @@ const BookingTypeList = () => {
   }, [fromDate, toDate]);
 
   React.useEffect(() => {
-    if (statusId) {
-      dispatch(getBookings(page, search, null, null, null, null, statusId, null));
-      return;
-    }
-    if (memberId) {
-      dispatch(getBookings(page, search, null, null, null, null, null, memberId));
-      return;
-    }
-    if (seatSearchId) {
-      dispatch(getBookings(page, search, null, null, null, null, null, null, seatSearchId));
-      return;
-    }
-    dispatch(getBookings(page, search));
-  }, [statusId, memberId, seatSearchId]);
-
-  React.useEffect(() => {
-    if (startTimeFrom && startTimeTo) {
-      dispatch(getBookings(1, '', moment(startTimeFrom).format('YYYY-MM-DD'), moment(startTimeTo).format('YYYY-MM-DD')));
-      return;
-    }
-    if (endTimeFrom && endTimeTo) {
-      dispatch(getBookings(page, '', null, null, moment(endTimeFrom).format('YYYY-MM-DD'), moment(endTimeTo).format('YYYY-MM-DD')));
-      return;
-    }
-
-    dispatch(getBookings(1, ''));
-  }, [startTimeFrom, startTimeTo, endTimeFrom, endTimeTo]);
+    dispatch(getBookings(page, search, moment(startTimeFrom).format('YYYY-MM-DD'), moment(startTimeTo).format('YYYY-MM-DD'), memberId, branchId, type));
+  }, [memberId, branchId, startTimeFrom, startTimeTo, type]);
 
   function resetFilter() {
     setstartTimeFrom(null);
@@ -571,6 +540,8 @@ const BookingTypeList = () => {
     setMemberId(null);
     setStatusId(null);
     setSeatSearchId(null);
+    setBranchId(null);
+    setType('')
   }
 
   return (
@@ -597,17 +568,8 @@ const BookingTypeList = () => {
       </div>
 
       <Row className="mb-4">
-        <Col md="6" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
-          {/* Search Start */}
-          {/* <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
-            <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
-            <span className="search-magnifier-icon">
-              <CsLineIcons icon="search" />
-            </span>
-            <span className="search-delete-icon d-none">
-              <CsLineIcons icon="close" />
-            </span>
-          </div> */}
+        <Col xs="7" md="6" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
+
           <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start w-100 w-md-auto mb-1 me-3" onClick={() => addNewBooking()}>
             <CsLineIcons icon="plus" size="12" /> <span className="">Add booking</span>
           </Button>
@@ -617,9 +579,20 @@ const BookingTypeList = () => {
 
           {/* Search End */}
         </Col>
-        <Col md="6" lg="6" xxl="6" className="mb-1 d-none d-md-flex justify-content-end align-items-center">
+        <Col xs="5" md="6" lg="6" xxl="6" className="mb-1  d-flex justify-content-end align-items-center">
           {/* Export Dropdown Start */}
-         <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+
+<div>
+  <Form.Select value={type} onChange={(e)=> setType(e.target.value)}>
+    <option disabled value=''>Filter by type </option>
+     <option value=''>Both</option>
+     <option value={1}>Coworking </option>
+      <option value={2}>Event </option>
+
+     </Form.Select>
+
+</div>
+          <Dropdown align={{ xs: 'end' }} className="d-none d-md-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
                 <CsLineIcons icon="download" />
@@ -678,18 +651,30 @@ const BookingTypeList = () => {
             />
           </div>
         </Col>
-        <Col xs="8" md="4">
-          <SelectSearch
-            filterOptions={() => fuzzySearch(membersData)}
-            options={membersData}
-            search
-            name="members"
-            value={memberId}
-            onChange={(val) => setMemberId(val)}
-            placeholder="Filter by  member"
-          />
+        <Col xs="12" md="5">
+          <div className="d-flex align-items-center gap-1">
+            <SelectSearch
+              filterOptions={() => fuzzySearch(membersData)}
+              options={membersData}
+              search
+              name="members"
+              value={memberId}
+              onChange={(val) => setMemberId(val)}
+              placeholder="Filter by  member"
+            />
+
+            <SelectSearch
+              filterOptions={() => fuzzySearch(branchesData)}
+              options={branchesData}
+              search
+              name="branchId"
+              value={branchId}
+              placeholder="Filter by  branch"
+              onChange={(val) => setBranchId(val)}
+            />
+          </div>
         </Col>
-        <Col xs="4" md="2" className="d-flex align-items-center">
+        <Col xs="4" md="2" className="d-flex align-items-center justify-content-center mt-3 mt-md-0">
           <span onClick={() => resetFilter()} className="cursor-pointer d-flex align-items-center">
             <span className="me-1">Reset filter</span> <CsLineIcons icon="refresh-horizontal" size="13" />
           </span>
@@ -726,7 +711,7 @@ const BookingTypeList = () => {
       {/* List Items Start */}
       <Row className="mt-5">
         {bookingsData.map((item) => (
-          <Col xs="12" md="4" key={item.id} className="mb-3">
+          <Col xs="12" md="6" lg="4" key={item.id} className="mb-3">
             <Card className="mb-2">
               <Card.Body className="px-3 py-3">
                 <table className="w-full">
@@ -756,7 +741,7 @@ const BookingTypeList = () => {
                       <td className="text-muted  text-uppercase border-bottom py-2">Plan :</td>
                       <td className="text-capitalize text-alternate border-bottom py-2">{item.plan.toLowerCase()}</td>
                     </tr>
-                      <tr className="">
+                    <tr className="">
                       <td className="text-muted  text-uppercase border-bottom py-2">Payment Status :</td>
                       <td className="text-capitalize text-alternate border-bottom py-2"> {item.paymentStatus.toLowerCase()}</td>
                     </tr>
@@ -918,14 +903,14 @@ const BookingTypeList = () => {
                 </div>
 
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                    {!isLoading ? (
-                'Submit'
-              ) : (
-                <Spinner animation="border" role="status" size="sm">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              )}
-                  </Button>
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                </Button>
               </form>
             )}
             {isEvent && (
@@ -1059,14 +1044,14 @@ const BookingTypeList = () => {
                 </div>
 
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                    {!isLoading ? (
-                'Submit'
-              ) : (
-                <Spinner animation="border" role="status" size="sm">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              )}
-                  </Button>
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                </Button>
               </form>
             )}
             {isEditing && (
@@ -1170,14 +1155,14 @@ const BookingTypeList = () => {
                 </div>
 
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                    {!isLoading ? (
-                'Submit'
-              ) : (
-                <Spinner animation="border" role="status" size="sm">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              )}
-                  </Button>
+                  {!isLoading ? (
+                    'Submit'
+                  ) : (
+                    <Spinner animation="border" role="status" size="sm">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                </Button>
               </form>
             )}
 

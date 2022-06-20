@@ -47,11 +47,11 @@ const ComponentToPrint = forwardRef((props, ref) => {
              <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status </div>
             </th>
-           
+
           </tr>
         </thead>
         <tbody>
-        
+
           {transactionsData.map((item) => (
             <tr key={item.id} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -74,7 +74,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 <div>{moment(item.expiryDate).format('llll')}</div>
               </td>
 
-           
+
                  <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.usagePerMember}</div>
               </td>
@@ -84,7 +84,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.status?'Active':'Inactive'}</div>
               </td>
-                         
+
             </tr>
           ))}
         </tbody>
@@ -205,6 +205,7 @@ const TransactionList = () => {
   function resetFilter() {
     setFromDate(null);
     setToDate(null);
+    
   }
 
   return (
