@@ -59,7 +59,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
-                <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
+                <div className="text-alternate">{item.phone ? item.phone : '-'}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div>{item.membershipType}</div>
@@ -137,10 +137,10 @@ const UserManagementList = () => {
     firstName: Yup.string().required('First name is required'),
     lastName: Yup.string().required('Last name is required'),
     address1: Yup.string().required('Address is required'),
-    city: Yup.string().required('City is required'),
+    city: Yup.string(),
     state: Yup.string().required('State is required'),
     gender: Yup.string().required('Gender is required'),
-    birthDate: Yup.string().required('Dob is required'),
+    birthDate: Yup.string(),
     phoneNumber: Yup.string().required('Phone number is required'),
     membershipTypeId: Yup.string().required('Field is required'),
   });
@@ -557,7 +557,7 @@ const UserManagementList = () => {
                     {isUploading === 'loaded' ? <CsLineIcons icon="check" size="12" variant="primary" /> : ''}
                     {isUploading === 'loading' ? <Spinner animation="border" role="status" className="text-success" size="sm" /> : ''}
                   </Form.Label>
-                  <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleFile} />
+                  <input type="file" id="photo" className="form-control" accept="image/*" name="photo" onChange={handleFile} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Gender</Form.Label>
@@ -653,7 +653,7 @@ const UserManagementList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Photo</Form.Label>
-                  <input type="file" id="photo" className="form-control" accept="image" name="photo" onChange={handleUpdateFile} />
+                  <input type="file" id="photo" className="form-control" accept="image/*" name="photo" onChange={handleUpdateFile} />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Gender</Form.Label>

@@ -766,47 +766,48 @@ const CampaignTypeList = () => {
                           <option value={2}>Unlimited</option>
                         </Form.Select>
                       </div>
-
-                      <div className="mb-3">
-                        <Form.Label>Usage per-member </Form.Label>
-                        <Form.Control type="number" name="usagePerMember" onChange={handleChange} value={values.usagePerMember} />
-                        {errors.usagePerMember && touched.usagePerMember && <div className="d-block invalid-tooltip">{errors.usagePerMember}</div>}
-                      </div>
                     </>
                   )}
                 </div>
 
                 {duration == 1 ? (
-                  <div className="mb-3 mt-3">
-                    <Form.Label>Duration</Form.Label>
-
-                    <div className="d-flex justify-content-between align-items-center">
-                      <DatePicker
-                        className="border rounded-sm px-2 py-1 text-muted w-100"
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        selectsStart
-                        minDate={new Date()}
-                        startDate={startDate}
-                        endDate={endDate}
-                        placeholder="Start date"
-                        showTimeSelect
-                      />
-
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        selectsEnd
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={startDate}
-                        className="border rounded-sm px-2 py-1 text-muted w-100"
-                        placeholder="Expiry date"
-                        showTimeSelect
-                      />
+                  <>
+                    <div className="mb-3">
+                      <Form.Label>Usage per-member </Form.Label>
+                      <Form.Control type="number" name="usagePerMember" onChange={handleChange} value={values.usagePerMember} />
+                      {errors.usagePerMember && touched.usagePerMember && <div className="d-block invalid-tooltip">{errors.usagePerMember}</div>}
                     </div>
-                    {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
-                  </div>
+                    <div className="mb-3 mt-3">
+                      <Form.Label>Duration</Form.Label>
+
+                      <div className="d-flex justify-content-between align-items-center">
+                        <DatePicker
+                          className="border rounded-sm px-2 py-1 text-muted w-100"
+                          selected={startDate}
+                          onChange={(date) => setStartDate(date)}
+                          selectsStart
+                          minDate={new Date()}
+                          startDate={startDate}
+                          endDate={endDate}
+                          placeholder="Start date"
+                          showTimeSelect
+                        />
+
+                        <DatePicker
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          selectsEnd
+                          startDate={startDate}
+                          endDate={endDate}
+                          minDate={startDate}
+                          className="border rounded-sm px-2 py-1 text-muted w-100"
+                          placeholder="Expiry date"
+                          showTimeSelect
+                        />
+                      </div>
+                      {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
+                    </div>
+                  </>
                 ) : (
                   ''
                 )}
@@ -916,45 +917,46 @@ const CampaignTypeList = () => {
                           <option value={2}>Unlimited</option>
                         </Form.Select>
                       </div>
-
-                      <div className="mb-3">
-                        <Form.Label>Usage per-member </Form.Label>
-                        <Form.Control type="number" name="usagePerMember" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerMember} />
-                      </div>
                     </>
                   )}
                 </div>
 
                 {duration == 1 ? (
-                  <div className="mb-3 mt-3">
-                    <Form.Label>Duration</Form.Label>
-
-                    <div className="d-flex justify-content-between align-items-center">
-                      <DatePicker
-                        className="border rounded-sm px-2 py-1 text-muted"
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        selectsStart
-                        minDate={new Date()}
-                        startDate={startDate}
-                        endDate={endDate}
-                        placeholder="Start date"
-                        showTimeSelect
-                      />
-
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        selectsEnd
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={startDate}
-                        className="border rounded-sm px-2 py-1 text-muted"
-                        placeholder="Expiry date"
-                        showTimeSelect
-                      />
+                  <>
+                    <div className="mb-3">
+                      <Form.Label>Usage per-member </Form.Label>
+                      <Form.Control type="number" name="usagePerMember" onChange={(e) => handleUpdateChange(e)} value={updateData.usagePerMember} />
                     </div>
-                  </div>
+                    <div className="mb-3 mt-3">
+                      <Form.Label>Duration</Form.Label>
+
+                      <div className="d-flex justify-content-between align-items-center">
+                        <DatePicker
+                          className="border rounded-sm px-2 py-1 text-muted"
+                          selected={startDate}
+                          onChange={(date) => setStartDate(date)}
+                          selectsStart
+                          minDate={new Date()}
+                          startDate={startDate}
+                          endDate={endDate}
+                          placeholder="Start date"
+                          showTimeSelect
+                        />
+
+                        <DatePicker
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          selectsEnd
+                          startDate={startDate}
+                          endDate={endDate}
+                          minDate={startDate}
+                          className="border rounded-sm px-2 py-1 text-muted"
+                          placeholder="Expiry date"
+                          showTimeSelect
+                        />
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   ''
                 )}
