@@ -394,6 +394,8 @@ const BookingTypeList = () => {
         return;
       }
       dispatch(addEventBooking(eventData));
+    }).catch(err => {
+      setBookingMessage(err.response. data.message)
     });
   }
 
