@@ -57,6 +57,12 @@ export const getRecentDashboardTransactions = () => async (dispatch) => {
     dispatch(setrecenttransactions(response.data));
   }
 };
+export const markAsPaid = (paymentId) => async () => {
+
+  return axios.post(`${SERVICE_URL}/payments/${paymentId}`, paymentId, requestConfig).catch((err) => {
+    toast.error(err.response.data.message);
+  });
+};
 
 const transactionReducer = transactionSlice.reducer;
 

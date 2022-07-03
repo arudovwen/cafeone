@@ -100,7 +100,6 @@ const BranchesList = () => {
     name: '',
     location: '',
     description: '',
-    address: '',
     city: '',
     state: '',
   };
@@ -296,7 +295,7 @@ const BranchesList = () => {
       values.name = '';
       values.location = '';
       values.description = '';
-      values.address = '';
+      values.location = '';
       values.city = '';
       values.state = '';
       setIsUploading(null);
@@ -313,7 +312,6 @@ const BranchesList = () => {
         name: '',
         location: '',
         description: '',
-        address: '',
         city: '',
         state: '',
       });
@@ -549,7 +547,7 @@ const BranchesList = () => {
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-3 px-1">
                 <div className="text-muted text-small d-md-none">Location</div>
                 <div className="text-alternate">
-                  <span>{item.address}</span>
+                  <span>{item.location}</span>
                 </div>
               </Col>
 
@@ -750,7 +748,7 @@ const BranchesList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Location</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.address}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.location}</td>
                     </tr>
 
                     <tr>
@@ -780,7 +778,7 @@ const BranchesList = () => {
 
                 <h5>Seat Information</h5>
 
-                <div className="" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <div className="" style={{ maxHeight: '400px', overflowY: 'auto', paddingBottom:"40px" }}>
                   {seats && seats.length ? (
                     <table className="mb-5 w-100 bg-light p-3 rounded-lg w-100">
                       <thead>
@@ -818,12 +816,7 @@ const BranchesList = () => {
                               </td>
 
                               <td className=" py-2 px-2 border-bottom">
-                                {/* <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start me-2" onClick={() => editThisSeat(item)}>
-                                  <CsLineIcons icon="pen" className="text-small" size="12" />{' '}
-                                </Button>
-                                <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start" onClick={() => deleteThisSeat(item.id)}>
-                                  <CsLineIcons icon="bin" className="text-small" size="12" />{' '}
-                                </Button> */}
+
                                 <Dropdown className="">
                                   <Dropdown.Toggle variant="light" as="div" className="text-center" bsPrefix="dot">
                                     <CsLineIcons icon="more-vertical" className="text-small" size="12" />{' '}

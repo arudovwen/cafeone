@@ -32,9 +32,9 @@ const memberSlice = createSlice({
 
 export const { setmembers, addmembers, updatestatus, resetstatus } = memberSlice.actions;
 export const getMembers =
-  (page, search, size = 15) =>
+  (page, search, size = 15, branchId) =>
   async (dispatch) => {
-    const response = await axios.get(`${SERVICE_URL}/members?page=${page}&search=${search}&size=${size}`, requestConfig).catch((err) => {
+    const response = await axios.get(`${SERVICE_URL}/members?page=${page}&search=${search}&size=${size}&branchId=${branchId}`, requestConfig).catch((err) => {
       toast.error(err.response.data.message);
     });
 

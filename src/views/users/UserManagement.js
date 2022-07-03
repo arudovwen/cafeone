@@ -6,7 +6,6 @@ import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Ove
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
-import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -15,11 +14,16 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
+import SelectSearch from 'react-select-search';
+import Fuse from 'fuse.js';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { useReactToPrint } from 'react-to-print';
 import {
   getmembershiptypes,
   // eslint-disable-next-line import/extensions
 } from '../../membership/membershipSlice';
+import { getBranches } from '../../branches/branchSlice';
 import { getMembers, addMember, uploadPhoto, getMember, updateMember, subscribeMember, deleteMember } from '../../members/memberSlice';
 import { getBookingByMember } from '../../bookings/bookingSlice';
 
@@ -43,11 +47,14 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium ">Membership Type</div>
             </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+              <div className="text-muted text-medium">Branch</div>
+            </th>
           </tr>
         </thead>
         <tbody>
-          {usersData.map((item) => (
-            <tr key={item.id} className="mb-2">
+          {usersData.map((item, id) => (
+            <tr key={id} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div className="text-alternate ">
                   {item.firstName} {item.lastName}
@@ -63,6 +70,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div>{item.membershipType}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div>{item.branch}</div>
               </td>
             </tr>
           ))}
@@ -86,9 +96,16 @@ const UserManagementList = () => {
   const total = useSelector((state) => state.members.total);
   const status = useSelector((state) => state.members.status);
   const membershipsData = useSelector((state) => state.membership.types);
+  const branchesData = useSelector((state) => state.branches.branches).map((item) => {
+    return {
+      value: item.id,
+      name: item.name,
+    };
+  });
   const [isLoading, setisloading] = React.useState(false);
   const [isUploading, setIsUploading] = useState(null);
   const [bookingModal, setBookingModal] = useState(false);
+  const [branchId, setBranchId] = useState(null);
   const initialValues = {
     email: '',
     firstName: '',
@@ -105,6 +122,7 @@ const UserManagementList = () => {
     note: '',
     membershipTypeId: '',
     gender: '',
+    branchId: '',
   };
   const [page, setPage] = useState(1);
   // const [isShowing, setIsShowing] = useState(1);
@@ -121,6 +139,7 @@ const UserManagementList = () => {
   const [datas, setDatas] = useState([]);
   React.useEffect(() => {
     dispatch(getMembers(page, search));
+    dispatch(getBranches(page, search, 50));
     dispatch(getmembershiptypes(page, search, 50));
   }, [dispatch, page, search]);
 
@@ -202,7 +221,7 @@ const UserManagementList = () => {
   function editUser(val) {
     dispatch(getMember(val.id)).then((res) => {
       const info = res.data;
-      info.birthDate = moment(res.data.birthDate).format('yyyy-MM-DD');
+      info.birthDate = res.data.birthDate ? moment(res.data.birthDate).format('yyyy-MM-DD') : '';
       info.photo = res.data.avatar;
       setUpdateData(info);
       setIsAdding(false);
@@ -283,6 +302,28 @@ const UserManagementList = () => {
         toast.error(err.response.data.message);
       });
   }
+  function fuzzySearch(options) {
+    const fuse = new Fuse(options, {
+      keys: ['name', 'groupName', 'items.name'],
+      threshold: 0.3,
+    });
+
+    return (value) => {
+      if (!value.length) {
+        return options;
+      }
+
+      return fuse.search(value).map(({ item }) => item);
+    };
+  }
+  React.useEffect(() => {
+    dispatch(getMembers(page, search, 15, branchId));
+  }, [branchId]);
+
+  function resetFilter() {
+    setBranchId(null);
+  }
+
   React.useEffect(() => {
     if (status === 'success') {
       values.email = '';
@@ -323,6 +364,7 @@ const UserManagementList = () => {
         cell2: item.email,
         cell3: item.phone,
         cell4: item.membershipType,
+         cell5: item.branch,
       };
     });
     setDatas(newdata);
@@ -344,6 +386,10 @@ const UserManagementList = () => {
     {
       id: 'cell4',
       displayName: 'MEMBERSHIP TYPE',
+    },
+    {
+      id: 'cell5',
+      displayName: 'BRANCH',
     },
   ];
   return (
@@ -390,13 +436,28 @@ const UserManagementList = () => {
 
           {/* Search End */}
         </Col>
-        <Col md="7" lg="6" xxl="6" className="mb-1 text-end">
+        <Col md="7" lg="5" xxl="5" className="mb-1 text-end d-flex align-items-center">
+          <SelectSearch
+            filterOptions={() => fuzzySearch(branchesData)}
+            options={branchesData}
+            search
+            name="branchId"
+            value={branchId}
+            placeholder="Filter by  branch"
+            onChange={(val) => setBranchId(val)}
+          />
+          <OverlayTrigger delay={{ show: 500, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Reset filter</Tooltip>}>
+            <span onClick={() => resetFilter()} className="cursor-pointer d-flex align-items-center ms-2">
+              <CsLineIcons icon="refresh-horizontal" size="16" />
+            </span>
+          </OverlayTrigger>
+
           {/* Export Dropdown Start */}
           <div style={{ display: 'none' }}>
             <ComponentToPrint ref={componentRef} />
           </div>
 
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-4">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export </Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="dropdown-toggle-no-arrow btn btn-icon btn-icon-only shadow">
                 <CsLineIcons icon="download" />
@@ -404,7 +465,7 @@ const UserManagementList = () => {
             </OverlayTrigger>
             <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">
-                {' '}
+
                 <CsvDownloader filename="members" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
                   Export csv
                 </CsvDownloader>
@@ -518,7 +579,6 @@ const UserManagementList = () => {
       <Modal className="modal-right scroll-out-negative" show={userModal} onHide={() => setUserModal(false)} scrollable dialogClassName="full">
         <Modal.Header closeButton>
           <Modal.Title as="h5">
-            {' '}
             {isAdding && 'Add new member'}
             {isEditing && 'Update new member'}
             {isViewing && 'Member Information'}
@@ -618,6 +678,20 @@ const UserManagementList = () => {
                   </Form.Select>
                   {errors.membershipTypeId && touched.membershipTypeId && <div className="d-block invalid-tooltip">{errors.membershipTypeId}</div>}
                 </div>
+                <div className="mb-3">
+                  <Form.Label>Branch</Form.Label>
+                  <Form.Select type="text" id="branchId" name="branchId" onChange={handleChange} value={values.branchId}>
+                    <option value="" disabled>
+                      Select branch
+                    </option>
+                    {branchesData.map((item) => (
+                      <option value={Number(item.value)} key={item.value}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {errors.branchId && touched.branchId && <div className="d-block invalid-tooltip">{errors.branchId}</div>}
+                </div>
 
                 <div className="border-0 mt-3 mb-5">
                   <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
@@ -711,6 +785,19 @@ const UserManagementList = () => {
                     ))}
                   </Form.Select>
                 </div>
+                <div className="mb-3">
+                  <Form.Label>Branch</Form.Label>
+                  <Form.Select type="text" id="branchId" name="branchId" onChange={(e) => handleUpdateChange(e)} value={updateData.branchId}>
+                    <option value="" disabled>
+                      Select branch
+                    </option>
+                    {branchesData.map((item) => (
+                      <option value={Number(item.value)} key={item.value}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
 
                 <div className="border-0 mt-3 mb-5">
                   <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
@@ -764,8 +851,9 @@ const UserManagementList = () => {
 
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">DOB</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.birthDate).format('l')}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.birthDate ? moment(updateData.birthDate).format('l') : '-'}</td>
                     </tr>
+
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">City</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.city}</td>
@@ -776,20 +864,24 @@ const UserManagementList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Occupation</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.occupation}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.occupation || '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership type</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.membershipType}</td>
                     </tr>
                     <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Branch</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.branch}</td>
+                    </tr>
+                    {/* <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership start date</td>
                       <td className=" py-2 px-1 border-bottom">{moment(updateData.membershipStartDate).format('l')}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership expiry date</td>
                       <td className=" py-2 px-1 border-bottom">{moment(updateData.membershipExpiryDate).format('l')}</td>
-                    </tr>
+                    </tr> */}
 
                     {updateData.note && (
                       <tr>

@@ -3,6 +3,7 @@ import { SERVICE_URL, requestConfig } from 'config.js';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import moment from 'moment';
 
 const initialState = {
   items: [],
@@ -67,6 +68,16 @@ export const getPaymentStatusTypes = () => async () => {
 };
 export const getBooking = (data) => async () => {
   return axios.get(`${SERVICE_URL}/bookings/${data}`, requestConfig);
+};
+export const getCoBookedSeat = (data) => async () => {
+
+  return axios.post(
+    `${SERVICE_URL}/bookings/coworking-booked-seats`,data,
+    requestConfig
+  );
+};
+export const getEventBookedSeat = (data) => async () => {
+  return axios.post(`${SERVICE_URL}/bookings/event-booked-seats`,data , requestConfig);
 };
 
 export const updateBooking = (data) => async () => {

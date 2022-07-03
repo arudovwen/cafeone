@@ -2,7 +2,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback, useRef, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,7 +15,7 @@ import moment from 'moment';
 import { useReactToPrint } from 'react-to-print';
 import SelectSearch from 'react-select-search';
 import Fuse from 'fuse.js';
-import { getTransactions } from '../../transactions/transactionSlice';
+import { getTransactions, markAsPaid } from '../../transactions/transactionSlice';
 import { getMembers } from '../../members/memberSlice';
 import { getBranches } from '../../branches/branchSlice';
 
@@ -237,6 +237,14 @@ const TransactionList = () => {
     setBranchId(null);
   }
 
+  function handlePaid(val) {
+    const conf = window.confirm('Please confirm this action!');
+    if (conf) {
+      dispatch(markAsPaid(val)).then(() => {
+        dispatch(getTransactions(page, search));
+      });
+    }
+  }
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -376,9 +384,9 @@ const TransactionList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">BRANCH</div>
         </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
+        {/* <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">CAMPAIGN</div>
-        </Col>
+        </Col> */}
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">PLAN</div>
         </Col>
@@ -400,6 +408,9 @@ const TransactionList = () => {
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">NARRATION</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
+          <div className="text-muted text-small cursor-pointer  text-left">ACTION</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -428,12 +439,12 @@ const TransactionList = () => {
                     <span>{item.branch}</span>
                   </div>
                 </Col>
-                <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
+                {/* <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
                   <div className="text-muted text-small d-md-none">Campaign</div>
                   <div className="text-alternate text-medium">
                     <span>{item.campaign ? item.campaign : '-'}</span>
                   </div>
-                </Col>
+                </Col> */}
                 <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
                   <div className="text-muted text-small d-md-none">Plan</div>
                   <div className="text-alternate text-medium text-capitalize">
@@ -450,15 +461,7 @@ const TransactionList = () => {
                   <div className="text-muted text-small d-md-none">Amount </div>
                   <div className="text-alternate text-medium"> {formatter.format(item.amountPayable)}</div>
                 </Col>
-                {/* <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
-                  <div className="text-muted text-small d-md-none">Discount</div>
-                  <div className="text-alternate text-medium">{formatter.format(item.discount)}</div>
-                </Col>
 
-                <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
-                  <div className="text-muted text-small d-md-none">Subtotal</div>
-                  <div className="text-alternate text-medium"> {formatter.format(item.subTotal)}</div>
-                </Col> */}
                 <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Status</div>
                   <div className="text-alternate text-medium text-capitalize">{item.status.toLowerCase()}</div>
@@ -467,6 +470,23 @@ const TransactionList = () => {
                   <div className="text-muted text-small d-md-none">Narration</div>
                   <div className="text-alternate text-small d-none d-md-inline">{item.narration}</div>
                   <div className="text-alternate text-medium d-md-none">{item.narration}</div>
+                </Col>
+                <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                  <Dropdown className="">
+                    <Dropdown.Toggle variant="light" as="div" className="text-center" bsPrefix="dot">
+                      <CsLineIcons icon="more-vertical" className="text-small" size="12" />{' '}
+                    </Dropdown.Toggle>
+
+                    {item.status.toLowerCase() === 'pending' ? (
+                      <Dropdown.Menu className="shadow dropdown-menu-end">
+                        <Dropdown.Item onClick={() => handlePaid(item.paymnetId)}>Mark as paid</Dropdown.Item>
+                      </Dropdown.Menu>
+                    ) : (
+                      <Dropdown.Menu className="shadow dropdown-menu-end">
+                        <Dropdown.Item>No action</Dropdown.Item>
+                      </Dropdown.Menu>
+                    )}
+                  </Dropdown>
                 </Col>
               </Row>
             </Card.Body>
