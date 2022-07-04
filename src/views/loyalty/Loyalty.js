@@ -139,7 +139,7 @@ const CampaignTypeList = () => {
     membershipTypeId: '',
     branchId: '',
   };
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
 
   const [startDateFrom, setStartDateFrom] = useState(null);
@@ -940,7 +940,7 @@ const CampaignTypeList = () => {
                           startDate={startDate}
                           endDate={endDate}
                           placeholder="Start date"
-                          showTimeSelect
+
                         />
 
                         <DatePicker
@@ -952,7 +952,7 @@ const CampaignTypeList = () => {
                           minDate={startDate}
                           className="border rounded-sm px-2 py-1 text-muted"
                           placeholder="Expiry date"
-                          showTimeSelect
+
                         />
                       </div>
                     </div>
