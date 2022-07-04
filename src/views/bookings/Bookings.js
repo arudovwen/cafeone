@@ -892,6 +892,7 @@ const BookingTypeList = () => {
                           startDate={startDate}
                           minDate={new Date()}
                           endDate={endDate}
+                          placeholderText="Select a date"
                         />
                       </div>
                       {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
