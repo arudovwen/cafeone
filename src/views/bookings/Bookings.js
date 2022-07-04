@@ -656,7 +656,7 @@ const BookingTypeList = () => {
               endDate={startTimeTo}
               isClearable
               placeholderText="Start Date From"
-              showTimeSelect
+              
             />
 
             <DatePicker
@@ -669,7 +669,7 @@ const BookingTypeList = () => {
               isClearable
               placeholderText="Start Date To"
               className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
-              showTimeSelect
+              
             />
           </div>
         </Col>
@@ -887,7 +887,7 @@ const BookingTypeList = () => {
                           startDate={startDate}
                           minDate={new Date()}
                           endDate={endDate}
-                          showTimeSelect
+                          
                         />
                       </div>
                       {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
@@ -1029,7 +1029,7 @@ const BookingTypeList = () => {
                           startDate={startDate}
                           minDate={new Date()}
                           endDate={endDate}
-                          showTimeSelect
+                          
                           required
                         />
                       </div>
@@ -1151,7 +1151,7 @@ const BookingTypeList = () => {
                           startDate={startDate}
                           minDate={new Date()}
                           endDate={endDate}
-                          showTimeSelect
+                          
                         />
                       </div>
                     </div>

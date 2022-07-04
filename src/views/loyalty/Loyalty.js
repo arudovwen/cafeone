@@ -517,7 +517,7 @@ const CampaignTypeList = () => {
               endDate={startDateTo}
               isClearable
               placeholderText="Start Date From"
-              showTimeSelect
+              
             />
 
             <DatePicker
@@ -530,7 +530,7 @@ const CampaignTypeList = () => {
               isClearable
               placeholderText="Start Date To"
               className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted w-100"
-              showTimeSelect
+              
             />
           </div>
         </Col>
@@ -790,7 +790,7 @@ const CampaignTypeList = () => {
                           startDate={startDate}
                           endDate={endDate}
                           placeholder="Start date"
-                          showTimeSelect
+                          
                         />
 
                         <DatePicker
@@ -802,7 +802,7 @@ const CampaignTypeList = () => {
                           minDate={startDate}
                           className="border rounded-sm px-2 py-1 text-muted w-100"
                           placeholder="Expiry date"
-                          showTimeSelect
+                          
                         />
                       </div>
                       {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
