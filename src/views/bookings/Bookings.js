@@ -433,6 +433,13 @@ const BookingTypeList = () => {
 
     return val;
   }
+  function afterDate(date) {
+    const today = moment(new Date());
+    const varDate = moment(date);
+    const val = today.isAfter(varDate, 'date');
+
+    return val;
+  }
   function handleChecking(id, stat) {
     const now = moment().format('hh:mm');
     if (stat === 'clockOut') {
@@ -656,7 +663,6 @@ const BookingTypeList = () => {
               endDate={startTimeTo}
               isClearable
               placeholderText="Start Date From"
-
             />
 
             <DatePicker
@@ -669,7 +675,6 @@ const BookingTypeList = () => {
               isClearable
               placeholderText="Start Date To"
               className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
-
             />
           </div>
         </Col>
@@ -887,7 +892,6 @@ const BookingTypeList = () => {
                           startDate={startDate}
                           minDate={new Date()}
                           endDate={endDate}
-
                         />
                       </div>
                       {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
@@ -1029,7 +1033,6 @@ const BookingTypeList = () => {
                           startDate={startDate}
                           minDate={new Date()}
                           endDate={endDate}
-
                           required
                         />
                       </div>
@@ -1151,7 +1154,6 @@ const BookingTypeList = () => {
                           startDate={startDate}
                           minDate={new Date()}
                           endDate={endDate}
-
                         />
                       </div>
                     </div>
@@ -1316,7 +1318,7 @@ const BookingTypeList = () => {
                       <th className="font-weight-bold  py-2 border-bottom text-muted">Clock In-Time</th>
                       <th className="font-weight-bold  py-2 border-bottom text-muted">Clock Out-Time</th>
                       <th className="font-weight-bold  py-2 border-bottom text-muted">Date</th>
-                      <th className="font-weight-bold  py-2 border-bottom text-muted">Action</th>
+                      <th className="font-weight-bold  py-2 border-bottom text-muted text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1326,33 +1328,31 @@ const BookingTypeList = () => {
                         <td className=" py-2 border-bottom">{i.clockOutTime ? i.clockOutTime : '-'}</td>
                         <td className=" py-2 border-bottom">{moment(i.date).format('ll')}</td>
                         <td className=" py-2 border-bottom text-center">
-                          {similarDate(i.date) ? (
-                            <div className="text-center">
-                              {!i.clockInTime && (
-                                <Button
-                                  variant="outline-primary"
-                                  size="sm"
-                                  className="btn-icon btn-icon-start "
-                                  onClick={() => handleChecking(i.id, 'clockIn')}
-                                >
-                                  <span className="">Check in</span>
-                                </Button>
-                              )}
-                              {i.clockInTime && !i.clockOutTime && (
-                                <Button
-                                  variant="outline-primary"
-                                  size="sm"
-                                  className="btn-icon btn-icon-start"
-                                  onClick={() => handleChecking(i.id, 'clockOut')}
-                                >
-                                  <span className="">Check out</span>
-                                </Button>
-                              )}
-                              {i.clockInTime && i.clockOutTime && <CsLineIcons icon="check" size="14" />}
-                            </div>
-                          ) : (
-                            <span>-</span>
-                          )}
+                          <div className="text-center">
+                            {!i.clockInTime && (
+                              <Button
+                                variant="link"
+                                size="sm"
+                                disabled={!similarDate(i.date)}
+                                className="btn-icon btn-icon-start text-primary"
+                                onClick={() => handleChecking(i.id, 'clockIn')}
+                              >
+                                <span className={afterDate(i.date)?'text-muted':''}>{afterDate(i.date)?'Expired':'Check in'}</span>
+                              </Button>
+                            )}
+                            {i.clockInTime && !i.clockOutTime && (
+                              <Button
+                                variant="link"
+                                size="sm"
+                                disabled={!similarDate(i.date)}
+                                className="btn-icon btn-icon-start text-primary"
+                                onClick={() => handleChecking(i.id, 'clockOut')}
+                              >
+                                <span className={afterDate(i.date)?'text-muted':''}>{afterDate(i.date)?'Expired':'Check out'}</span>
+                              </Button>
+                            )}
+                            {i.clockInTime && i.clockOutTime && <CsLineIcons icon="check" size="14" />}
+                          </div>
                         </td>
                       </tr>
                     ))}
