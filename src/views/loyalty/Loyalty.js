@@ -517,7 +517,7 @@ const CampaignTypeList = () => {
               endDate={startDateTo}
               isClearable
               placeholderText="Start Date From"
-              
+
             />
 
             <DatePicker
@@ -530,7 +530,7 @@ const CampaignTypeList = () => {
               isClearable
               placeholderText="Start Date To"
               className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted w-100"
-              
+
             />
           </div>
         </Col>
@@ -780,7 +780,7 @@ const CampaignTypeList = () => {
                     <div className="mb-3 mt-3">
                       <Form.Label>Duration</Form.Label>
 
-                      <div className="d-flex justify-content-between align-items-center">
+                      <div className="d-flex justify-content-between align-items-center gap-3">
                         <DatePicker
                           className="border rounded-sm px-2 py-1 text-muted w-100"
                           selected={startDate}
@@ -789,8 +789,8 @@ const CampaignTypeList = () => {
                           minDate={new Date()}
                           startDate={startDate}
                           endDate={endDate}
-                          placeholder="Start date"
-                          
+                          placeholderText="Start date"
+
                         />
 
                         <DatePicker
@@ -801,8 +801,8 @@ const CampaignTypeList = () => {
                           endDate={endDate}
                           minDate={startDate}
                           className="border rounded-sm px-2 py-1 text-muted w-100"
-                          placeholder="Expiry date"
-                          
+                          placeholderText="Expiry date"
+
                         />
                       </div>
                       {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
@@ -930,7 +930,7 @@ const CampaignTypeList = () => {
                     <div className="mb-3 mt-3">
                       <Form.Label>Duration</Form.Label>
 
-                      <div className="d-flex justify-content-between align-items-center">
+                      <div className="d-flex justify-content-between align-items-center gap-3">
                         <DatePicker
                           className="border rounded-sm px-2 py-1 text-muted"
                           selected={startDate}
@@ -939,7 +939,7 @@ const CampaignTypeList = () => {
                           minDate={new Date()}
                           startDate={startDate}
                           endDate={endDate}
-                          placeholder="Start date"
+                          placeholderText="Start date"
 
                         />
 
@@ -951,7 +951,7 @@ const CampaignTypeList = () => {
                           endDate={endDate}
                           minDate={startDate}
                           className="border rounded-sm px-2 py-1 text-muted"
-                          placeholder="Expiry date"
+                          placeholderText="Expiry date"
 
                         />
                       </div>
