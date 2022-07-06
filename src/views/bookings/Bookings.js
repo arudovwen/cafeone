@@ -153,7 +153,7 @@ const BookingTypeList = () => {
 
   const status = useSelector((state) => state.bookings.status);
   const initialValues = {
-    seats: [],
+    seats: 0,
     memberId: '',
     branchId: '',
     startTime: '',
@@ -207,13 +207,12 @@ const BookingTypeList = () => {
     setPage(page - 1);
   }
   const validationSchema = Yup.object().shape({
-    // startTime: Yup.string().required('Start Time  is required'),
     startDate: Yup.string().required('Start date is required'),
     memberId: Yup.string().required('Member is required'),
-    // duration: Yup.string().required('Duration is required'),
+
     planType: Yup.string().required('Plan type is required'),
     paymentStatus: Yup.string().required('Payment status is required'),
-    seats: Yup.array().required('Seats is required'),
+    seats: Yup.number().required('Seats is required'),
   });
 
   const toggleModal = () => {
@@ -222,22 +221,22 @@ const BookingTypeList = () => {
 
   const onSubmit = (values) => {
     setisloading(true);
-    const data = {
-      seats: values.seats,
-      fromDate: moment(values.startDate).format('YYYY-MM-DD'),
-      planType: values.planType,
-    };
+   // const data = {
+    //   seats: values.seats,
+    //   fromDate: moment(values.startDate).format('YYYY-MM-DD'),
+    //   planType: values.planType,
+    // };
     values.startDate = moment(values.startDate).format('YYYY-MM-DD');
-    dispatch(getCoBookedSeat(data)).then((res) => {
-      setisloading(false);
-      if (res.data.length) {
-        const message = res.data.map((i) => `${i.seat} is not available, select a different day`);
-        const newMessage = new Set(message);
-        setBookingMessage([...newMessage]);
-        return;
-      }
+    // dispatch(getCoBookedSeat(data)).then((res) => {
+    //   setisloading(false);
+    //   if (res.data.length) {
+    //     const message = res.data.map((i) => `${i.seat} is not available, select a different day`);
+    //     const newMessage = new Set(message);
+    //     setBookingMessage([...newMessage]);
+    //     return;
+    //   }
       dispatch(addBooking(values));
-    });
+    // });
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -332,7 +331,7 @@ const BookingTypeList = () => {
     if (status === 'success') {
       setBookingModal(false);
       setisloading(false);
-      values.seats = [];
+      values.seats = 0;
       values.memberId = '';
       values.branchId = '';
       values.startTime = '';
@@ -384,19 +383,21 @@ const BookingTypeList = () => {
       fromDate: moment(eventData.startDate).format('YYYY-MM-DD'),
     };
     eventData.startDate = moment(eventData.startDate).format('YYYY-MM-DD');
-    eventData.planType = 1
-    dispatch(getEventBookedSeat(eventData)).then((res) => {
-      setisloading(false);
-      if (res.data.length) {
-        const message = res.data.map((i) => `${i.seat} is not available, select a different day`);
-        const newMessage = new Set(message);
-        setBookingMessage([...newMessage]);
-        return;
-      }
-      dispatch(addEventBooking(eventData));
-    }).catch(err => {
-      setBookingMessage(err.response. data.message)
-    });
+    eventData.planType = 1;
+    dispatch(getEventBookedSeat(eventData))
+      .then((res) => {
+        setisloading(false);
+        if (res.data.length) {
+          const message = res.data.map((i) => `${i.seat} is not available, select a different day`);
+          const newMessage = new Set(message);
+          setBookingMessage([...newMessage]);
+          return;
+        }
+        dispatch(addEventBooking(eventData));
+      })
+      .catch((err) => {
+        setBookingMessage(err.response.data.message);
+      });
   }
 
   // React.useEffect(() => {
@@ -539,15 +540,10 @@ const BookingTypeList = () => {
     },
   ];
 
-  function handleSeats(val) {
-    values.seats = val;
-    updateData.seats = val;
-  }
   function handleMember(val) {
     setMember(val);
     dispatch(getMember(val)).then((res) => {
       values.branchId = res.data.branchId;
-      console.log(values);
       setUpdate(val);
     });
   }
@@ -634,7 +630,7 @@ const BookingTypeList = () => {
                 </CsvDownloader>
               </Dropdown.Item>
               <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
-              console.log("🚀 ~ file: Bookings.js ~ line 605 ~ BookingTypeList ~ hand", hand)
+
             </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
@@ -858,19 +854,13 @@ const BookingTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Select seat</Form.Label>
-                  <SelectSearch
-                    filterOptions={() => fuzzySearch(seatData)}
-                    options={seatData}
-                    search
-                    name="seats"
-                    value={values.seats}
-                    multiple
-                    placeholder="Select seat"
-                    printOptions="on-focus"
-                    onChange={(val) => handleSeats(val)}
-                  />
+                  <Form.Label>Select seat(s) {values.branchId && `(max:${seatData.length})`}</Form.Label>
 
+                  <div className="d-flex align-items-center">
+                    {' '}
+                    <Form.Range required min="0" max={seatData.length || 1} name="seats" onChange={handleChange} value={values.seats} />
+                    <div className="me-3 px-3 py-2">{values.seats}</div>
+                  </div>
                   {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
                 </div>
 
@@ -898,13 +888,6 @@ const BookingTypeList = () => {
                       {errors.startDate && touched.startDate && <div className="d-block invalid-tooltip">{errors.startDate}</div>}
                     </div>
                   </Col>
-                  {/* <Col md="5">
-                    <div className="mb-3">
-                      <Form.Label>Duration (hrs)</Form.Label>
-                      <Form.Control type="number" min="1" max="24" name="duration" className="sw-md-8" onChange={handleChange} value={values.duration} />
-                      {errors.duration && touched.duration && <div className="d-block invalid-tooltip">{errors.duration}</div>}
-                    </div>
-                  </Col> */}
                 </Row>
                 <div className="mb-3">
                   <Form.Label>Plan type</Form.Label>
@@ -1122,17 +1105,13 @@ const BookingTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label>Select seat</Form.Label>
-                  <SelectSearch
-                    filterOptions={() => fuzzySearch(seatData)}
-                    options={seatData}
-                    search
-                    name="seats"
-                    value={updateData.seats}
-                    multiple
-                    placeholder="Select seat"
-                    printOptions="on-focus"
-                    onChange={(val) => handleSeats(val)}
-                  />
+
+                  <div className="d-flex align-items-center">
+                    {' '}
+                    <Form.Range required min="0" max={seatData.length|| 1} name="seats"  onChange={(e) => handleUpdateChange(e)} value={updateData.seats} />
+                    <div className="me-3 px-3 py-2">{updateData.seats}</div>
+                  </div>
+
                 </div>
 
                 <Row>
@@ -1287,7 +1266,7 @@ const BookingTypeList = () => {
                   </tbody>
                 </table>
 
-                <h5 className="mt-5">Booked seats</h5>
+                {/* <h5 className="mt-5">Booked seats</h5>
                 <table className="w-full">
                   <thead>
                     <tr>
@@ -1310,7 +1289,7 @@ const BookingTypeList = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table> */}
 
                 <h5 className="mt-5">Calendar</h5>
                 <table className="w-full mb-5">
@@ -1338,7 +1317,7 @@ const BookingTypeList = () => {
                                 className="btn-icon btn-icon-start text-primary"
                                 onClick={() => handleChecking(i.id, 'clockIn')}
                               >
-                                <span className={afterDate(i.date)?'text-muted':''}>{afterDate(i.date)?'Expired':'Check in'}</span>
+                                <span className={afterDate(i.date) ? 'text-muted' : ''}>{afterDate(i.date) ? 'Expired' : 'Check in'}</span>
                               </Button>
                             )}
                             {i.clockInTime && !i.clockOutTime && (
@@ -1349,7 +1328,7 @@ const BookingTypeList = () => {
                                 className="btn-icon btn-icon-start text-primary"
                                 onClick={() => handleChecking(i.id, 'clockOut')}
                               >
-                                <span className={afterDate(i.date)?'text-muted':''}>{afterDate(i.date)?'Expired':'Check out'}</span>
+                                <span className={afterDate(i.date) ? 'text-muted' : ''}>{afterDate(i.date) ? 'Expired' : 'Check out'}</span>
                               </Button>
                             )}
                             {i.clockInTime && i.clockOutTime && <CsLineIcons icon="check" size="14" />}
