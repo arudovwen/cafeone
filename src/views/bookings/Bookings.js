@@ -248,18 +248,11 @@ const BookingTypeList = () => {
 
     dispatch(getBranch(values.branchId)).then((res) => {
       if (res.status === 200) {
-        setSeatData(
-          res.data.seats.map((item) => {
-            return {
-              name: item.name,
-              value: item.id,
-            };
-          })
-        );
+        setSeatData(res.data.seats);
       }
     });
-    values.seats = [];
-    // setSeatData(newbranch.seats);
+    values.seats = 0;
+
   }, [values.branchId]);
 
   function addNewBooking() {
@@ -858,7 +851,7 @@ const BookingTypeList = () => {
 
                   <div className="d-flex align-items-center">
                     {' '}
-                    <Form.Range required min="0" max={seatData.length || 1} name="seats" onChange={handleChange} value={values.seats} />
+                    <input type="range" required min="0" max={seatData.length || 1} name="seats" onChange={handleChange} value={values.seats} />
                     <div className="me-3 px-3 py-2">{values.seats}</div>
                   </div>
                   {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
