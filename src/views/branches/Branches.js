@@ -19,17 +19,11 @@ import {
   addBranch,
   getBranch,
   updateBranch,
-  addBranchSeat,
   activateBranch,
   deactivateBranch,
   deleteBranch,
-  deleteBranchSeat,
   updateBranchstatus,
-  updateBranchSeat,
-  activateSeat,
-  deactivateSeat,
 } from '../../branches/branchSlice';
-import { uploadPhoto } from '../../members/memberSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
   const branchesData = useSelector((state) => state.branches.branches);
@@ -65,7 +59,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{item.seatCount}</div>
+                <div className="text-alternate">{item.seats}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.status}</div>
@@ -89,40 +83,30 @@ const BranchesList = () => {
   const branchesData = useSelector((state) => state.branches.branches);
   const status = useSelector((state) => state.branches.status);
   const [datas, setDatas] = useState([]);
-  const [isUploading, setIsUploading] = useState(null);
-  const [seatInfo, setSeatInfo] = useState({
-    image: '',
-    description: '',
-    name: '',
-    branchId: '',
-  });
+
   const initialValues = {
     name: '',
     location: '',
     description: '',
     city: '',
     state: '',
+    seats: '',
   };
   const [isLoading, setisloading] = React.useState(false);
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  // const [isShowing, setIsShowing] = useState(1);
   const [search, setSearch] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
-  const [isAddSeat, setIsAddSeat] = useState(false);
-  const [isSeatEditing, setIsSeatEditing] = useState(false);
   const [updateData, setUpdateData] = useState({});
-  const [seats, setSeats] = useState([]);
   React.useEffect(() => {
     dispatch(getBranches(page, search));
   }, [dispatch, page, search]);
 
   function nextPage() {
     if (branchesData.length < 15) return;
-      setPage(page + 1);
-
+    setPage(page + 1);
   }
   function prevPage() {
     if (page === 1) return;
@@ -132,6 +116,7 @@ const BranchesList = () => {
     name: Yup.string().required('Branch name is required'),
     location: Yup.string().required('Location name is required'),
     state: Yup.string().required('State is required'),
+    seats: Yup.number().required('Seat count is required'),
   });
 
   const toggleModal = () => {
@@ -158,38 +143,11 @@ const BranchesList = () => {
           setIsAdding(false);
           setIsViewing(false);
           setIsEditing(false);
-          setIsSeatEditing(false);
         }
       });
     }
   }
-  function editThisSeat(data) {
-    setIsAdding(false);
-    setIsViewing(false);
-    setIsEditing(false);
-    setIsSeatEditing(true);
-    setSeatInfo({ ...data, branchId: updateData.id, image: data.photo });
-  }
 
-  function deleteThisSeat(id) {
-    const conf = window.confirm('Are you sure?');
-    if (conf) {
-      dispatch(deleteBranchSeat({ seat_id: id, id: updateData.id })).then((res) => {
-        if (res.status === 200) {
-          dispatch(getBranches(page, search));
-          const newseat = seats.filter((item) => item.id !== id);
-          setSeats(newseat);
-          setUpdateData({ ...updateData, seatCount: newseat.length });
-
-          setIsAdding(false);
-          setIsSeatEditing(false);
-          setIsEditing(false);
-          setIsViewing(true);
-          toast.success('Seat removed');
-        }
-      });
-    }
-  }
   function toggleStatus(e, id) {
     const value = e.target.checked;
     if (!value) {
@@ -209,42 +167,10 @@ const BranchesList = () => {
       });
     }
   }
-  function toggleSeatStatus(e, id) {
-    const value = e.target.checked;
-    if (!value) {
-      dispatch(deactivateSeat(id, updateData.id)).then((res) => {
-        if (res.status === 200) {
-          const newseat = seats.map((item) => {
-            if (item.id === id) {
-              item.statusId = 0;
-            }
-            return item;
-          });
-          setSeats(newseat);
-          toast.success('Status changed');
-        }
-      });
-    }
-    if (value) {
-      dispatch(activateSeat(id, updateData.id)).then((res) => {
-        if (res.status === 200) {
-          const newseat = seats.map((item) => {
-            if (item.id === id) {
-              item.statusId = 1;
-            }
-            return item;
-          });
-          setSeats(newseat);
-          toast.success('Status changed');
-        }
-      });
-    }
-  }
+
   function addNewBranch() {
     setIsViewing(false);
     setIsEditing(false);
-    setIsSeatEditing(false);
-    setIsAddSeat(false);
     setIsAdding(true);
     toggleModal();
   }
@@ -252,28 +178,15 @@ const BranchesList = () => {
   function editBranch(val) {
     setIsAdding(false);
     setIsViewing(false);
-    setIsSeatEditing(false);
-    setIsAddSeat(false);
     setIsEditing(true);
-
-    dispatch(getBranch(val.id)).then((res) => {
-      const info = res.data;
-
-      setUpdateData(info);
-    });
+    setUpdateData(val);
   }
 
   function viewBranch(val) {
     setIsAdding(false);
-    setIsSeatEditing(false);
-    setIsAddSeat(false);
     setIsViewing(true);
     setIsEditing(false);
-    dispatch(getBranch(val.id)).then((res) => {
-      const info = res.data;
-      setUpdateData(info);
-      setSeats(info.seats);
-    });
+    setUpdateData(val);
     toggleModal();
   }
 
@@ -298,14 +211,13 @@ const BranchesList = () => {
       values.location = '';
       values.city = '';
       values.state = '';
-      setIsUploading(null);
+      values.seats = '';
     }
     if (status === 'error') {
       setisloading(false);
     }
     if (status === 'update') {
       setisloading(false);
-      setIsUploading(null);
       dispatch(getBranches(1, ''));
       setBranchModal(false);
       setUpdateData({
@@ -314,6 +226,7 @@ const BranchesList = () => {
         description: '',
         city: '',
         state: '',
+        seats: '',
       });
     }
   }, [status, dispatch]);
@@ -330,63 +243,12 @@ const BranchesList = () => {
     dispatch(updateBranch(updateData));
   }
 
-  const handleFile = (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    setIsUploading('loading');
-    dispatch(uploadPhoto(formData)).then((res) => {
-      setIsUploading('loaded');
-      setSeatInfo({
-        ...seatInfo,
-        image: res.data.file,
-      });
-    });
-  };
-
-  function addNewSeat(id) {
-    setIsAdding(false);
-    setIsViewing(false);
-    setIsEditing(false);
-    setIsSeatEditing(false);
-    setIsAddSeat(true);
-    setSeatInfo({
-      ...seatInfo,
-      branchId: id,
-    });
-  }
-  function handleSeatChange(e) {
-    setSeatInfo({
-      ...seatInfo,
-      [e.target.name]: e.target.value,
-    });
-  }
-  function handleSeatAdd(e) {
-    e.preventDefault();
-    setisloading(true);
-    dispatch(addBranchSeat(seatInfo)).then((res) => {
-      if (res.status === 200) {
-        setisloading(false);
-        dispatch(getBranches(page, search));
-        const newseat = [res.data, ...seats];
-        setSeats(newseat);
-        setUpdateData({ ...updateData, seatCount: newseat.length });
-        setIsAdding(false);
-        setIsViewing(true);
-        setIsSeatEditing(false);
-        setIsEditing(false);
-        setIsAddSeat(false);
-        toast.success('Seat added');
-      }
-    });
-  }
-
   React.useEffect(() => {
     const newdata = branchesData.map((item) => {
       return {
         cell1: item.name,
         cell2: item.location,
-        cell3: item.seatCount,
+        cell3: item.seats,
         cell4: item.state,
       };
     });
@@ -412,31 +274,6 @@ const BranchesList = () => {
     },
   ];
 
-  function handleSeatUpdate(e) {
-    e.preventDefault();
-    setisloading(true);
-    dispatch(updateBranchSeat(seatInfo)).then((res) => {
-      if (res.status === 200) {
-        setisloading(false);
-        const newseat = seats.map((item) => {
-          if (item.id === seatInfo.id) {
-            item.name = seatInfo.name;
-            item.photo = seatInfo.image;
-          }
-          return item;
-        });
-        setUpdateData({ ...updateData, seatCount: newseat.length });
-        setSeats(newseat);
-        setIsAdding(false);
-        setIsSeatEditing(false);
-        setIsEditing(false);
-        setIsAddSeat(false);
-        setIsViewing(true);
-        setSeatInfo({});
-        toast.success('Seat updated');
-      }
-    });
-  }
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -553,13 +390,13 @@ const BranchesList = () => {
 
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-4 px-1">
                 <div className="text-muted text-small d-md-none">Seats</div>
-                <div className="text-alternate">{item.seatCount}</div>
+                <div className="text-alternate">{item.seats}</div>
               </Col>
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5 px-1">
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.statusId ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-start align-items-md-end mb-2 mb-md-0 order-5 px-1 order-md-last">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-start align-items-md-stsrt mb-2 mb-md-0 order-5 px-1 order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
                   className=""
@@ -611,7 +448,6 @@ const BranchesList = () => {
             {isAdding && 'Add new branch'}
             {isEditing && 'Update new branch'}
             {isViewing && 'Branch Information'}
-            {isAddSeat && 'Add Branch seat'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -634,6 +470,11 @@ const BranchesList = () => {
                   <Form.Label>State</Form.Label>
                   <Form.Control type="text" name="state" onChange={handleChange} value={values.state} />
                   {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Seats</Form.Label>
+                  <Form.Control type="number" name="seats" onChange={handleChange} value={values.seats} />
+                  {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
                 </div>
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
                   {!isLoading ? (
@@ -661,66 +502,10 @@ const BranchesList = () => {
                   <Form.Label>State</Form.Label>
                   <Form.Control type="text" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
                 </div>
-                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                  {!isLoading ? (
-                    'Submit'
-                  ) : (
-                    <Spinner animation="border" role="status" size="sm">
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                  )}
-                </Button>
-              </form>
-            )}
-            {isAddSeat && (
-              <form onSubmit={(e) => handleSeatAdd(e)}>
                 <div className="mb-3">
-                  <Form.Label>Seat name</Form.Label>
-                  <Form.Control type="text" name="name" onChange={(e) => handleSeatChange(e)} value={seatInfo.name} />
+                  <Form.Label>Seats</Form.Label>
+                  <Form.Control type="text" name="seats" onChange={(e) => handleUpdateChange(e)} value={updateData.seats} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleSeatChange(e)} value={seatInfo.location} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>
-                    <span className="me-1">Image</span>
-                    {isUploading === 'loaded' ? <CsLineIcons icon="check" size="12" variant="primary" /> : ''}
-                    {isUploading === 'loading' ? <Spinner animation="border" role="status" className="text-success" size="sm" /> : ''}
-                  </Form.Label>
-                  <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
-                </div>
-
-                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                  {!isLoading ? (
-                    'Submit'
-                  ) : (
-                    <Spinner animation="border" role="status" size="sm">
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                  )}
-                </Button>
-              </form>
-            )}
-            {isSeatEditing && (
-              <form onSubmit={(e) => handleSeatUpdate(e)}>
-                <div className="mb-3">
-                  <Form.Label>Seat name</Form.Label>
-                  <Form.Control type="text" name="name" onChange={(e) => handleSeatChange(e)} value={seatInfo.name} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control type="text" name="description" as="textarea" rows={3} onChange={(e) => handleSeatChange(e)} value={seatInfo.location} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>
-                    <span className="me-1">Image</span>
-                    {isUploading === 'loaded' ? <CsLineIcons icon="check" size="12" variant="primary" /> : ''}
-                    {isUploading === 'loading' ? <Spinner animation="border" role="status" className="text-success" size="sm" /> : ''}
-                  </Form.Label>
-                  <input type="file" id="image" className="form-control" accept="image" name="image" onChange={handleFile} />
-                </div>
-
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
                   {!isLoading ? (
                     'Submit'
@@ -735,11 +520,6 @@ const BranchesList = () => {
 
             {isViewing && updateData && (
               <div className="">
-                <div className="text-center d-flex justify-content-end mb-2">
-                  <Button variant="primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewSeat(updateData.id)}>
-                    <CsLineIcons icon="plus" /> <span>Add seat</span>
-                  </Button>
-                </div>
                 <table className="mb-5 w-100">
                   <tbody>
                     <tr>
@@ -762,7 +542,7 @@ const BranchesList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Seats </td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.seatCount}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.seats}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -773,68 +553,6 @@ const BranchesList = () => {
                   <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBranch(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" size="13" /> <span className="sr-only">Delete</span>
                   </Button>
-                </div>
-                <hr className="my-4" />
-
-                <h5>Seat Information</h5>
-
-                <div className="" style={{ maxHeight: '400px', overflowY: 'auto', paddingBottom:"40px" }}>
-                  {seats && seats.length ? (
-                    <table className="mb-5 w-100 bg-light p-3 rounded-lg w-100">
-                      <thead>
-                        <tr>
-                          <th className="text-small text-muted  font-weight-bold  py-2 px-2  border-bottom text-uppercase text-muted">Image</th>
-                          <th className="text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-muted">Name</th>
-
-                          <th className="text-small text-muted  font-weight-bold  py-2 px-2  border-bottom text-uppercase text-muted">Status</th>
-
-                          <th className=" text-small text-muted font-weight-bold  py-2 px-2   border-bottom text-uppercase text-center">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {seats &&
-                          seats.map((item) => (
-                            <tr key={item.id} className="border-bottom ">
-                              <td className="px-2  border-bottom py-2">
-                                <img
-                                   src={item.photo?`${process.env.REACT_APP_URL}/${item.photo}`:'https://via.placeholder.com/150'}
-                                  className="rounded-full"
-                                  alt="image"
-                                  style={{ width: '30px', height: '30px' }}
-                                />
-                              </td>
-                              <td className="px-2  border-bottom py-2"> {item.name}</td>
-                              <td className="px-2  border-bottom py-2">
-                                <Form.Switch
-                                  className=""
-                                  type="checkbox"
-                                  checked={item.statusId}
-                                  onChange={(e) => {
-                                    toggleSeatStatus(e, item.id);
-                                  }}
-                                />
-                              </td>
-
-                              <td className=" py-2 px-2 border-bottom">
-
-                                <Dropdown className="">
-                                  <Dropdown.Toggle variant="light" as="div" className="text-center" bsPrefix="dot">
-                                    <CsLineIcons icon="more-vertical" className="text-small" size="12" />{' '}
-                                  </Dropdown.Toggle>
-
-                                  <Dropdown.Menu className="shadow dropdown-menu-end">
-                                    <Dropdown.Item onClick={() => editThisSeat(item)}>Edit</Dropdown.Item>
-                                    <Dropdown.Item onClick={() => deleteThisSeat(item.id)}>Drop</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="text-center py-2 px-1 bg-light rounded px-2">No seats available</div>
-                  )}
                 </div>
               </div>
             )}

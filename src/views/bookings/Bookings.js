@@ -21,13 +21,10 @@ import moment from 'moment';
 import CsvDownloader from 'react-csv-downloader';
 import { useReactToPrint } from 'react-to-print';
 import {
-  getCoBookedSeat,
-  getEventBookedSeat,
   addBooking,
   getBooking,
   getBookings,
   updateBooking,
-  // deleteBooking,
   checkinBooking,
   checkoutBooking,
   getPaymentStatusTypes,
@@ -37,7 +34,7 @@ import {
   // eslint-disable-next-line import/extensions
 } from '../../bookings/bookingSlice';
 import { getMembers, getMember } from '../../members/memberSlice';
-import { getBranches, getBranch } from '../../branches/branchSlice';
+import { getBranches } from '../../branches/branchSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
   const bookingsData = useSelector((state) => state.bookings.items);
@@ -58,9 +55,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Time</div>
             </th>
-            {/* <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Duration</div>
-            </th> */}
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Branch</div>
+            </th>
 
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Plan</div>
@@ -90,9 +87,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.startTime}</div>
               </td>
-              {/* <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{`${item.duration} hours`}</div>
-              </td> */}
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{`${item.branch}`}</div>
+              </td>
 
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.plan}</div>
@@ -125,10 +122,11 @@ const BookingTypeList = () => {
     return {
       value: item.id,
       name: item.name,
+      seats: item.seats,
     };
   });
   const [datas, setDatas] = useState([]);
-  const [seatData, setSeatData] = React.useState([]);
+  const [seatData, setSeatData] = React.useState(0);
   const [isEvent, setIsEvent] = React.useState(false);
   const [type, setType] = useState('');
   const [eventData, setEventData] = React.useState({
@@ -137,12 +135,10 @@ const BookingTypeList = () => {
     firstName: '',
     lastName: '',
     amountDue: '',
-    // memberId: '',
     branchId: '',
     startTime: '',
-    // duration: '',
     planType: '',
-    startDate: '',
+    startDate: null,
     paymentStatus: '',
   });
   const membersData = useSelector((state) => state.members.items).map((item) => {
@@ -156,8 +152,6 @@ const BookingTypeList = () => {
     seats: 0,
     memberId: '',
     branchId: '',
-    startTime: '',
-    // duration: '',
     planType: '',
     startDate: null,
     paymentStatus: '',
@@ -168,7 +162,6 @@ const BookingTypeList = () => {
   const [paymentTypes, setPaymentTypes] = useState([]);
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  // const [isShowing, setIsShowing] = useState(1);
   const [search] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -176,7 +169,6 @@ const BookingTypeList = () => {
   const [updateData, setUpdateData] = useState({});
   const [fromDate] = useState(null);
   const [toDate] = useState(null);
-
   const [startTimeFrom, setstartTimeFrom] = useState(null);
   const [startTimeTo, setstartTimeTo] = useState(null);
   const [, setEndDateFrom] = useState(null);
@@ -221,39 +213,12 @@ const BookingTypeList = () => {
 
   const onSubmit = (values) => {
     setisloading(true);
-   // const data = {
-    //   seats: values.seats,
-    //   fromDate: moment(values.startDate).format('YYYY-MM-DD'),
-    //   planType: values.planType,
-    // };
     values.startDate = moment(values.startDate).format('YYYY-MM-DD');
-    // dispatch(getCoBookedSeat(data)).then((res) => {
-    //   setisloading(false);
-    //   if (res.data.length) {
-    //     const message = res.data.map((i) => `${i.seat} is not available, select a different day`);
-    //     const newMessage = new Set(message);
-    //     setBookingMessage([...newMessage]);
-    //     return;
-    //   }
-      dispatch(addBooking(values));
-    // });
+    dispatch(addBooking(values));
   };
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
-
-  // Retrieve seats
-  React.useEffect(() => {
-    if (!values.branchId) return;
-
-    dispatch(getBranch(values.branchId)).then((res) => {
-      if (res.status === 200) {
-        setSeatData(res.data.seats);
-      }
-    });
-    values.seats = 0;
-
-  }, [values.branchId]);
 
   function addNewBooking() {
     setIsViewing(false);
@@ -271,17 +236,6 @@ const BookingTypeList = () => {
     toggleModal();
   }
 
-  function editBooking(val) {
-    setIsAdding(false);
-    setIsViewing(false);
-    setIsEvent(false);
-    setIsEditing(true);
-
-    setUpdateData(val);
-    setStartDate(new Date(val.startDate));
-    setEndDate(new Date(val.endDate));
-  }
-
   function viewBooking(val) {
     dispatch(getBooking(val.id)).then((res) => {
       setIsAdding(false);
@@ -293,13 +247,6 @@ const BookingTypeList = () => {
     });
   }
 
-  // highlight-starts
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const debouncedSave = useCallback(
-  //   debounce((nextValue) => setSearch(nextValue), 1000),
-  //   []
-  // );
-  // eslint-disable-next-line no-shadow
   function fuzzySearch(options) {
     const fuse = new Fuse(options, {
       keys: ['name', 'groupName', 'items.name'],
@@ -315,11 +262,6 @@ const BookingTypeList = () => {
     };
   }
 
-  // highlight-ends
-  // const handleSearch = (e) => {
-  //   debouncedSave(e.target.value);
-  // };
-
   React.useEffect(() => {
     if (status === 'success') {
       setBookingModal(false);
@@ -327,8 +269,6 @@ const BookingTypeList = () => {
       values.seats = 0;
       values.memberId = '';
       values.branchId = '';
-      values.startTime = '';
-      // values.duration = '';
       values.planType = '';
       values.startDate = null;
       values.paymentStatus = '';
@@ -377,44 +317,14 @@ const BookingTypeList = () => {
     };
     eventData.startDate = moment(eventData.startDate).format('YYYY-MM-DD');
     eventData.planType = 1;
-    dispatch(getEventBookedSeat(eventData))
-      .then((res) => {
-        setisloading(false);
-        if (res.data.length) {
-          const message = res.data.map((i) => `${i.seat} is not available, select a different day`);
-          const newMessage = new Set(message);
-          setBookingMessage([...newMessage]);
-          return;
-        }
-        dispatch(addEventBooking(eventData));
-      })
-      .catch((err) => {
-        setBookingMessage(err.response.data.message);
-      });
+    dispatch(addEventBooking(eventData));
   }
-
-  // React.useEffect(() => {
-  //   values.fromTime = startDate;
-  //   values.toTime = endDate;
-  //   updateData.fromTime = startDate;
-  //   updateData.toTime = endDate;
-  // }, [startDate, endDate]);
 
   function setBranch(val) {
     values.branchId = val;
-    dispatch(getBranch(val)).then((res) => {
-      if (res.status === 200) {
-        if (!res.data.seats.length) return;
-        setSeatData(
-          res.data.seats.map((item) => {
-            return {
-              value: item.id,
-              name: item.name,
-            };
-          })
-        );
-      }
-    });
+    const newseats = branchesData.find((item) => item.value == val);
+    setSeatData(newseats.seats);
+    values.seats = 0;
   }
   function setMember(val) {
     values.memberId = val;
@@ -463,9 +373,9 @@ const BookingTypeList = () => {
         cell1: item.id,
         cell2: item.member.id,
         cell3: item.member.name,
-        // cell4: `${item.duration} hours`,
+        cell4: `${item.branch}`,
         cell5: item.startDate,
-        cell6: item.startTime,
+        // cell6: item.startTime,
         cell7: item.endDate,
         cell8: item.endTime,
         cell9: item.seatCount,
@@ -491,18 +401,18 @@ const BookingTypeList = () => {
       id: 'cell3',
       displayName: 'NAME',
     },
-    // {
-    //   id: 'cell4',
-    //   displayName: 'DURATION',
-    // },
+    {
+      id: 'cell4',
+      displayName: 'BRANCH',
+    },
     {
       id: 'cell5',
       displayName: 'START-DATE',
     },
-    {
-      id: 'cell6',
-      displayName: 'START-TIME',
-    },
+    // {
+    //   id: 'cell6',
+    //   displayName: 'START-TIME',
+    // },
     {
       id: 'cell7',
       displayName: 'END-DATE',
@@ -623,7 +533,6 @@ const BookingTypeList = () => {
                 </CsvDownloader>
               </Dropdown.Item>
               <Dropdown.Item onClick={handlePrint}>Export pdf</Dropdown.Item>
-
             </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
@@ -740,10 +649,7 @@ const BookingTypeList = () => {
                       <td className="text-muted  text-uppercase border-bottom py-2">name :</td>
                       <td className="text-alternate border-bottom py-2">{item.member.name}</td>
                     </tr>
-                    <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom py-2">phone :</td>
-                      <td className="text-alternate border-bottom py-2">{item.member.phoneNumber || '-'}</td>
-                    </tr>
+
                     <tr className="">
                       <td className="text-muted  text-uppercase border-bottom py-2">Date :</td>
                       <td className="text-alternate border-bottom py-2">
@@ -843,20 +749,22 @@ const BookingTypeList = () => {
                     onChange={(val) => setBranch(val)}
                   />
 
-                  {errors.memberId && touched.memberId && <div className="d-block invalid-tooltip">{errors.memberId}</div>}
+                  {errors.branchId && touched.branchId && <div className="d-block invalid-tooltip">{errors.branchId}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Select seat(s) {values.branchId && `(max:${seatData.length})`}</Form.Label>
-
+                  {setSeatData}
+                  <Form.Label className="mb-0">Select seat(s)</Form.Label>
+                  <div className="text-medium text-danger">
+                    {(!values.branchId || !values.memberId) && '*Member & branch required, '} {values.branchId && `Total seats : ${seatData}`}
+                  </div>
                   <div className="d-flex align-items-center">
                     {' '}
-                    <input type="range" required min="0" max={seatData.length || 1} name="seats" onChange={handleChange} value={values.seats} />
+                    <input disabled={!seatData} type="range" required min="0" max={seatData} name="seats" onChange={handleChange} value={values.seats} />
                     <div className="me-3 px-3 py-2">{values.seats}</div>
                   </div>
                   {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
                 </div>
-
                 <Row>
                   <Col md="5">
                     <div className="mb-3">
@@ -867,7 +775,6 @@ const BookingTypeList = () => {
                           className="border rounded-sm px-2 py-1 w-100"
                           selected={startDate}
                           onChange={(date) => {
-                            values.startTime = moment(date).format('hh:mm');
                             values.startDate = date;
                             setStartDate(date);
                           }}
@@ -960,20 +867,7 @@ const BookingTypeList = () => {
                   <Form.Label>Amount due</Form.Label>
                   <Form.Control required type="number" id="amountDue" name="amountDue" onChange={(e) => handleEventChange(e)} value={eventData.amountDue} />
                 </div>
-                {/* <div className="mb-3">
-                  <Form.Label>Member</Form.Label>
-                  <SelectSearch
-                    filterOptions={() => fuzzySearch(membersData)}
-                    options={membersData}
-                    search
-                    name="members"
-                    value={eventData.memberId}
-                    onChange={(val) => {
-                      eventData.memberId = val;
-                    }}
-                    placeholder="Select  member"
-                  />
-                </div> */}
+
                 <div className="mb-3">
                   <Form.Label>Branch</Form.Label>
                   <SelectSearch
@@ -1011,39 +905,13 @@ const BookingTypeList = () => {
                           minDate={new Date()}
                           endDate={endDate}
                           required
+                          placeholderText="Select a date"
                         />
                       </div>
                     </div>
                   </Col>
-                  {/* <Col md="5">
-                    <div className="mb-3">
-                      <Form.Label>Duration (hrs)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        min="1"
-                        max="24"
-                        name="duration"
-                        className="sw-md-8"
-                        onChange={(e) => handleEventChange(e)}
-                        value={eventData.duration}
-                        required
-                      />
-                    </div>
-                  </Col> */}
                 </Row>
-                {/* <div className="mb-3">
-                  <Form.Label>Plan type</Form.Label>
-                  <Form.Select required type="text" name="planType" onChange={(e) => handleEventChange(e)} value={eventData.planType}>
-                    <option value="" disabled>
-                      Select plan
-                    </option>
-                    {planTypes.map((item) => (
-                      <option value={Number(item.id)} key={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </div> */}
+
                 <div className="mb-3">
                   <Form.Label>Payment status</Form.Label>
                   <Form.Select required type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
@@ -1097,14 +965,15 @@ const BookingTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Select seat</Form.Label>
+                  <Form.Label className="mb-0">
+                    Select seat(s) <span className="text-small"> (Member & branch required, {updateData.branchId && `max:${seatData}`})</span>
+                  </Form.Label>
 
                   <div className="d-flex align-items-center">
                     {' '}
-                    <Form.Range required min="0" max={seatData.length|| 1} name="seats"  onChange={(e) => handleUpdateChange(e)} value={updateData.seats} />
+                    <Form.Range required min="0" max={seatData} name="seats" onChange={(e) => handleUpdateChange(e)} value={updateData.seats} />
                     <div className="me-3 px-3 py-2">{updateData.seats}</div>
                   </div>
-
                 </div>
 
                 <Row>
@@ -1131,20 +1000,6 @@ const BookingTypeList = () => {
                       </div>
                     </div>
                   </Col>
-                  {/* <Col md="5">
-                    <div className="mb-3">
-                      <Form.Label>Duration (hrs)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        min="1"
-                        max="24"
-                        name="duration"
-                        className="sw-md-8"
-                        onChange={(e) => handleUpdateChange(e)}
-                        value={updateData.duration}
-                      />
-                    </div>
-                  </Col> */}
                 </Row>
                 <div className="mb-3">
                   <Form.Label>Plan type</Form.Label>
@@ -1215,6 +1070,10 @@ const BookingTypeList = () => {
                       <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Type</td>
                       <td className=" py-2 border-bottom">{updateData.type}</td>
                     </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Branch</td>
+                      <td className=" py-2 border-bottom">{updateData.branch}</td>
+                    </tr>
 
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Plan</td>
@@ -1246,7 +1105,7 @@ const BookingTypeList = () => {
 
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Seat count</td>
-                      <td className=" py-2 border-bottom">{updateData.seatCount}</td>
+                      <td className=" py-2 border-bottom">{updateData.seats}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Payment status</td>
@@ -1259,32 +1118,7 @@ const BookingTypeList = () => {
                   </tbody>
                 </table>
 
-                {/* <h5 className="mt-5">Booked seats</h5>
-                <table className="w-full">
-                  <thead>
-                    <tr>
-                      <th className="font-weight-bold  py-2 border-bottom text-muted">Image</th>
-                      <th className="font-weight-bold  py-2 border-bottom text-muted">Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {updateData.seats.map((i) => (
-                      <tr key={i.id}>
-                        <td className=" py-2 border-bottom">
-                          <img
-                            src={`${process.env.REACT_APP_URL}/${i.photo}`}
-                            alt="avatar"
-                            className="avatar avatar-sm me-2 rounded d-none d-md-inline"
-                            style={{ width: '30px', height: '30px' }}
-                          />
-                        </td>
-                        <td className=" py-2 border-bottom">{i.name}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table> */}
-
-                <h5 className="mt-5">Calendar</h5>
+                {/* <h5 className="mt-5">Calendar</h5>
                 <table className="w-full mb-5">
                   <thead>
                     <tr>
@@ -1330,7 +1164,7 @@ const BookingTypeList = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table> */}
               </div>
             )}
           </OverlayScrollbarsComponent>
