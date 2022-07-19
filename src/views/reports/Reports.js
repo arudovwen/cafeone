@@ -93,7 +93,7 @@ const ReportList = () => {
         <Col md="5" lg="6" xxl="6" className="mb-1 d-flex align-items-center ">
           {/* Search Start */}
           <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
-            <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
+            <Form.Control type="search" placeholder="Search" onChange={(e) => handleSearch(e)} />
             <span className="search-magnifier-icon">
               <CsLineIcons icon="search" />
             </span>

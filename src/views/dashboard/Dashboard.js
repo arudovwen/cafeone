@@ -109,9 +109,9 @@ const Dashboard = () => {
       </Row>
       {/* Stats End */}
 
-      <Row>
+      <Row className="mb-5">
         {/* Recent Orders Start */}
-        <Col xl="6" className="mb-5">
+        <Col xl="6" className="">
           <h2 className="small-title">Recent Transactions</h2>
           {transactions.length ? (
             transactions.map((item) => (
@@ -119,7 +119,7 @@ const Dashboard = () => {
                 <Card.Body className="pt-0 pb-0 h-100">
                   <Row className="g-0 h-100 align-content-center justify-content-between">
                     <Col xs="12" md="4" className="d-flex align-items-center mb-3 mb-md-0 h-md-100 px-1">
-                      <span className="">{item.member?item.member.name:'-'}</span>
+                      <span className="">{item.member ? item.member.name : '-'}</span>
                     </Col>
 
                     <Col xs="12" md="4" className="d-flex align-items-center mb-1 mb-md-0 text-alternate px-1">
@@ -137,41 +137,22 @@ const Dashboard = () => {
           )}
         </Col>
         {/* Recent Orders End */}
-
-        {/* Performance Start */}
-        <Col xl="6" className="mb-5">
-          <h2 className="small-title">Membership Stats</h2>
-          <Card className="sh-45 h-xl-100-card">
-            <Card.Body className="h-100">
-              <div className="h-100">{data && data.membershiptStats ? <PerformanceChart statData={data.membershiptStats} /> : ''}</div>
-            </Card.Body>
-          </Card>
-        </Col>
-        {/* Performance End */}
-      </Row>
-
-      <Row className="gx-4 gy-5">
         {/* Top Selling f Items Start */}
-        <Col>
+        <Col xl="6" className="d-flex flex-column">
           <h2 className="small-title">Top Booked Spaces</h2>
-          <div className="mb-2">
+          <div className="mb-2 bg-white rounded-md flex-grow-1">
             {seatUsage.length ? (
               seatUsage.map((item) => (
                 <Card className="mb-2 overflow-hidden" key={item.id}>
                   <Row className="g-0 sh-14 sh-md-10 overflow-hidden">
-                    <Col className="col-auto h-100">
-                      <img src={`${process.env.REACT_APP_URL}/${item.photo}`} alt="alternate text" className="" style={{ width: '5rem', height: '100%' }} />
-                    </Col>
                     <Col>
                       <Card.Body className="pt-0 pb-0 h-100">
                         <Row className="g-0 h-100 align-content-center">
                           <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                            {item.branch}
-                          </Col>
-                          <Col md="3" className="d-flex align-items-center text-muted text-medium">
                             {item.name}
                           </Col>
-                          <Col md="3" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
+
+                          <Col md="6" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
                             {item.bookings} bookings
                           </Col>
                         </Row>
@@ -186,6 +167,19 @@ const Dashboard = () => {
           </div>
         </Col>
         {/* Top Selling Items End */}
+      </Row>
+
+      <Row className="gx-4 gy-5">
+        {/* Performance Start */}
+        <Col className="mb-5">
+          <h2 className="small-title">Membership Stats</h2>
+          <Card className="sh-45">
+            <Card.Body className="h-100">
+              <div className="h-100">{data && data.membershiptStats ? <PerformanceChart statData={data.membershiptStats} /> : ''}</div>
+            </Card.Body>
+          </Card>
+        </Col>
+        {/* Performance End */}
       </Row>
     </>
   );

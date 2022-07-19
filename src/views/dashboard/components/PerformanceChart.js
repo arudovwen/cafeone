@@ -79,9 +79,9 @@ const PerformanceChart = ({ statData }) => {
         size: 14,
         family: themeValues.font,
       },
-      padding: 20,
+      padding: 15,
       usePointStyle: true,
-      boxWidth: 10,
+      boxWidth: 8,
     };
   }, [themeValues]);
 
@@ -141,8 +141,8 @@ const PerformanceChart = ({ statData }) => {
             },
             ticks: {
               beginAtZero: true,
-              stepSize: 20,
-              padding: 6,
+              stepSize: 5,
+              padding: 5,
               fontColor: themeValues.alternate,
             },
           },
