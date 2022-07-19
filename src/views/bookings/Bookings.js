@@ -751,7 +751,6 @@ const BookingTypeList = () => {
                 </div>
 
                 <div className="mb-3">
-                  {setSeatData}
                   <Form.Label className="mb-0">Select seat(s)</Form.Label>
                   <div className="text-medium text-danger">
                     {(!values.branchId || !values.memberId) && '*Member & branch required, '} {values.branchId && `Total seats : ${seatData}`}
@@ -1022,15 +1021,6 @@ const BookingTypeList = () => {
 
             {isViewing && updateData && (
               <div className="">
-                <div className="d-flex justify-content-end">
-                  {/* <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 " onClick={() => editBooking(updateData)}>
-                    <CsLineIcons icon="edit" size="13" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
-                  </Button> */}
-                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBooking(updateData.id)}>
-                    <CsLineIcons icon="bin" className="text-small" size="13" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
-                  </Button> */}
-                </div>
-
                 <table className="mb-5 w-100">
                   <tbody>
                     <tr>
@@ -1099,27 +1089,25 @@ const BookingTypeList = () => {
                 </table>
                 <div>
                   <div className="text-center mt-5 ">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      disabled={!similarDate(updateData.startDate)}
+                      className="btn-icon btn-icon-start text-primary me-4"
+                      onClick={() => handleChecking(updateData.id, 'clockIn')}
+                    >
+                      Check in
+                    </Button>
 
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        disabled={!similarDate(updateData.startDate)}
-                        className="btn-icon btn-icon-start text-primary me-4"
-                        onClick={() => handleChecking(updateData.id, 'clockIn')}
-                      >
-                        Check in
-                      </Button>
-
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        disabled={!similarDate(updateData.endDate)}
-                        className="btn-icon btn-icon-start text-primary"
-                        onClick={() => handleChecking(updateData.id, 'clockOut')}
-                      >
-                        Check out
-                      </Button>
-
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      disabled={!similarDate(updateData.endDate)}
+                      className="btn-icon btn-icon-start text-primary"
+                      onClick={() => handleChecking(updateData.id, 'clockOut')}
+                    >
+                      Check out
+                    </Button>
                   </div>
                 </div>
               </div>
