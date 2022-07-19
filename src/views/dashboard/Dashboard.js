@@ -111,7 +111,7 @@ const Dashboard = () => {
 
       <Row className="mb-5">
         {/* Recent Orders Start */}
-        <Col xl="6" className="">
+        <Col xl="6" className="mb-5 mb-lg-0">
           <h2 className="small-title">Recent Transactions</h2>
           {transactions.length ? (
             transactions.map((item) => (
@@ -125,7 +125,7 @@ const Dashboard = () => {
                     <Col xs="12" md="4" className="d-flex align-items-center mb-1 mb-md-0 text-alternate px-1">
                       <Badge>{formatter.format(item.subTotal)}</Badge>
                     </Col>
-                    <Col xs="12" md="4" className="d-flex align-items-center justify-content-md-end mb-1 mb-md-0 text-alternate text-small px-1">
+                    <Col xs="12" md="4" className="d-flex align-items-center mb-1 mb-md-0 text-alternate text-small px-1">
                       {item.narration}
                     </Col>
                   </Row>
