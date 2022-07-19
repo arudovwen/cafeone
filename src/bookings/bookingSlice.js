@@ -3,7 +3,6 @@ import { SERVICE_URL, requestConfig } from 'config.js';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import moment from 'moment';
 
 const initialState = {
   items: [],
@@ -70,14 +69,10 @@ export const getBooking = (data) => async () => {
   return axios.get(`${SERVICE_URL}/bookings/${data}`, requestConfig);
 };
 export const getCoBookedSeat = (data) => async () => {
-
-  return axios.post(
-    `${SERVICE_URL}/bookings/coworking-booked-seats`,data,
-    requestConfig
-  );
+  return axios.post(`${SERVICE_URL}/bookings/coworking-booked-seats`, data, requestConfig);
 };
 export const getEventBookedSeat = (data) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/event-booked-seats`,data , requestConfig);
+  return axios.post(`${SERVICE_URL}/bookings/event-booked-seats`, data, requestConfig);
 };
 
 export const updateBooking = (data) => async () => {
@@ -88,12 +83,12 @@ export const deleteBooking = (data) => async () => {
   return axios.delete(`${SERVICE_URL}/bookings/${data.id}`, requestConfig);
 };
 
-export const checkinBooking = (data, id, now) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${data}/checkin`, { registerId: id, time: now }, requestConfig);
+export const checkinBooking = (id) => async () => {
+  return axios.post(`${SERVICE_URL}/bookings/${id}/checkin`, { bookingId: id }, requestConfig);
 };
 
-export const checkoutBooking = (data, id, now) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${data}/checkout`, { registerId: id, time: now }, requestConfig);
+export const checkoutBooking = (id) => async () => {
+  return axios.post(`${SERVICE_URL}/bookings/${id}/checkout`, { bookingId: id }, requestConfig);
 };
 
 export const addBooking = (data) => async (dispatch) => {

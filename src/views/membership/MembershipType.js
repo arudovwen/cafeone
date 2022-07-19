@@ -156,8 +156,7 @@ const MembershipTypeList = () => {
 
   function nextPage() {
     if (membershipsData.length < 15) return;
-      setPage(page + 1);
-
+    setPage(page + 1);
   }
   function prevPage() {
     if (page === 1) return;

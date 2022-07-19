@@ -14,16 +14,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
 import { useReactToPrint } from 'react-to-print';
-import {
-  getBranches,
-  addBranch,
-  getBranch,
-  updateBranch,
-  activateBranch,
-  deactivateBranch,
-  deleteBranch,
-  updateBranchstatus,
-} from '../../branches/branchSlice';
+import { getBranches, addBranch, updateBranch, activateBranch, deactivateBranch, deleteBranch, updateBranchstatus } from '../../branches/branchSlice';
 
 const ComponentToPrint = forwardRef((props, ref) => {
   const branchesData = useSelector((state) => state.branches.branches);

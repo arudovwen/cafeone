@@ -157,7 +157,7 @@ const BookingTypeList = () => {
     paymentStatus: '',
   };
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [endDate] = useState(null);
   const [planTypes, setPlanTypes] = useState([]);
   const [paymentTypes, setPaymentTypes] = useState([]);
   const dispatch = useDispatch();
@@ -176,7 +176,6 @@ const BookingTypeList = () => {
   const [memberId, setMemberId] = useState(null);
   const [branchId, setBranchId] = useState(null);
   const [, setUpdate] = useState(null);
-  const [bookingMessage, setBookingMessage] = useState([]);
 
   React.useEffect(() => {
     dispatch(getBookings(page, search));
@@ -311,10 +310,10 @@ const BookingTypeList = () => {
     setisloading(true);
     e.preventDefault();
     setisloading(true);
-    const data = {
-      branchId: eventData.branchId,
-      fromDate: moment(eventData.startDate).format('YYYY-MM-DD'),
-    };
+    // const data = {
+    //   branchId: eventData.branchId,
+    //   fromDate: moment(eventData.startDate).format('YYYY-MM-DD'),
+    // };
     eventData.startDate = moment(eventData.startDate).format('YYYY-MM-DD');
     eventData.planType = 1;
     dispatch(addEventBooking(eventData));
@@ -337,17 +336,16 @@ const BookingTypeList = () => {
 
     return val;
   }
-  function afterDate(date) {
-    const today = moment(new Date());
-    const varDate = moment(date);
-    const val = today.isAfter(varDate, 'date');
+  // function afterDate(date) {
+  //   const today = moment(new Date());
+  //   const varDate = moment(date);
+  //   const val = today.isAfter(varDate, 'date');
 
-    return val;
-  }
+  //   return val;
+  // }
   function handleChecking(id, stat) {
-    const now = moment().format('hh:mm');
     if (stat === 'clockOut') {
-      dispatch(checkoutBooking(updateData.id, id, now)).then((res) => {
+      dispatch(checkoutBooking(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Checked out successful');
           dispatch(getBooking(updateData.id)).then((resp) => {
@@ -356,7 +354,7 @@ const BookingTypeList = () => {
         }
       });
     } else {
-      dispatch(checkinBooking(updateData.id, id, now)).then((res) => {
+      dispatch(checkinBooking(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Checked in successful');
           dispatch(getBooking(updateData.id)).then((resp) => {
@@ -825,15 +823,6 @@ const BookingTypeList = () => {
                     </Spinner>
                   )}
                 </Button>
-                <ul className="mt-5">
-                  {bookingMessage.length
-                    ? bookingMessage.map((m) => (
-                        <li key={m} className="mb-1 text-danger">
-                          {m}
-                        </li>
-                      ))
-                    : ''}
-                </ul>
               </form>
             )}
             {isEvent && (
@@ -935,15 +924,6 @@ const BookingTypeList = () => {
                     </Spinner>
                   )}
                 </Button>
-                <ul className="mt-5">
-                  {bookingMessage.length
-                    ? bookingMessage.map((m) => (
-                        <li key={m} className="mb-1 text-danger">
-                          {m}
-                        </li>
-                      ))
-                    : ''}
-                </ul>
               </form>
             )}
             {isEditing && (
@@ -1113,58 +1093,35 @@ const BookingTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">status</td>
-                      <td className=" py-2 border-bottom">{updateData.status === '2' ? 'Not checked in' : updateData.status}</td>
+                      <td className=" py-2 border-bottom">{updateData.status}</td>
                     </tr>
                   </tbody>
                 </table>
+                <div>
+                  <div className="text-center mt-5 ">
 
-                {/* <h5 className="mt-5">Calendar</h5>
-                <table className="w-full mb-5">
-                  <thead>
-                    <tr>
-                      <th className="font-weight-bold  py-2 border-bottom text-muted">Clock In-Time</th>
-                      <th className="font-weight-bold  py-2 border-bottom text-muted">Clock Out-Time</th>
-                      <th className="font-weight-bold  py-2 border-bottom text-muted">Date</th>
-                      <th className="font-weight-bold  py-2 border-bottom text-muted text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {updateData.registers.map((i) => (
-                      <tr key={i.date}>
-                        <td className=" py-2 border-bottom">{i.clockInTime ? i.clockInTime : '-'}</td>
-                        <td className=" py-2 border-bottom">{i.clockOutTime ? i.clockOutTime : '-'}</td>
-                        <td className=" py-2 border-bottom">{moment(i.date).format('ll')}</td>
-                        <td className=" py-2 border-bottom text-center">
-                          <div className="text-center">
-                            {!i.clockInTime && (
-                              <Button
-                                variant="link"
-                                size="sm"
-                                disabled={!similarDate(i.date)}
-                                className="btn-icon btn-icon-start text-primary"
-                                onClick={() => handleChecking(i.id, 'clockIn')}
-                              >
-                                <span className={afterDate(i.date) ? 'text-muted' : ''}>{afterDate(i.date) ? 'Expired' : 'Check in'}</span>
-                              </Button>
-                            )}
-                            {i.clockInTime && !i.clockOutTime && (
-                              <Button
-                                variant="link"
-                                size="sm"
-                                disabled={!similarDate(i.date)}
-                                className="btn-icon btn-icon-start text-primary"
-                                onClick={() => handleChecking(i.id, 'clockOut')}
-                              >
-                                <span className={afterDate(i.date) ? 'text-muted' : ''}>{afterDate(i.date) ? 'Expired' : 'Check out'}</span>
-                              </Button>
-                            )}
-                            {i.clockInTime && i.clockOutTime && <CsLineIcons icon="check" size="14" />}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table> */}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        disabled={!similarDate(updateData.startDate)}
+                        className="btn-icon btn-icon-start text-primary me-4"
+                        onClick={() => handleChecking(updateData.id, 'clockIn')}
+                      >
+                        Check in
+                      </Button>
+
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        disabled={!similarDate(updateData.endDate)}
+                        className="btn-icon btn-icon-start text-primary"
+                        onClick={() => handleChecking(updateData.id, 'clockOut')}
+                      >
+                        Check out
+                      </Button>
+
+                  </div>
+                </div>
               </div>
             )}
           </OverlayScrollbarsComponent>

@@ -16,7 +16,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
 import SelectSearch from 'react-select-search';
 import Fuse from 'fuse.js';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useReactToPrint } from 'react-to-print';
 import {
@@ -364,7 +363,7 @@ const UserManagementList = () => {
         cell2: item.email,
         cell3: item.phone,
         cell4: item.membershipType,
-         cell5: item.branch,
+        cell5: item.branch,
       };
     });
     setDatas(newdata);
@@ -465,7 +464,6 @@ const UserManagementList = () => {
             </OverlayTrigger>
             <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">
-
                 <CsvDownloader filename="members" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
                   Export csv
                 </CsvDownloader>
