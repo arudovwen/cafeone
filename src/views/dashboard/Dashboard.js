@@ -140,25 +140,21 @@ const Dashboard = () => {
         {/* Top Selling f Items Start */}
         <Col xl="6" className="d-flex flex-column">
           <h2 className="small-title">Top Booked Spaces</h2>
-          <div className="mb-2 bg-white rounded-md flex-grow-1">
+          <div className="mb-2 rounded-md flex-grow-1">
             {seatUsage.length ? (
               seatUsage.map((item) => (
-                <Card className="mb-2 overflow-hidden" key={item.id}>
-                  <Row className="g-0 sh-14 sh-md-10 overflow-hidden">
-                    <Col>
-                      <Card.Body className="pt-0 pb-0 h-100">
-                        <Row className="g-0 h-100 align-content-center">
-                          <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
-                            {item.name}
-                          </Col>
+                <Card className="mb-2 sh-15 sh-md-6" key={item.id}>
+                  <Card.Body className="pt-0 pb-0 h-100">
+                    <Row className="g-0 h-100 align-content-center">
+                      <Col md="6" className="d-flex align-items-center mb-2 mb-md-0">
+                        {item.name}
+                      </Col>
 
-                          <Col md="6" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
-                            {item.bookings} bookings
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Col>
-                  </Row>
+                      <Col md="6" className="d-flex align-items-center justify-content-md-end text-muted text-medium">
+                        {item.bookings} bookings
+                      </Col>
+                    </Row>
+                  </Card.Body>
                 </Card>
               ))
             ) : (
@@ -175,7 +171,7 @@ const Dashboard = () => {
           <h2 className="small-title">Membership Stats</h2>
           <Card className="sh-45">
             <Card.Body className="h-100">
-              <div className="h-100">{data && data.membershiptStats ? <PerformanceChart statData={data.membershiptStats} /> : ''}</div>
+              <div className="h-100">{data && data.membershipStats ? <PerformanceChart statData={data.membershipStats} /> : ''}</div>
             </Card.Body>
           </Card>
         </Col>

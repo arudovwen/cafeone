@@ -238,7 +238,7 @@ const AdminManagementList = () => {
         cell1: `${item.firstName} ${item.lastName}`,
         cell2: item.email,
         cell3: item.roleName,
-        cell4: item.isActive,
+        cell4: item.isActive ? 'Active' : 'Inactive',
         cell5: moment(item.dateCreated).format('llll'),
       };
     });
@@ -328,7 +328,7 @@ const AdminManagementList = () => {
             <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">
                 {' '}
-                <CsvDownloader filename="admins" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                <CsvDownloader filename="admins" extension=".csv" separator="," wrapColumnChar="" columns={columns} datas={datas}>
                   Export csv
                 </CsvDownloader>
               </Dropdown.Item>

@@ -46,9 +46,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium ">Membership Type</div>
             </th>
-            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+            {/* <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium">Branch</div>
-            </th>
+            </th> */}
           </tr>
         </thead>
         <tbody>
@@ -65,14 +65,14 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
-                <div className="text-alternate">{item.phone ? item.phone : '-'}</div>
+                <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div>{item.membershipType}</div>
               </td>
-              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+              {/* <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div>{item.branch}</div>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
@@ -361,7 +361,7 @@ const UserManagementList = () => {
       return {
         cell1: `${item.firstName} ${item.lastName}`,
         cell2: item.email,
-        cell3: item.phone,
+        cell3: item.phoneNumber,
         cell4: item.membershipType,
         cell5: item.branch,
       };
@@ -464,7 +464,7 @@ const UserManagementList = () => {
             </OverlayTrigger>
             <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">
-                <CsvDownloader filename="members" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                <CsvDownloader filename="members" extension=".csv" separator="," wrapColumnChar="" columns={columns} datas={datas}>
                   Export csv
                 </CsvDownloader>
               </Dropdown.Item>
@@ -536,7 +536,7 @@ const UserManagementList = () => {
               </Col>
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-4">
                 <div className="text-muted text-small d-md-none">Phone</div>
-                <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
+                <div className="text-alternate">{item.phoneNumberNumber ? item.phoneNumberNumber : '-'}</div>
               </Col>
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5">
                 <div className="text-muted text-small d-md-none">Membership Type</div>

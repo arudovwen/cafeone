@@ -52,9 +52,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Date</div>
             </th>
-            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Time</div>
-            </th>
+
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Branch</div>
             </th>
@@ -84,9 +82,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">{moment(item.startDate).format('ll')}</div>
               </td>
-              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.startTime}</div>
-              </td>
+
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{`${item.branch}`}</div>
               </td>
@@ -373,9 +369,7 @@ const BookingTypeList = () => {
         cell3: item.member.name,
         cell4: `${item.branch}`,
         cell5: item.startDate,
-        // cell6: item.startTime,
-        cell7: item.endDate,
-        cell8: item.endTime,
+        cell6: item.paymentStatus,
         cell9: item.seatCount,
         cell10: item.plan,
         cell11: item.type,
@@ -407,18 +401,11 @@ const BookingTypeList = () => {
       id: 'cell5',
       displayName: 'START-DATE',
     },
-    // {
-    //   id: 'cell6',
-    //   displayName: 'START-TIME',
-    // },
     {
-      id: 'cell7',
-      displayName: 'END-DATE',
+      id: 'cell6',
+      displayName: 'PAYMENT-STATUS',
     },
-    {
-      id: 'cell8',
-      displayName: 'END-TIME',
-    },
+
     {
       id: 'cell9',
       displayName: 'SEATS',
@@ -526,7 +513,7 @@ const BookingTypeList = () => {
             <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">
                 {' '}
-                <CsvDownloader filename="bookings" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                <CsvDownloader filename="bookings" extension=".csv" separator="," wrapColumnChar="" columns={columns} datas={datas}>
                   Export csv
                 </CsvDownloader>
               </Dropdown.Item>
@@ -721,8 +708,11 @@ const BookingTypeList = () => {
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
             {isAdding && (
               <form onSubmit={handleSubmit}>
+                <p className="text-medium mb-3 text-primary">Fields with (*) are required</p>
                 <div className="mb-3">
-                  <Form.Label>Member</Form.Label>
+                  <Form.Label>
+                    Member <span className="text-danger">*</span>
+                  </Form.Label>
                   <SelectSearch
                     filterOptions={() => fuzzySearch(membersData)}
                     options={membersData}
@@ -736,7 +726,9 @@ const BookingTypeList = () => {
                   {errors.memberId && touched.memberId && <div className="d-block invalid-tooltip">{errors.memberId}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Branch</Form.Label>
+                  <Form.Label>
+                    Branch <span className="text-danger">*</span>
+                  </Form.Label>
                   <SelectSearch
                     filterOptions={() => fuzzySearch(branchesData)}
                     options={branchesData}
@@ -752,9 +744,7 @@ const BookingTypeList = () => {
 
                 <div className="mb-3">
                   <Form.Label className="mb-0">Select seat(s)</Form.Label>
-                  <div className="text-medium text-danger">
-                    {(!values.branchId || !values.memberId) && '*Member & branch required, '} {values.branchId && `Total seats : ${seatData}`}
-                  </div>
+                  <div className="text-medium text-muted">{ `Maximum seats : ${seatData}`}</div>
                   <div className="d-flex align-items-center">
                     {' '}
                     <input disabled={!seatData} type="range" required min="0" max={seatData} name="seats" onChange={handleChange} value={values.seats} />

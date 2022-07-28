@@ -248,7 +248,8 @@ const CampaignTypeList = () => {
     setIsAdding(true);
     setIsViewing(false);
     setIsEditing(false);
-
+    setStartDate(null);
+    setEndDate(null);
     toggleModal();
   }
 
@@ -485,7 +486,7 @@ const CampaignTypeList = () => {
             <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">
                 {' '}
-                <CsvDownloader filename="campaigns" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                <CsvDownloader filename="campaigns" extension=".csv" separator="," wrapColumnChar="" columns={columns} datas={datas}>
                   Export csv
                 </CsvDownloader>
               </Dropdown.Item>
@@ -934,7 +935,6 @@ const CampaignTypeList = () => {
                           selectsStart
                           minDate={new Date()}
                           startDate={startDate}
-                          endDate={endDate}
                           placeholderText="Start date"
                         />
 
