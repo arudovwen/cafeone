@@ -64,7 +64,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
               <div className="text-muted text-medium ">Payment status</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Status status</div>
+              <div className="text-muted text-medium ">Booking status</div>
             </th>
           </tr>
         </thead>

@@ -46,9 +46,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium ">Membership Type</div>
             </th>
-            {/* <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium">Branch</div>
-            </th> */}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -70,9 +70,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div>{item.membershipType}</div>
               </td>
-              {/* <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div>{item.branch}</div>
-              </td> */}
+              </td>
             </tr>
           ))}
         </tbody>
