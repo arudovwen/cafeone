@@ -375,13 +375,13 @@ const TransactionList = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">DATE</div>
         </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center ">
           <div className="text-muted text-small cursor-pointer ">NAME</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">BRANCH</div>
         </Col>
         {/* <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
@@ -396,21 +396,15 @@ const TransactionList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">AMOUNT </div>
         </Col>
-        {/* <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
-          <div className="text-muted text-small cursor-pointer ">DISCOUNT</div>
-        </Col>
 
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
-          <div className="text-muted text-small cursor-pointer  text-left">SUBTOTAL</div>
-        </Col> */}
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-2">
           <div className="text-muted text-small cursor-pointer  text-left">STATUS </div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">NARRATION</div>
         </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center px-1">
-          <div className="text-muted text-small cursor-pointer  text-left">ACTION</div>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-right px-1">
+          <div className="text-muted text-small cursor-pointer text-center">ACTION</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -467,9 +461,9 @@ const TransactionList = () => {
                   <div className="text-alternate text-medium text-capitalize">{item.status.toLowerCase()}</div>
                 </Col>
                 <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
-                  <div className="text-muted text-small d-md-none">Narration</div>
-                  <div className="text-alternate text-small d-none d-md-inline">{item.narration}</div>
-                  <div className="text-alternate text-medium d-md-none">{item.narration}</div>
+                  <div className="text-muted d-md-none">Narration</div>
+                  <div className="text-alternate d-none d-md-inline">{item.narration}</div>
+                  <div className="text-alternate d-md-none">{item.narration}</div>
                 </Col>
                 <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <Dropdown className="">

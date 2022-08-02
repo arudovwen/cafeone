@@ -29,7 +29,7 @@ const adminSlice = createSlice({
       state.status = action.payload;
     },
     updateadminstatus(state, action) {
-      console.log('🚀 ~ file: adminSlice.js ~ line 32 ~ updateadminstatus ~ action', action);
+     
       state.items = state.items.map((v) => {
         if (v.id === action.payload.id) {
           v.isActive = action.payload.value;
