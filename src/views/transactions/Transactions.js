@@ -294,7 +294,7 @@ const TransactionList = () => {
             <Dropdown.Menu className="shadow dropdown-menu-end">
               <Dropdown.Item href="#">
                 {' '}
-                <CsvDownloader filename="transactions" extension=".csv" separator=";" wrapColumnChar="'" columns={columns} datas={datas}>
+                <CsvDownloader filename="transactions" extension=".csv" separator="," wrapColumnChar="" columns={columns} datas={datas}>
                   Export csv
                 </CsvDownloader>
               </Dropdown.Item>

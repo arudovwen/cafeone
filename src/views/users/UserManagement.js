@@ -966,12 +966,7 @@ const UserManagementList = () => {
                                   <span>{moment(item.startDate).format('ll')}</span>
                                 </td>
                               </tr>
-                              <tr className="">
-                                <td className="text-muted  text-uppercase border-bottom py-2">Time :</td>
-                                <td className="text-alternate text-alternate border-bottom py-2">
-                                  <span>{item.startTime}</span>
-                                </td>
-                              </tr>
+                            
 
                               <tr className="">
                                 <td className="text-muted  text-uppercase border-bottom py-2">Plan :</td>
