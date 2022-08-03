@@ -60,6 +60,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Plan</div>
             </th>
+             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Amount</div>
+            </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Payment status</div>
             </th>
@@ -89,6 +92,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
 
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.plan}</div>
+              </td>
+               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.amountPaid}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.paymentStatus}</div>
@@ -332,6 +338,10 @@ const BookingTypeList = () => {
 
     return val;
   }
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'NGN',
+  });
   // function afterDate(date) {
   //   const today = moment(new Date());
   //   const varDate = moment(date);
@@ -370,7 +380,9 @@ const BookingTypeList = () => {
         cell4: `${item.branch}`,
         cell5: item.startDate,
         cell6: item.paymentStatus,
+        cell7: formatter.format(item.amountPaid),
         cell9: item.seatCount,
+
         cell10: item.plan,
         cell11: item.type,
         cell12: item.status,
@@ -404,6 +416,10 @@ const BookingTypeList = () => {
     {
       id: 'cell6',
       displayName: 'PAYMENT-STATUS',
+    },
+ {
+      id: 'cell7',
+      displayName: 'AMOUNT',
     },
 
     {
@@ -597,21 +613,19 @@ const BookingTypeList = () => {
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
 
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">DATE</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PLAN</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PAID STATUS</div>
         </Col>
-        {/* <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Seat</div>
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">AMOUNT</div>
         </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">Status</div>
-        </Col> */}
+
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer sort">Action</div>
         </Col>
@@ -641,12 +655,12 @@ const BookingTypeList = () => {
                         <span>{moment(item.startDate).format('ll')}</span>
                       </td>
                     </tr>
-                    {/* <tr className="">
-                      <td className="text-muted  text-uppercase border-bottom py-2">Time :</td>
+                    <tr className="">
+                      <td className="text-muted  text-uppercase border-bottom py-2">Amount :</td>
                       <td className="text-alternate text-alternate border-bottom py-2">
-                        <span>{item.startTime}</span>
+                        <span>{formatter.format(item.amountPaid)}</span>
                       </td>
-                    </tr> */}
+                    </tr>
 
                     <tr className="">
                       <td className="text-muted  text-uppercase border-bottom py-2">Plan :</td>
@@ -1039,12 +1053,12 @@ const BookingTypeList = () => {
                       <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Plan</td>
                       <td className=" py-2 border-bottom">{updateData.plan}</td>
                     </tr>
-                    {/* <tr>
-                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Duration</td>
+                    <tr>
+                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Amount</td>
                       <td className=" py-2 border-bottom">
-                        {updateData.duration} {updateData.duration > 1 ? 'hours' : 'hour'}
+                        {formatter.format(updateData.amountPaid)}
                       </td>
-                    </tr> */}
+                    </tr>
 
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Start date </td>
