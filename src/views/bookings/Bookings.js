@@ -492,8 +492,10 @@ const BookingTypeList = () => {
     }
 
     dispatch(getbookedseats(data)).then((res) => {
-      const sum = res.data.map((i) => i.seats).reduce((a, b) => Number(a) + Number(b));
-      console.log('🚀 ~ file: Bookings.js ~ line 495 ~ dispatch ~ sum', sum);
+      const sum = res.data
+        .map((i) => i.seats)
+        .sort()
+        .pop();
       setUsedSeats(sum);
       setIsShowingSeats(true);
     });
