@@ -387,7 +387,7 @@ const BranchesList = () => {
                 <div className="text-muted text-small d-md-none">Status</div>
                 <div>{item.statusId ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-start align-items-md-stsrt mb-2 mb-md-0 order-5 px-1 order-md-last">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center  mb-2 mb-md-0 order-5 px-1 order-md-last">
                 <div className="text-muted text-small d-md-none">Toggle Status</div>
                 <Form.Switch
                   className=""

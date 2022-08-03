@@ -30,7 +30,7 @@ import {
   getPaymentStatusTypes,
   getPlanTypes,
   addEventBooking,
-
+  getbookedseats,
   // eslint-disable-next-line import/extensions
 } from '../../bookings/bookingSlice';
 import { getMembers, getMember } from '../../members/memberSlice';
@@ -60,7 +60,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Plan</div>
             </th>
-             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Amount</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -93,7 +93,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.plan}</div>
               </td>
-               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.amountPaid}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -148,7 +148,7 @@ const BookingTypeList = () => {
     const data = { value: item.id, name: fullname, branch: item.branch, branchId: item.branchId };
     return data;
   });
-
+  const [usedSeats, setUsedSeats] = React.useState(0);
   const status = useSelector((state) => state.bookings.status);
   const initialValues = {
     seats: 0,
@@ -178,7 +178,7 @@ const BookingTypeList = () => {
   const [memberId, setMemberId] = useState(null);
   const [branchId, setBranchId] = useState(null);
   const [, setUpdate] = useState(null);
-
+  const [isShowingSeats, setIsShowingSeats] = useState(null);
   React.useEffect(() => {
     dispatch(getBookings(page, search));
     dispatch(getMembers(page, search, 50));
@@ -266,6 +266,7 @@ const BookingTypeList = () => {
   React.useEffect(() => {
     if (status === 'success') {
       setBookingModal(false);
+      setIsShowingSeats(false);
       setisloading(false);
       values.seats = 0;
       values.memberId = '';
@@ -273,11 +274,13 @@ const BookingTypeList = () => {
       values.planType = '';
       values.startDate = null;
       values.paymentStatus = '';
+      setStartDate(null);
     }
     if (status === 'update') {
       setisloading(false);
       dispatch(getBookings(1, ''));
       setBookingModal(false);
+      setIsShowingSeats(false);
       setUpdateData({
         name: '',
         amount: '',
@@ -312,10 +315,7 @@ const BookingTypeList = () => {
     setisloading(true);
     e.preventDefault();
     setisloading(true);
-    // const data = {
-    //   branchId: eventData.branchId,
-    //   fromDate: moment(eventData.startDate).format('YYYY-MM-DD'),
-    // };
+
     eventData.startDate = moment(eventData.startDate).format('YYYY-MM-DD');
     eventData.planType = 1;
     dispatch(addEventBooking(eventData));
@@ -417,7 +417,7 @@ const BookingTypeList = () => {
       id: 'cell6',
       displayName: 'PAYMENT-STATUS',
     },
- {
+    {
       id: 'cell7',
       displayName: 'AMOUNT',
     },
@@ -448,6 +448,7 @@ const BookingTypeList = () => {
     setMember(val);
     dispatch(getMember(val)).then((res) => {
       values.branchId = res.data.branchId;
+      setBranch(res.data.branchId);
       setUpdate(val);
     });
   }
@@ -470,7 +471,32 @@ const BookingTypeList = () => {
     setEndDateTo(null);
     setMemberId(null);
     setBranchId(null);
+    setIsShowingSeats(false);
     setType('');
+  }
+  function getBookedSeats() {
+    const data = {
+      branchId: values.branchId,
+      fromDate: moment(values.startDate).format('YYYY-MM-DD'),
+      toDate: null,
+    };
+
+    if (Number(values.planType) === 1) {
+      data.toDate = moment(values.startDate).add().format('YYYY-MM-DD');
+    }
+    if (Number(values.planType) === 2) {
+      data.toDate = moment(values.startDate).add(7, 'days').format('YYYY-MM-DD');
+    }
+    if (Number(values.planType) === 3) {
+      data.toDate = moment(values.startDate).add(30, 'days').format('YYYY-MM-DD');
+    }
+
+    dispatch(getbookedseats(data)).then((res) => {
+      const sum = res.data.map((i) => i.seats).reduce((a, b) => Number(a) + Number(b));
+      console.log('🚀 ~ file: Bookings.js ~ line 495 ~ dispatch ~ sum', sum);
+      setUsedSeats(sum);
+      setIsShowingSeats(true);
+    });
   }
 
   return (
@@ -756,22 +782,12 @@ const BookingTypeList = () => {
                   {errors.branchId && touched.branchId && <div className="d-block invalid-tooltip">{errors.branchId}</div>}
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label className="mb-0">Select seat(s)</Form.Label>
-                  <div className="text-medium text-muted">{ `Maximum seats : ${seatData}`}</div>
-                  <div className="d-flex align-items-center">
-                    {' '}
-                    <input disabled={!seatData} type="range" required min="0" max={seatData} name="seats" onChange={handleChange} value={values.seats} />
-                    <div className="me-3 px-3 py-2">{values.seats}</div>
-                  </div>
-                  {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
-                </div>
                 <Row>
-                  <Col md="5">
+                  <Col md="12">
                     <div className="mb-3">
                       <Form.Label>Start Date</Form.Label>
 
-                      <div className="d-flex justify-content-between align-items-center">
+                      <div className="d-flex justify-content-between align-items-center w-100">
                         <DatePicker
                           className="border rounded-sm px-2 py-1 w-100"
                           selected={startDate}
@@ -803,29 +819,61 @@ const BookingTypeList = () => {
                     ))}
                   </Form.Select>
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Payment status</Form.Label>
-                  <Form.Select type="text" name="paymentStatus" onChange={handleChange} value={values.paymentStatus}>
-                    <option value="" disabled>
-                      Select type
-                    </option>
-                    {paymentTypes.map((item) => (
-                      <option value={Number(item.id)} key={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </div>
 
-                <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
-                  {!isLoading ? (
-                    'Submit'
-                  ) : (
-                    <Spinner animation="border" role="status" size="sm">
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                  )}
-                </Button>
+                <div className="d-flex justify-content-end mb-5">
+                  {' '}
+                  <Button type="button" size="sm" variant="outline-primary" onClick={() => getBookedSeats()}>
+                    Check seats
+                  </Button>
+                </div>
+                {isShowingSeats && (
+                  <>
+                    <div className="mb-3">
+                      <Form.Label className="mb-0">Select seat(s)</Form.Label>
+                      <div className="text-medium text-muted">{`Maximum seats : ${seatData}`}</div>
+                      <div className="text-medium text-muted">{`Available seats : ${seatData - usedSeats}`}</div>
+
+                      <div className="d-flex align-items-center">
+                        {' '}
+                        <input
+                          disabled={!seatData}
+                          type="range"
+                          required
+                          min="0"
+                          max={seatData - usedSeats}
+                          name="seats"
+                          onChange={handleChange}
+                          value={values.seats}
+                        />
+                        <div className="me-3 px-3 py-2">{values.seats}</div>
+                      </div>
+                      {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
+                    </div>
+                    <div className="mb-3">
+                      <Form.Label>Payment status</Form.Label>
+                      <Form.Select type="text" name="paymentStatus" onChange={handleChange} value={values.paymentStatus}>
+                        <option value="" disabled>
+                          Select type
+                        </option>
+                        {paymentTypes.map((item) => (
+                          <option value={Number(item.id)} key={item.id}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </div>
+
+                    <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
+                      {!isLoading ? (
+                        'Submit'
+                      ) : (
+                        <Spinner animation="border" role="status" size="sm">
+                          <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                      )}
+                    </Button>
+                  </>
+                )}
               </form>
             )}
             {isEvent && (
@@ -1055,9 +1103,7 @@ const BookingTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Amount</td>
-                      <td className=" py-2 border-bottom">
-                        {formatter.format(updateData.amountPaid)}
-                      </td>
+                      <td className=" py-2 border-bottom">{formatter.format(updateData.amountPaid)}</td>
                     </tr>
 
                     <tr>

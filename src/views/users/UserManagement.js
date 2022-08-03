@@ -16,6 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import CsvDownloader from 'react-csv-downloader';
 import SelectSearch from 'react-select-search';
 import Fuse from 'fuse.js';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useReactToPrint } from 'react-to-print';
 import {
@@ -105,6 +106,7 @@ const UserManagementList = () => {
   const [isUploading, setIsUploading] = useState(null);
   const [bookingModal, setBookingModal] = useState(false);
   const [branchId, setBranchId] = useState(null);
+  const [dob, setDob] = useState(null);
   const initialValues = {
     email: '',
     firstName: '',
@@ -114,7 +116,7 @@ const UserManagementList = () => {
     city: '',
     state: '',
     middleName: '',
-    birthDate: '',
+    birthDate: null,
     occupation: '',
     photo: '',
     phoneNumber: '',
@@ -169,6 +171,7 @@ const UserManagementList = () => {
 
   const onSubmit = (values) => {
     setisloading(true);
+    values.birthDate = dob;
     dispatch(addMember(values));
   };
 
@@ -220,8 +223,9 @@ const UserManagementList = () => {
   function editUser(val) {
     dispatch(getMember(val.id)).then((res) => {
       const info = res.data;
-      info.birthDate = res.data.birthDate ? moment(res.data.birthDate).format('yyyy-MM-DD') : '';
+      info.birthDate = res.data.birthDate;
       info.photo = res.data.avatar;
+      setDob(new Date(info.birthDate));
       setUpdateData(info);
       setIsAdding(false);
       setIsViewing(false);
@@ -239,7 +243,6 @@ const UserManagementList = () => {
   function viewUser(val) {
     dispatch(getMember(val.id)).then((res) => {
       setIsAdding(false);
-
       setIsEditing(false);
       setIsSubscribing(false);
       setIsViewing(true);
@@ -333,7 +336,7 @@ const UserManagementList = () => {
       values.city = '';
       values.state = '';
       values.middleName = '';
-      values.birthDate = '';
+      values.birthDate = null;
       values.occupation = '';
       values.photo = '';
       values.gender = '';
@@ -391,6 +394,11 @@ const UserManagementList = () => {
       displayName: 'BRANCH',
     },
   ];
+  React.useEffect(() => {
+    values.birthDate = dob;
+    updateData.birthDate = dob;
+    console.log(values.birthDate);
+  }, [dob]);
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -536,7 +544,7 @@ const UserManagementList = () => {
               </Col>
               <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-4">
                 <div className="text-muted text-small d-md-none">Phone</div>
-                <div className="text-alternate">{item.phoneNumberNumber ? item.phoneNumberNumber : '-'}</div>
+                <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
               </Col>
               <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-5">
                 <div className="text-muted text-small d-md-none">Membership Type</div>
@@ -631,7 +639,16 @@ const UserManagementList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Dob</Form.Label>
-                  <input type="date" className="form-control" name="birthDate" onChange={handleChange} value={values.birthDate} />
+                  <DatePicker
+                    className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
+                    selected={dob}
+                    onChange={(date) => setDob(date)}
+                    minDate={new Date('1900-12-21')}
+                    maxDate={new Date('2010-12-21')}
+                    isClearable
+                    placeholderText="Enter your birth date"
+                  />
+                  {/* <input type="date" className="form-control" name="birthDate" onChange={handleChange} value={values.birthDate} /> */}
                   {errors.birthDate && touched.birthDate && <div className="d-block invalid-tooltip">{errors.birthDate}</div>}
                 </div>
                 <div className="mb-3">
@@ -740,7 +757,15 @@ const UserManagementList = () => {
                 </div>
                 <div className="mb-3">
                   <Form.Label>Dob</Form.Label>
-                  <input type="date" className="form-control" name="birthDate" onChange={(e) => handleUpdateChange(e)} value={updateData.birthDate} />
+                  <DatePicker
+                    className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
+                    selected={dob}
+                    onChange={(date) => setDob(date)}
+                    minDate={new Date('1900-12-21')}
+                    maxDate={new Date('2010-12-21')}
+                    isClearable
+                    placeholderText="Enter your birth date"
+                  />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Address 1</Form.Label>
@@ -966,7 +991,6 @@ const UserManagementList = () => {
                                   <span>{moment(item.startDate).format('ll')}</span>
                                 </td>
                               </tr>
-                            
 
                               <tr className="">
                                 <td className="text-muted  text-uppercase border-bottom py-2">Plan :</td>

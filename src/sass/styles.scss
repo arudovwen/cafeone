@@ -456,3 +456,6 @@ input[type='range'] {
 .select-search:not(.select-search--multiple) .select-search__input:hover {
   border-color: #1ea8e7 !important;
 }
+.select-search__option.is-selected {
+  background-color: #1ea8e7 !important;
+}

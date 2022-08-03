@@ -74,6 +74,9 @@ export const getCoBookedSeat = (data) => async () => {
 export const getEventBookedSeat = (data) => async () => {
   return axios.post(`${SERVICE_URL}/bookings/event-booked-seats`, data, requestConfig);
 };
+export const getbookedseats = (data) => async () => {
+  return axios.post(`${SERVICE_URL}/bookings/get-booked-seats`, data, requestConfig);
+};
 
 export const updateBooking = (data) => async () => {
   return axios.post(`${SERVICE_URL}/bookings/${data}`, data, requestConfig);
