@@ -644,7 +644,7 @@ const UserManagementList = () => {
                     selected={dob}
                     onChange={(date) => setDob(date)}
                     minDate={new Date('1900-12-21')}
-                    maxDate={new Date('2010-12-21')}
+  maxDate={new Date()}
                     isClearable
                     placeholderText="Enter your birth date"
                   />
@@ -762,7 +762,7 @@ const UserManagementList = () => {
                     selected={dob}
                     onChange={(date) => setDob(date)}
                     minDate={new Date('1900-12-21')}
-                    maxDate={new Date('2010-12-21')}
+                    maxDate={new Date()}
                     isClearable
                     placeholderText="Enter your birth date"
                   />
