@@ -341,6 +341,7 @@ const BookingTypeList = () => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'NGN',
+    currencyDisplay: "narrowSymbol",
   });
   // function afterDate(date) {
   //   const today = moment(new Date());
@@ -1097,6 +1098,10 @@ const BookingTypeList = () => {
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Branch</td>
                       <td className=" py-2 border-bottom">{updateData.branch}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold  py-2 border-bottom py-2 border-bottom text-uppercase text-muted"> Campaign</td>
+                      <td className=" py-2 border-bottom text-capitalize">{updateData.campaign}</td>
                     </tr>
 
                     <tr>

@@ -128,6 +128,7 @@ const TransactionList = () => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'NGN',
+    currencyDisplay: "narrowSymbol",
   });
   React.useEffect(() => {
     dispatch(getTransactions(page, search));
@@ -384,16 +385,16 @@ const TransactionList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">BRANCH</div>
         </Col>
-        {/* <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">CAMPAIGN</div>
-        </Col> */}
+        </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">PLAN</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">TYPE</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center px-1">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center px-1">
           <div className="text-muted text-small cursor-pointer ">AMOUNT </div>
         </Col>
 
@@ -433,12 +434,12 @@ const TransactionList = () => {
                     <span>{item.branch}</span>
                   </div>
                 </Col>
-                {/* <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
+                <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
                   <div className="text-muted text-small d-md-none">Campaign</div>
                   <div className="text-alternate text-medium">
                     <span>{item.campaign ? item.campaign : '-'}</span>
                   </div>
-                </Col> */}
+                </Col>
                 <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3 px-1">
                   <div className="text-muted text-small d-md-none">Plan</div>
                   <div className="text-alternate text-medium text-capitalize">
@@ -451,7 +452,7 @@ const TransactionList = () => {
                     <span>{item.type.toLowerCase()}</span>
                   </div>
                 </Col>
-                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
+                <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted text-small d-md-none">Amount </div>
                   <div className="text-alternate text-medium"> {formatter.format(item.amountPayable)}</div>
                 </Col>

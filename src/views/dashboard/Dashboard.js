@@ -22,6 +22,7 @@ const Dashboard = () => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'NGN',
+    currencyDisplay: 'narrowSymbol',
   });
   React.useEffect(() => {
     axios.get(`${SERVICE_URL}/reports`, requestConfig).then((res) => {
