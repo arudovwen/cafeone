@@ -463,8 +463,8 @@ const TransactionList = () => {
                 </Col>
                 <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <div className="text-muted d-md-none">Narration</div>
-                  <div className="text-alternate d-none d-md-inline">{item.narration}</div>
-                  <div className="text-alternate d-md-none">{item.narration}</div>
+                  <div className="text-alternate text-medium d-none d-md-inline">{item.narration}</div>
+                  <div className="text-alternate text-medium d-md-none">{item.narration}</div>
                 </Col>
                 <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4 px-1">
                   <Dropdown className="">
