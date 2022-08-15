@@ -638,7 +638,7 @@ const UserManagementList = () => {
                   {errors.gender && touched.gender && <div className="d-block invalid-tooltip">{errors.gender}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Dob</Form.Label>
+                  <Form.Label>Dob (Month/Day/Year)</Form.Label>
                   <DatePicker
                     className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
                     selected={dob}
@@ -756,7 +756,7 @@ const UserManagementList = () => {
                   </Form.Select>
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Dob</Form.Label>
+                  <Form.Label>Dob (Month/Day/Year)</Form.Label>
                   <DatePicker
                     className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
                     selected={dob}
