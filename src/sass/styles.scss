@@ -453,8 +453,15 @@ input[type='range'] {
   accent-color: #1ea8e7;
   width: 100%;
 }
+.select-search__select {
+  border: 1px solid #ddd;
+  border-radius: 8px !important;
+}
 .select-search:not(.select-search--multiple) .select-search__input:hover {
   border-color: #1ea8e7 !important;
+}
+.select-search__options {
+  padding-left: 0 !important;
 }
 .select-search__option.is-selected {
   background-color: #1ea8e7 !important;

@@ -202,7 +202,6 @@ const BookingTypeList = () => {
   const validationSchema = Yup.object().shape({
     startDate: Yup.string().required('Start date is required'),
     memberId: Yup.string().required('Member is required'),
-
     planType: Yup.string().required('Plan type is required'),
     paymentStatus: Yup.string().required('Payment status is required'),
     seats: Yup.number().required('Seats is required'),
@@ -213,6 +212,10 @@ const BookingTypeList = () => {
   };
 
   const onSubmit = (values) => {
+    if (!values.seats){
+       toast.error('Seats cannot be 0');
+      return;
+    }
     setisloading(true);
     values.startDate = moment(values.startDate).format('YYYY-MM-DD');
     dispatch(addBooking(values));
@@ -341,7 +344,7 @@ const BookingTypeList = () => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'NGN',
-    currencyDisplay: "narrowSymbol",
+    currencyDisplay: 'narrowSymbol',
   });
   // function afterDate(date) {
   //   const today = moment(new Date());
@@ -447,6 +450,7 @@ const BookingTypeList = () => {
 
   function handleMember(val) {
     setMember(val);
+    setIsShowingSeats(false);
     dispatch(getMember(val)).then((res) => {
       values.branchId = res.data.branchId;
       setBranch(res.data.branchId);
@@ -779,7 +783,10 @@ const BookingTypeList = () => {
                     name="branch"
                     value={values.branchId}
                     placeholder="Select  branch"
-                    onChange={(val) => setBranch(val)}
+                    onChange={(val) => {
+                      setBranch(val);
+                      setIsShowingSeats(false);
+                    }}
                   />
 
                   {errors.branchId && touched.branchId && <div className="d-block invalid-tooltip">{errors.branchId}</div>}
@@ -797,6 +804,7 @@ const BookingTypeList = () => {
                           onChange={(date) => {
                             values.startDate = date;
                             setStartDate(date);
+                            setIsShowingSeats(false);
                           }}
                           selectsStart
                           startDate={startDate}
@@ -821,6 +829,7 @@ const BookingTypeList = () => {
                       </option>
                     ))}
                   </Form.Select>
+                  {errors.planType && touched.planType && <div className="d-block invalid-tooltip">{errors.planType}</div>}
                 </div>
 
                 <div className="d-flex justify-content-end mb-5">
@@ -864,6 +873,7 @@ const BookingTypeList = () => {
                           </option>
                         ))}
                       </Form.Select>
+                      {errors.paymentStatus && touched.paymentStatus && <div className="d-block invalid-tooltip">{errors.paymentStatus}</div>}
                     </div>
 
                     <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">

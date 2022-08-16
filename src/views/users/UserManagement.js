@@ -166,6 +166,7 @@ const UserManagementList = () => {
   });
 
   const toggleModal = () => {
+    setDob(null);
     setUserModal(!userModal);
   };
 
@@ -344,6 +345,7 @@ const UserManagementList = () => {
       values.note = '';
       values.phoneNumber = '';
       values.membershipTypeId = '';
+      setDob(null);
       setisloading(false);
       setUserModal(false);
       setIsUploading(null);
@@ -352,6 +354,7 @@ const UserManagementList = () => {
       setisloading(false);
     }
     if (status === 'update') {
+      setDob(null);
       dispatch(getMembers(1, ''));
       setUserModal(false);
       setisloading(false);
@@ -638,13 +641,13 @@ const UserManagementList = () => {
                   {errors.gender && touched.gender && <div className="d-block invalid-tooltip">{errors.gender}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Dob (Month/Day/Year)</Form.Label>
+                  <Form.Label>DOB (month/day/year)</Form.Label>
                   <DatePicker
                     className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
                     selected={dob}
                     onChange={(date) => setDob(date)}
                     minDate={new Date('1900-12-21')}
-  maxDate={new Date()}
+                    maxDate={new Date()}
                     isClearable
                     placeholderText="Enter your birth date"
                   />
@@ -756,7 +759,7 @@ const UserManagementList = () => {
                   </Form.Select>
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Dob (Month/Day/Year)</Form.Label>
+                  <Form.Label>DOB (month/day/year)</Form.Label>
                   <DatePicker
                     className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
                     selected={dob}
