@@ -87,11 +87,11 @@ export const deleteBooking = (data) => async () => {
 };
 
 export const checkinBooking = (id) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${id}/checkin`, { bookingId: id }, requestConfig);
+  return axios.post(`${SERVICE_URL}/bookings/${id}/checkin`, { clockedInTime: new Date() }, requestConfig);
 };
 
 export const checkoutBooking = (id) => async () => {
-  return axios.post(`${SERVICE_URL}/bookings/${id}/checkout`, { bookingId: id }, requestConfig);
+  return axios.post(`${SERVICE_URL}/bookings/${id}/checkout`, { clockOutTime: new Date() }, requestConfig);
 };
 
 export const addBooking = (data) => async (dispatch) => {
