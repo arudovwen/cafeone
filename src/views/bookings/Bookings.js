@@ -212,8 +212,8 @@ const BookingTypeList = () => {
   };
 
   const onSubmit = (values) => {
-    if (!values.seats){
-       toast.error('Seats cannot be 0');
+    if (!values.seats) {
+      toast.error('Seats cannot be 0');
       return;
     }
     setisloading(true);
@@ -357,6 +357,7 @@ const BookingTypeList = () => {
     if (stat === 'clockOut') {
       dispatch(checkoutBooking(id)).then((res) => {
         if (res.status === 200) {
+          dispatch(getBookings(page, search));
           toast.success('Checked out successful');
           dispatch(getBooking(updateData.id)).then((resp) => {
             setUpdateData(resp.data);
@@ -367,6 +368,7 @@ const BookingTypeList = () => {
       dispatch(checkinBooking(id)).then((res) => {
         if (res.status === 200) {
           toast.success('Checked in successful');
+          dispatch(getBookings(page, search));
           dispatch(getBooking(updateData.id)).then((resp) => {
             setUpdateData(resp.data);
           });
@@ -1159,7 +1161,7 @@ const BookingTypeList = () => {
                     <Button
                       variant="outline-primary"
                       size="sm"
-                      disabled={!similarDate(updateData.startDate)}
+                      disabled={!similarDate(updateData.startDate) || updateData.status.toLowerCase() === 'signed in'}
                       className="btn-icon btn-icon-start text-primary me-4"
                       onClick={() => handleChecking(updateData.id, 'clockIn')}
                     >

@@ -49,7 +49,7 @@ export const getCampaigns =
   async (dispatch) => {
     const response = await axios
       .get(
-        `${SERVICE_URL}/campaigns?search=${search}&page=${page}&fromDate=${startDateFrom}&toDate=${startDateTo}&branchId=${branchId}&MembershipTypeId=${membershipId}`,
+        `${SERVICE_URL}/campaigns?search=${search}&page=${page}&fromDate=${startDateFrom}&toDate=${startDateTo}&branchId=${branchId}&MembershipTypeId=${membershipId}&size=15`,
         requestConfig
       )
       .catch((err) => {

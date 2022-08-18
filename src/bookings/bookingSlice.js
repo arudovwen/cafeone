@@ -38,7 +38,7 @@ export const getBookings =
   async (dispatch) => {
     const response = await axios
       .get(
-        `${SERVICE_URL}/bookings?search=${search}&page=${page}&fromDate=${startTimeFrom}&toDate=${startTimeTo}&MemberId=${MemberId}&branchId=${branchId}&typeId=${type}`,
+        `${SERVICE_URL}/bookings?search=${search}&page=${page}&fromDate=${startTimeFrom}&toDate=${startTimeTo}&MemberId=${MemberId}&branchId=${branchId}&typeId=${type}&size=15`,
         requestConfig
       )
       .catch((err) => {
@@ -53,7 +53,7 @@ export const getBookings =
 export const getBookingByMember =
   (MemberId = null) =>
   () => {
-    return axios.get(`${SERVICE_URL}/bookings?MemberId=${MemberId}`, requestConfig).catch((err) => {
+    return axios.get(`${SERVICE_URL}/bookings?MemberId=${MemberId}&size=15`, requestConfig).catch((err) => {
       toast.error(err.response.data.message);
     });
   };
