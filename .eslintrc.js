@@ -86,6 +86,7 @@ module.exports = {
     'no-param-reassign': 0,
     'import/no-unresolved': 0,
     'no-unused-vars': 'warn',
+    'react/no-unknown-property': 0,
   },
   globals: {
     window: true,
