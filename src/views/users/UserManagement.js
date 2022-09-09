@@ -531,7 +531,7 @@ const UserManagementList = () => {
 
                 <div className="text-alternate dflex align-items-center">
                   <img
-                    src={item.avatar ? `${process.env.REACT_APP_URL}/${item.avatar}` : 'https://via.placeholder.com/150'}
+                    src={item.avatar ? item.avatar : 'https://via.placeholder.com/150'}
                     alt="avatar"
                     className="avatar avatar-sm me-2 rounded d-none d-md-inline"
                     style={{ width: '30px', height: '30px' }}
@@ -843,7 +843,7 @@ const UserManagementList = () => {
               <div className="">
                 <div className="d-flex justify-content-between align-items-end  mb-3">
                   <img
-                    src={updateData.avatar ? `${process.env.REACT_APP_URL}/${updateData.avatar}` : 'https://via.placeholder.com/150'}
+                    src={updateData.avatar ? updateData.avatar : 'https://via.placeholder.com/150'}
                     alt="avatar"
                     className="rounded-circle"
                     style={{ width: '80px', height: '80px' }}

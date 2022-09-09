@@ -164,6 +164,9 @@ Table of Contents
 @import 'layout/print';
 @import 'layout/settings';
 
+iframe{
+  pointer-events: none;
+}
 .select-search {
   width: 100%;
   position: relative;

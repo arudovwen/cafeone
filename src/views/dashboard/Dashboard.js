@@ -112,7 +112,7 @@ const Dashboard = () => {
 
       <Row className="mb-5">
         {/* Recent Orders Start */}
-        <Col xl="6" className="mb-5 mb-lg-0">
+        <Col xl="6" className="mb-5 mb-xl-0">
           <h2 className="small-title">Recent Transactions</h2>
           {transactions.length ? (
             transactions.map((item) => (
