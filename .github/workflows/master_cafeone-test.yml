@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'cafeone-test'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4A17DF0579BA489B9C784F594AE6CBE8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4B2838E17996428594BF02D2C608AC91 }}
           package: .
