@@ -16,7 +16,7 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'plugin:prettier/recommended',
   ],
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 6,
     sourceType: 'module',
@@ -25,6 +25,7 @@ module.exports = {
       modules: true,
       experimentalObjectRestSpread: true,
     },
+    requireConfigFile: false,
   },
   settings: {
     react: {
@@ -84,9 +85,12 @@ module.exports = {
     ],
     'no-console': 'off',
     'no-param-reassign': 0,
+    'no-promise-executor-return': 0,
     'import/no-unresolved': 0,
     'no-unused-vars': 'warn',
     'react/no-unknown-property': 0,
+    'react/function-component-definition': 0,
+    'react/jsx-no-useless-fragment': 0,
   },
   globals: {
     window: true,

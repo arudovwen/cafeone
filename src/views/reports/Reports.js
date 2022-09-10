@@ -1,15 +1,14 @@
 /* eslint-disable no-alert */
 import React, { useState, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
+
 import { debounce } from 'lodash';
-import { toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
@@ -22,7 +21,6 @@ const ReportList = () => {
   const description = 'Report  Page';
   const [ReportModal, setReportModal] = useState(false);
   const ReportsData = useSelector((state) => state.Report.Reports);
-  const total = useSelector((state) => state.Report.total);
 
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
