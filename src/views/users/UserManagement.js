@@ -320,7 +320,7 @@ const UserManagementList = () => {
     };
   }
   React.useEffect(() => {
-    dispatch(getMembers(page, search, 15, branchId));
+    dispatch(getMembers(page, search, branchId));
   }, [branchId]);
 
   function resetFilter() {
@@ -400,7 +400,6 @@ const UserManagementList = () => {
   React.useEffect(() => {
     values.birthDate = dob;
     updateData.birthDate = dob;
-    console.log(values.birthDate);
   }, [dob]);
   return (
     <>
@@ -424,7 +423,7 @@ const UserManagementList = () => {
               <CsLineIcons icon="" />
             </Button>
           </Col> */}
-          Top Buttons End
+          {/* Top Buttons End */}
         </Row>
       </div>
 
