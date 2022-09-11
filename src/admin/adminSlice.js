@@ -102,7 +102,7 @@ export const subscribeAdmin = (data) => async () => {
 };
 
 export const uploadPhoto = (data) => async () => {
-  return axios.post(`http://streams.com.ng/cafeoneservices/upload`, data, {
+  return axios.post(`https://membership-service-stg-api.azurewebsites.net/upload`, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
