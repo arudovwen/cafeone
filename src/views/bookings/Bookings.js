@@ -797,7 +797,9 @@ const BookingTypeList = () => {
                 <Row>
                   <Col md="12">
                     <div className="mb-3">
-                      <Form.Label>Start Date</Form.Label>
+                      <Form.Label>
+                        Start Date <span className="text-danger">*</span>
+                      </Form.Label>
 
                       <div className="d-flex justify-content-between align-items-center w-100">
                         <DatePicker
@@ -820,7 +822,9 @@ const BookingTypeList = () => {
                   </Col>
                 </Row>
                 <div className="mb-3">
-                  <Form.Label>Plan type</Form.Label>
+                  <Form.Label>
+                    Plan type <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select type="text" name="planType" onChange={handleChange} value={values.planType}>
                     <option value="" disabled>
                       Select plan
@@ -894,21 +898,29 @@ const BookingTypeList = () => {
             {isEvent && (
               <form onSubmit={(e) => handleEventData(e)}>
                 <div className="mb-3">
-                  <Form.Label>First name</Form.Label>
+                  <Form.Label>
+                    First name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control required type="text" name="firstName" onChange={(e) => handleEventChange(e)} value={eventData.firstName} />
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Last name</Form.Label>
+                  <Form.Label>
+                    Last name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control required type="text" id="lastName" name="lastName" onChange={(e) => handleEventChange(e)} value={eventData.lastName} />
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label>
+                    Email <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control required type="email" id="email" name="email" onChange={(e) => handleEventChange(e)} value={eventData.email} />
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Phone number</Form.Label>
+                  <Form.Label>
+                    Phone number <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     required
                     type="number"
@@ -919,12 +931,16 @@ const BookingTypeList = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Amount due</Form.Label>
+                  <Form.Label>
+                    Amount due <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control required type="number" id="amountDue" name="amountDue" onChange={(e) => handleEventChange(e)} value={eventData.amountDue} />
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Branch</Form.Label>
+                  <Form.Label>
+                    Branch <span className="text-danger">*</span>
+                  </Form.Label>
                   <SelectSearch
                     required
                     filterOptions={() => fuzzySearch(branchesData)}
@@ -943,7 +959,9 @@ const BookingTypeList = () => {
                 <Row>
                   <Col md="5">
                     <div className="mb-3">
-                      <Form.Label>Start Date</Form.Label>
+                      <Form.Label>
+                        Start Date <span className="text-danger">*</span>
+                      </Form.Label>
 
                       <div className="d-flex justify-content-between align-items-center">
                         <DatePicker
@@ -968,7 +986,9 @@ const BookingTypeList = () => {
                 </Row>
 
                 <div className="mb-3">
-                  <Form.Label>Payment status</Form.Label>
+                  <Form.Label>
+                    Payment status <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select required type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
                     <option value="" disabled>
                       Select status

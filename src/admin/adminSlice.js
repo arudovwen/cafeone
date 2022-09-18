@@ -29,7 +29,6 @@ const adminSlice = createSlice({
       state.status = action.payload;
     },
     updateadminstatus(state, action) {
-     
       state.items = state.items.map((v) => {
         if (v.id === action.payload.id) {
           v.isActive = action.payload.value;
@@ -75,16 +74,21 @@ export const updateAdmin = (data) => async (dispatch) => {
 };
 
 export const addAdmin = (data) => async (dispatch) => {
-  const response = await axios.post(`${SERVICE_URL}/admins`, data, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(addadmins(response.data));
-    toast.success('User created');
-    dispatch(updatestatus('success'));
-    dispatch(resetstatus());
-  }
+  axios
+    .post(`${SERVICE_URL}/admins`, data, requestConfig)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(addadmins(response.data));
+        toast.success('User created');
+        dispatch(updatestatus('success'));
+        dispatch(resetstatus());
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
+    });
 };
 export const activateAdmin = (data) => async () => {
   return axios.post(`${SERVICE_URL}/admins/${data}/activate`, data, requestConfig);

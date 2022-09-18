@@ -458,17 +458,6 @@ const CampaignTypeList = () => {
 
       <Row className="mb-3">
         <Col md="5" lg="7" xxl="6" className="mb-1 d-flex align-items-center ">
-          {/* Search Start */}
-          {/* <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
-            <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
-            <span className="search-magnifier-icon">
-              <CsLineIcons icon="search" />
-            </span>
-            <span className="search-delete-icon d-none">
-              <CsLineIcons icon="close" />
-            </span>
-          </div> */}
-
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewCampaign()}>
             <CsLineIcons icon="plus" /> <span>Add campaign</span>
           </Button>
@@ -671,7 +660,9 @@ const CampaignTypeList = () => {
             {isAdding && (
               <form onSubmit={handleSubmit} className="pb-5">
                 <div className="mb-3">
-                  <Form.Label>Discount type</Form.Label>
+                  <Form.Label>
+                    Discount type <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select type="text" name="discountType" onChange={handleChange} value={values.discountType}>
                     <option value="" disabled>
                       Select discount type
@@ -684,20 +675,26 @@ const CampaignTypeList = () => {
                   </Form.Select>
                 </div>
                 <div className="mb-3">
-                  <Form.Label>{Number(values.discountType) === 2 ? 'Percentage Value (%)' : 'Discount Value'}</Form.Label>
+                  <Form.Label>
+                    {Number(values.discountType) === 2 ? 'Percentage Value (%)' : 'Discount Value'} <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="number" name="value" onChange={handleChange} value={values.value} />
                   {errors.value && touched.value && <div className="d-block invalid-tooltip">{errors.value}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
+                  <Form.Label>
+                    Description <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" name="description" as="textarea" rows={3} onChange={handleChange} value={values.description} />
                   {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
                 </div>
 
                 <div>
                   <div className="mb-3">
-                    <Form.Label>Campaign type</Form.Label>
+                    <Form.Label>
+                      Campaign type <span className="text-danger">*</span>
+                    </Form.Label>
                     <div className="d-flex">
                       <Form.Check
                         type="radio"
@@ -721,7 +718,9 @@ const CampaignTypeList = () => {
 
                   {type === 'branch' ? (
                     <div className="mb-3">
-                      <Form.Label>Select branch</Form.Label>
+                      <Form.Label>
+                        Select branch <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Select type="text" name="branchId" onChange={handleChange} value={values.branchId}>
                         <option value="" disabled>
                           Select branch
@@ -736,7 +735,9 @@ const CampaignTypeList = () => {
                   ) : (
                     <>
                       <div className="mb-3">
-                        <Form.Label>Select membership</Form.Label>
+                        <Form.Label>
+                          Select membership <span className="text-danger">*</span>
+                        </Form.Label>
                         <Form.Select type="text" name="membershipTypeId" onChange={handleChange} value={values.membershipTypeId}>
                           <option value="" disabled>
                             Select membership type
@@ -749,7 +750,9 @@ const CampaignTypeList = () => {
                         </Form.Select>
                       </div>
                       <div className="mb-3">
-                        <Form.Label>Discount type</Form.Label>
+                        <Form.Label>
+                          Discount type <span className="text-danger">*</span>
+                        </Form.Label>
                         <Form.Select
                           type="select"
                           name="duration"
@@ -772,7 +775,9 @@ const CampaignTypeList = () => {
                 {duration == 1 ? (
                   <>
                     <div className="mb-3">
-                      <Form.Label>Usage per-member </Form.Label>
+                      <Form.Label>
+                        Usage per-member <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Control type="number" name="usagePerMember" onChange={handleChange} value={values.usagePerMember} />
                       {errors.usagePerMember && touched.usagePerMember && <div className="d-block invalid-tooltip">{errors.usagePerMember}</div>}
                     </div>

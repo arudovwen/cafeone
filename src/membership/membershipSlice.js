@@ -48,13 +48,16 @@ export const updatemembershipStatus = (data) => async (dispatch) => {
   dispatch(updatemembershipstatus(data));
 };
 export const getmembershiptypes = () => async (dispatch) => {
-  const response = await axios.get(`${SERVICE_URL}/membership-types`, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(setmembershiptypes(response.data));
-  }
+  axios
+    .get(`${SERVICE_URL}/membership-types`, requestConfig)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(setmembershiptypes(response.data));
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
 
 export const getMembership = () => async () => {

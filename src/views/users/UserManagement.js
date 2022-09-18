@@ -35,13 +35,28 @@ const ComponentToPrint = forwardRef((props, ref) => {
         <thead className="">
           <tr>
             <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
-              <div className="text-muted text-medium">NAME</div>
+              <div className="text-muted text-medium">Name</div>
             </th>
-            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Email</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Address</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">DOB </div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">City </div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">State </div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
               <div className="text-muted text-medium ">Phone</div>
+            </th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+              <div className="text-muted text-medium ">Occupation</div>
             </th>
 
             <th style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
@@ -66,7 +81,32 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate">
+                  <span>{item.address1 || '-'}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate">
+                  <span>{moment(item.birthDate).format('l')}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate">
+                  <span>{item.city || '-'}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate">
+                  <span>{item.state || '-'}</span>
+                </div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div className="text-alternate">{item.phoneNumber ? item.phoneNumber : '-'}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
+                <div className="text-alternate">
+                  <span>{item.occupation || '-'}</span>
+                </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '3px 2px' }}>
                 <div>{item.membershipType}</div>
@@ -369,7 +409,12 @@ const UserManagementList = () => {
         cell2: item.email,
         cell3: item.phoneNumber,
         cell4: item.membershipType,
-        cell5: item.branch,
+        cell5: item.address || '-',
+        cell6: moment(item.birthDate).format('l'),
+        cell7: item.city || '-',
+        cell8: item.state || '-',
+        cell9: item.membershipType,
+        cell10: item.occupation || '-',
       };
     });
     setDatas(newdata);
@@ -390,11 +435,31 @@ const UserManagementList = () => {
     },
     {
       id: 'cell4',
-      displayName: 'MEMBERSHIP TYPE',
+      displayName: 'ADDRESS',
     },
     {
       id: 'cell5',
+      displayName: 'DOB',
+    },
+    {
+      id: 'cell6',
+      displayName: 'CITY',
+    },
+    {
+      id: 'cell7',
+      displayName: 'STATE',
+    },
+    {
+      id: 'cell8',
       displayName: 'BRANCH',
+    },
+    {
+      id: 'cell9',
+      displayName: 'MEMBERSHIP TYPE',
+    },
+    {
+      id: 'cell10',
+      displayName: 'OCCUPATION',
     },
   ];
   React.useEffect(() => {
@@ -597,30 +662,36 @@ const UserManagementList = () => {
           <OverlayScrollbarsComponent options={{ overflowBehavior: { x: 'hidden', y: 'scroll' } }} className="scroll-track-visible">
             {isAdding && (
               <form onSubmit={handleSubmit} className="pb-5">
-                <div className="mb-3">
-                  <Form.Label>First name</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    First name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" name="firstName" onChange={handleChange} value={values.firstName} />
                   {errors.firstName && touched.firstName && <div className="d-block invalid-tooltip">{errors.firstName}</div>}
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Last name</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    Last name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" id="lastName" name="lastName" onChange={handleChange} value={values.lastName} />
                   {errors.lastName && touched.lastName && <div className="d-block invalid-tooltip">{errors.lastName}</div>}
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>Middle name</Form.Label>
                   <Form.Control type="text" id="middleName" name="middleName" onChange={handleChange} value={values.middleName} />
                   {errors.middleName && touched.middleName && <div className="d-block invalid-tooltip">{errors.middleName}</div>}
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    Email <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
                   {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>
                     <span className="me-1">Photo</span>
                     {isUploading === 'loaded' ? <CsLineIcons icon="check" size="12" variant="primary" /> : ''}
@@ -628,8 +699,10 @@ const UserManagementList = () => {
                   </Form.Label>
                   <input type="file" id="photo" className="form-control" accept="image/*" name="photo" onChange={handleFile} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Gender</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    Gender <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select type="select" name="gender" onChange={handleChange} value={values.gender} placeholder="Select gender">
                     <option disabled value="">
                       Select gender
@@ -640,8 +713,10 @@ const UserManagementList = () => {
                   </Form.Select>
                   {errors.gender && touched.gender && <div className="d-block invalid-tooltip">{errors.gender}</div>}
                 </div>
-                <div className="mb-3">
-                  <Form.Label>DOB (month/day/year)</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    DOB (month/day/year) <span className="text-danger">*</span>
+                  </Form.Label>
                   <DatePicker
                     className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
                     selected={dob}
@@ -654,36 +729,46 @@ const UserManagementList = () => {
                   {/* <input type="date" className="form-control" name="birthDate" onChange={handleChange} value={values.birthDate} /> */}
                   {errors.birthDate && touched.birthDate && <div className="d-block invalid-tooltip">{errors.birthDate}</div>}
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Address</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    Address <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" id="address1" name="address1" onChange={handleChange} value={values.address1} />
                   {errors.address1 && touched.address1 && <div className="d-block invalid-tooltip">{errors.address1}</div>}
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>City</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    City <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" id="city" name="city" onChange={handleChange} value={values.city} />
                   {errors.city && touched.city && <div className="d-block invalid-tooltip">{errors.city}</div>}
                 </div>
-                <div className="mb-3">
-                  <Form.Label>State</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    State <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" id="state" name="state" onChange={handleChange} value={values.state} />
                   {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>Occupation</Form.Label>
                   <Form.Control type="text" id="occupation" name="occupation" onChange={handleChange} value={values.occupation} />
                   {errors.occupation && touched.occupation && <div className="d-block invalid-tooltip">{errors.occupation}</div>}
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Phone number</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    Phone number <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={handleChange} value={values.phoneNumber} />
                   {errors.phoneNumber && touched.phoneNumber && <div className="d-block invalid-tooltip">{errors.phoneNumber}</div>}
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Membership type</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    Membership type <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select type="text" id="membershipTypeId" name="membershipTypeId" onChange={handleChange} value={values.membershipTypeId}>
                     <option value="" disabled>
                       Select membership type
@@ -696,8 +781,10 @@ const UserManagementList = () => {
                   </Form.Select>
                   {errors.membershipTypeId && touched.membershipTypeId && <div className="d-block invalid-tooltip">{errors.membershipTypeId}</div>}
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Branch</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>
+                    Branch <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select type="text" id="branchId" name="branchId" onChange={handleChange} value={values.branchId}>
                     <option value="" disabled>
                       Select branch
@@ -726,29 +813,29 @@ const UserManagementList = () => {
             )}
             {isEditing && (
               <form onSubmit={(e) => handleUpdate(e)} className="pb-5">
-                <div className="mb-3">
-                  <Form.Label>First name</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>First name*</Form.Label>
                   <Form.Control type="text" name="firstName" onChange={(e) => handleUpdateChange(e)} value={updateData.firstName} />
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Last name</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>Last name*</Form.Label>
                   <Form.Control type="text" id="lastName" name="lastName" onChange={(e) => handleUpdateChange(e)} value={updateData.lastName} />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>Middle name</Form.Label>
                   <Form.Control type="text" id="middleName" name="middleName" onChange={(e) => handleUpdateChange(e)} value={updateData.middleName} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>Email*</Form.Label>
                   <Form.Control type="email" id="email" name="email" onChange={(e) => handleUpdateChange(e)} value={updateData.email} />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>Photo</Form.Label>
                   <input type="file" id="photo" className="form-control" accept="image/*" name="photo" onChange={handleUpdateFile} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Gender</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>Gender*</Form.Label>
                   <Form.Select type="select" name="gender" onChange={(e) => handleUpdateChange(e)} value={updateData.gender} placeholder="Select gender">
                     <option disabled value="">
                       Select gender
@@ -758,8 +845,8 @@ const UserManagementList = () => {
                     <option value="other">Other</option>
                   </Form.Select>
                 </div>
-                <div className="mb-3">
-                  <Form.Label>DOB (month/day/year)</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>DOB (month/day/year)*</Form.Label>
                   <DatePicker
                     className="border rounded-sm px-2 px-lg-3 py-2 py-lg-2 text-muted me-2 w-100"
                     selected={dob}
@@ -770,30 +857,30 @@ const UserManagementList = () => {
                     placeholderText="Enter your birth date"
                   />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Address 1</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>Address 1*</Form.Label>
                   <Form.Control type="text" id="address1" name="address1" onChange={(e) => handleUpdateChange(e)} value={updateData.address1} />
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>City</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>City*</Form.Label>
                   <Form.Control type="text" id="city" name="city" onChange={(e) => handleUpdateChange(e)} value={updateData.city} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>State</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>State*</Form.Label>
                   <Form.Control type="text" id="state" name="state" onChange={(e) => handleUpdateChange(e)} value={updateData.state} />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>Occupation</Form.Label>
                   <Form.Control type="text" id="occupation" name="occupation" onChange={(e) => handleUpdateChange(e)} value={updateData.occupation} />
                 </div>
 
-                <div className="mb-3">
-                  <Form.Label>Phone number</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>Phone number*</Form.Label>
                   <Form.Control type="number" id="phoneNumber" name="phoneNumber" onChange={(e) => handleUpdateChange(e)} value={updateData.phoneNumber} />
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Membership type</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>Membership type*</Form.Label>
                   <Form.Select
                     type="text"
                     id="membershipTypeId"
@@ -811,8 +898,8 @@ const UserManagementList = () => {
                     ))}
                   </Form.Select>
                 </div>
-                <div className="mb-3">
-                  <Form.Label>Branch</Form.Label>
+                <div className="mb-3 relative">
+                  <Form.Label>Branch*</Form.Label>
                   <Form.Select type="text" id="branchId" name="branchId" onChange={(e) => handleUpdateChange(e)} value={updateData.branchId}>
                     <option value="" disabled>
                       Select branch
@@ -868,11 +955,11 @@ const UserManagementList = () => {
 
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Phone</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.phoneNumber}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.phoneNumber || '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Address 1</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.address1}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.address1 || '-'}</td>
                     </tr>
 
                     <tr>
@@ -882,11 +969,11 @@ const UserManagementList = () => {
 
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">City</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.city}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.city || '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">State</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.state}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.state || '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Occupation</td>
@@ -894,25 +981,17 @@ const UserManagementList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership type</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.membershipType}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.membershipType || '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Branch</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.branch}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.branch || '-'}</td>
                     </tr>
-                    {/* <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership start date</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.membershipStartDate).format('l')}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Membership expiry date</td>
-                      <td className=" py-2 px-1 border-bottom">{moment(updateData.membershipExpiryDate).format('l')}</td>
-                    </tr> */}
 
                     {updateData.note && (
                       <tr>
                         <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Note</td>
-                        <td className=" py-2 px-1 border-bottom">{updateData.note}</td>
+                        <td className=" py-2 px-1 border-bottom">{updateData.note || '-'}</td>
                       </tr>
                     )}
                   </tbody>
@@ -930,7 +1009,7 @@ const UserManagementList = () => {
             )}
             {isSubscribing && (
               <form onSubmit={(e) => subscribeNow(e)}>
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>Membership type</Form.Label>
                   <Form.Select
                     type="text"
@@ -949,7 +1028,7 @@ const UserManagementList = () => {
                     ))}
                   </Form.Select>
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <Form.Label>Campaign</Form.Label>
                   <Form.Control type="text" name="campaignCode" onChange={(e) => handlSubscription(e)} value={subscriptionData.campaignCode} />
                 </div>
@@ -975,7 +1054,7 @@ const UserManagementList = () => {
               {myBookings.length ? (
                 <Row className="mt-5">
                   {myBookings.map((item) => (
-                    <Col xs="12" md="4" key={item.id} className="mb-3">
+                    <Col xs="12" md="4" key={item.id} className="mb-3 relative">
                       <Card className="mb-2">
                         <Card.Body className="px-3 py-3">
                           <table className="w-full">

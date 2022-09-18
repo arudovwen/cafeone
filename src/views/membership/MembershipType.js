@@ -51,7 +51,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Monthly amount</div>
             </th>
-
+            <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+              <div className="text-muted text-medium ">Account Holder</div>
+            </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status</div>
             </th>
@@ -76,6 +78,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 3) ? item.plans.find((v) => v.planTypeId === 3).amount : 0}</div>
+              </td>
+              <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
+                <div>{item.isAccountHolder ? 'Yes' : 'No'}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.isActive ? 'Active' : 'Inactive'}</div>
@@ -108,7 +113,7 @@ const MembershipTypeList = () => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'NGN',
-    currencyDisplay: "narrowSymbol",
+    currencyDisplay: 'narrowSymbol',
   });
   const initialValues = {
     name: '',
@@ -130,6 +135,7 @@ const MembershipTypeList = () => {
       },
     ],
     description: '',
+    isAccountHolder: false,
   };
 
   const dispatch = useDispatch();
@@ -290,6 +296,7 @@ const MembershipTypeList = () => {
       dispatch(getmembershiptypes(1, ''));
       setMembershipModal(false);
       setUpdateData({
+        isAccountHolder: false,
         name: '',
         description: '',
         plans: [
@@ -317,6 +324,12 @@ const MembershipTypeList = () => {
     setUpdateData({
       ...updateData,
       [e.target.name]: e.target.value,
+    });
+  }
+  function handleUpdateHolder(e) {
+    setUpdateData({
+      ...updateData,
+      [e.target.name]: e.target.checked,
     });
   }
   function handlePlanUpdate(e, i) {
@@ -350,7 +363,8 @@ const MembershipTypeList = () => {
         cell3: item.plans.find((v) => v.planTypeId === 1) ? item.plans.find((v) => v.planTypeId === 1).amount : 0,
         cell4: item.plans.find((v) => v.planTypeId === 2) ? item.plans.find((v) => v.planTypeId === 2).amount : 0,
         cell5: item.plans.find((v) => v.planTypeId === 3) ? item.plans.find((v) => v.planTypeId === 3).amount : 0,
-        cell6: item.isActive ? 'Active' : 'Inactive',
+        cell6: item.isAccountHolder ? 'Yes' : 'No',
+        cell7: item.isActive ? 'Active' : 'Inactive',
       };
     });
 
@@ -378,9 +392,12 @@ const MembershipTypeList = () => {
       id: 'cell5',
       displayName: 'MONTHLY AMOUNT',
     },
-
     {
       id: 'cell6',
+      displayName: 'ACCOUNT HOLDER',
+    },
+    {
+      id: 'cell7',
       displayName: 'STATUS',
     },
   ];
@@ -470,10 +487,13 @@ const MembershipTypeList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">STATUS</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer ">ACCOUNT HOLDER</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer ">TOGGLE</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center text-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer ">Action</div>
         </Col>
       </Row>
@@ -499,8 +519,11 @@ const MembershipTypeList = () => {
                   <div className="text-muted text-small d-md-none">Status</div>
                   <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
                 </Col>
-
-                <Col xs="6" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-5 order-md-last">
+                <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
+                  <div className="text-muted text-small d-md-none">Account holder</div>
+                  <div>{item.isAccountHolder ? 'Yes' : 'No'}</div>
+                </Col>
+                <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-5 order-md-last">
                   <div className="text-muted text-small d-md-none">Toggle Status</div>
                   <Form.Switch
                     className=""
@@ -511,7 +534,7 @@ const MembershipTypeList = () => {
                     }}
                   />
                 </Col>
-                <Col xs="12" md="2" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
+                <Col xs="12" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-last text-end order-md-last">
                   <Button variant="primary" type="button" size="sm" onClick={() => viewMembership(item)} className="">
                     View
                   </Button>
@@ -579,6 +602,13 @@ const MembershipTypeList = () => {
                     </div>
                   </div>
                 ))}
+                <div className="mb-5">
+                  <label className=" d-flex gap-2">
+                    <input type="checkbox" name="isAccountHolder" onChange={handleChange} value={values.isAccountHolder} />
+                    <span>Is account holder?</span>
+                  </label>
+                  {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
+                </div>
 
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
                   {!isLoading ? (
@@ -629,7 +659,12 @@ const MembershipTypeList = () => {
                     </div>
                   </div>
                 ))}
-
+                <div className="mb-5">
+                  <label className=" d-flex gap-2">
+                    <input type="checkbox" name="isAccountHolder" onChange={(e) => handleUpdateHolder(e)} value={values.isAccountHolder} />
+                    <span>Is account holder?</span>
+                  </label>
+                </div>
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
                   {!isLoading ? (
                     'Submit'
@@ -654,7 +689,10 @@ const MembershipTypeList = () => {
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Description</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
                     </tr>
-
+                    <tr>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Account holder</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.isAccountHolder ? 'Yes' : 'No'}</td>
+                    </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
                       <td className=" py-2 px-1 border-bottom">{updateData.isActive ? 'Active' : 'Inactive'}</td>

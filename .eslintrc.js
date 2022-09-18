@@ -16,14 +16,18 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'plugin:prettier/recommended',
   ],
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 6,
+    ecmaVersion: 8,
+    requireConfigFile: false,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
       modules: true,
       experimentalObjectRestSpread: true,
+    },
+    babelOptions: {
+      presets: ['@babel/preset-react'],
     },
   },
   settings: {

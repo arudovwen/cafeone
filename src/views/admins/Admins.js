@@ -456,23 +456,31 @@ const AdminManagementList = () => {
             {isAdding && (
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <Form.Label>First name</Form.Label>
+                  <Form.Label>
+                    First name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" name="firstName" onChange={handleChange} value={values.firstName} />
                   {errors.firstName && touched.firstName && <div className="d-block invalid-tooltip">{errors.firstName}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Last name</Form.Label>
+                  <Form.Label>
+                    Last name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" id="lastName" name="lastName" onChange={handleChange} value={values.lastName} />
                   {errors.lastName && touched.lastName && <div className="d-block invalid-tooltip">{errors.lastName}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label>
+                    Email <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
                   {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Roles</Form.Label>
+                  <Form.Label>
+                    Roles <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select name="role" onChange={handleChange} value={values.role} placeholder="Select role">
                     <option value="" disabled>
                       Select role

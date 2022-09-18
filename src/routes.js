@@ -26,27 +26,6 @@ const orders = {
   list: lazy(() => import('views/orders/list/OrdersList')),
   detail: lazy(() => import('views/orders/detail/OrdersDetail')),
 };
-// const customers = {
-//   list: lazy(() => import('views/customers/list/CustomersList')),
-//   detail: lazy(() => import('views/customers/detail/CustomersDetail')),
-// };
-
-// const storefront = {
-//   home: lazy(() => import('views/storefront/home/Home')),
-//   filters: lazy(() => import('views/storefront/filters/Filters')),
-//   categories: lazy(() => import('views/storefront/categories/Categories')),
-//   detail: lazy(() => import('views/storefront/detail/Detail')),
-//   cart: lazy(() => import('views/storefront/cart/Cart')),
-//   checkout: lazy(() => import('views/storefront/checkout/Checkout')),
-//   invoice: lazy(() => import('views/storefront/invoice/Invoice')),
-// };
-// const shipping = lazy(() => import('views/shipping/Shipping'));
-// const discount = lazy(() => import('views/discount/Discount'));
-
-// const settings = {
-//   home: lazy(() => import('views/settings/home/Home')),
-//   general: lazy(() => import('views/settings/general/General')),
-// };
 
 const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
 
@@ -80,15 +59,14 @@ const routesAndMenuItems = {
           path: '/members',
           label: 'Members',
           component: usermanagement.members,
-          roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'OPERATION_REPRESENTATIVE', 'SALES_REPRESENTATIVE'],
+          roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANT', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'SALES_REPRESENTATIVE'],
         },
         {
           path: '/admins',
           label: 'Admins',
           component: usermanagement.admins,
-          roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
+          roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANT', 'OPERATION_MANAGER'],
         },
-        // { path: '/detail', label: 'menu.detail', component: usermanagement.detail },
       ],
     },
 
@@ -98,7 +76,7 @@ const routesAndMenuItems = {
       label: 'Branches',
       icon: 'list',
       protected: true,
-      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANT', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
     },
     {
       path: `${appRoot}/membership`,
@@ -106,7 +84,7 @@ const routesAndMenuItems = {
       label: 'Membership',
       icon: 'tag',
       protected: true,
-      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANT', 'OPERATION_MANAGER'],
       subs: [
         // { path: '/list', label: 'List', component: membership.list },
         { path: '/types', label: 'Types', component: membership.types },
@@ -119,7 +97,7 @@ const routesAndMenuItems = {
       label: 'Bookings',
       icon: 'menu-bookmark',
       protected: true,
-      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'OPERATION_REPRESENTATIVE', 'SALES_REPRESENTATIVE'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANT', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'SALES_REPRESENTATIVE'],
     },
     {
       path: `${appRoot}/loyalty`,
@@ -127,7 +105,7 @@ const routesAndMenuItems = {
       label: 'Campaigns',
       icon: 'gift',
       protected: true,
-      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANT', 'OPERATION_MANAGER'],
     },
 
     {
@@ -136,7 +114,7 @@ const routesAndMenuItems = {
       label: 'Transactions',
       icon: 'invoice',
       protected: true,
-      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANCE', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'OPERATION_REPRESENTATIVE', 'SALES_REPRESENTATIVE'],
+      roles: ['SUPER_ADMIN', 'OPERATION_ASSISTANT', 'OPERATION_MANAGER', 'SHOP_MANAGER', 'SALES_REPRESENTATIVE'],
     },
     {
       path: `${appRoot}/logout`,
@@ -145,79 +123,6 @@ const routesAndMenuItems = {
       icon: 'logout',
       protected: true,
     },
-
-    // {
-    //   path: `${appRoot}/products`,
-    //   exact: true,
-    //   redirect: true,
-    //   to: `${appRoot}/products/list`,
-    //   label: 'menu.products',
-    //   icon: 'cupcake',
-    //   subs: [
-    //     { path: '/list', label: 'menu.list', component: products.list },
-    //     { path: '/detail', label: 'menu.detail', component: products.detail },
-    //   ],
-    // },
-    //  {
-    //   path: `${appRoot}/orders`,
-    //   exact: true,
-    //   redirect: true,
-    //   to: `${appRoot}/orders/list`,
-    //   label: 'menu.orders',
-    //   icon: 'cart',
-    //   subs: [
-    //     { path: '/list', label: 'menu.list', component: orders.list },
-    //     { path: '/detail', label: 'menu.detail', component: orders.detail },
-    //   ],
-    // },
-    // {
-    //   path: `${appRoot}/customers`,
-    //   exact: true,
-    //   redirect: true,
-    //   to: `${appRoot}/customers/list`,
-    //   label: 'menu.customers',
-    //   icon: 'user',
-    //   subs: [
-    //     { path: '/list', label: 'menu.list', component: customers.list },
-    //     { path: '/detail', label: 'menu.detail', component: customers.detail },
-    //   ],
-    // },
-    // {
-    //   path: `${appRoot}/storefront`,
-    //   exact: true,
-    //   redirect: true,
-    //   to: `${appRoot}/storefront/home`,
-    //   label: 'menu.storefront',
-    //   icon: 'screen',
-    //   subs: [
-    //     { path: '/home', label: 'menu.home', component: storefront.home },
-    //     { path: '/filters', label: 'menu.filters', component: storefront.filters },
-    //     { path: '/categories', label: 'menu.categories', component: storefront.categories },
-    //     { path: '/detail', label: 'menu.detail', component: storefront.detail },
-    //     { path: '/cart', label: 'menu.cart', component: storefront.cart },
-    //     { path: '/checkout', label: 'menu.checkout', component: storefront.checkout },
-    //     { path: '/invoice', label: 'menu.invoice', component: storefront.invoice },
-    //   ],
-    // },
-    // {
-    //   path: `${appRoot}/shipping`,
-    //   component: shipping,
-    //   label: 'menu.shipping',
-    //   icon: 'shipping',
-    // },
-    // {
-    //   path: `${appRoot}/discount`,
-    //   component: discount,
-    //   label: 'menu.discount',
-    //   icon: 'tag',
-    // },
-    // {
-    //   path: `${appRoot}/settings`,
-    //   component: settings.home,
-    //   label: 'menu.settings',
-    //   icon: 'gear',
-    //   subs: [{ path: '/general', component: settings.general, hideInMenu: true }],
-    // },
   ],
   sidebarItems: [],
 };
