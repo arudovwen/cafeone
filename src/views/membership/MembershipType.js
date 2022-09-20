@@ -52,7 +52,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
               <div className="text-muted text-medium ">Monthly amount</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-              <div className="text-muted text-medium ">Account Holder</div>
+              <div className="text-muted text-medium ">Fussion User</div>
             </th>
             <th style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
               <div className="text-muted text-medium ">Status</div>
@@ -80,7 +80,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 <div className="text-alternate">{item.plans.find((v) => v.planTypeId === 3) ? item.plans.find((v) => v.planTypeId === 3).amount : 0}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{item.isAccountHolder ? 'Yes' : 'No'}</div>
+                <div>{item.isFussionUser ? 'Yes' : 'No'}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div>{item.isActive ? 'Active' : 'Inactive'}</div>
@@ -135,7 +135,7 @@ const MembershipTypeList = () => {
       },
     ],
     description: '',
-    isAccountHolder: false,
+    isFussionUser: false,
   };
 
   const dispatch = useDispatch();
@@ -296,7 +296,7 @@ const MembershipTypeList = () => {
       dispatch(getmembershiptypes(1, ''));
       setMembershipModal(false);
       setUpdateData({
-        isAccountHolder: false,
+        isFussionUser: false,
         name: '',
         description: '',
         plans: [
@@ -363,7 +363,7 @@ const MembershipTypeList = () => {
         cell3: item.plans.find((v) => v.planTypeId === 1) ? item.plans.find((v) => v.planTypeId === 1).amount : 0,
         cell4: item.plans.find((v) => v.planTypeId === 2) ? item.plans.find((v) => v.planTypeId === 2).amount : 0,
         cell5: item.plans.find((v) => v.planTypeId === 3) ? item.plans.find((v) => v.planTypeId === 3).amount : 0,
-        cell6: item.isAccountHolder ? 'Yes' : 'No',
+        cell6: item.isFussionUser ? 'Yes' : 'No',
         cell7: item.isActive ? 'Active' : 'Inactive',
       };
     });
@@ -394,7 +394,7 @@ const MembershipTypeList = () => {
     },
     {
       id: 'cell6',
-      displayName: 'ACCOUNT HOLDER',
+      displayName: 'Fussion User',
     },
     {
       id: 'cell7',
@@ -488,7 +488,7 @@ const MembershipTypeList = () => {
           <div className="text-muted text-small cursor-pointer ">STATUS</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer ">ACCOUNT HOLDER</div>
+          <div className="text-muted text-small cursor-pointer ">Fussion User</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center text-center">
           <div className="text-muted text-small cursor-pointer ">TOGGLE</div>
@@ -520,8 +520,8 @@ const MembershipTypeList = () => {
                   <div>{item.isActive ? <Badge bg="outline-primary">Active</Badge> : <Badge bg="outline-warning">Inactive</Badge>}</div>
                 </Col>
                 <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-5">
-                  <div className="text-muted text-small d-md-none">Account holder</div>
-                  <div>{item.isAccountHolder ? 'Yes' : 'No'}</div>
+                  <div className="text-muted text-small d-md-none">Fussion User</div>
+                  <div>{item.isFussionUser ? 'Yes' : 'No'}</div>
                 </Col>
                 <Col xs="6" md="1" className="d-flex flex-column justify-content-center align-items-md-center mb-2 mb-md-0 order-5 order-md-last">
                   <div className="text-muted text-small d-md-none">Toggle Status</div>
@@ -604,8 +604,8 @@ const MembershipTypeList = () => {
                 ))}
                 <div className="mb-5">
                   <label className=" d-flex gap-2">
-                    <input type="checkbox" name="isAccountHolder" onChange={handleChange} value={values.isAccountHolder} />
-                    <span>Is account holder?</span>
+                    <input type="checkbox" name="isFussionUser" onChange={handleChange} value={values.isFussionUser} />
+                    <span>Is Fussion User?</span>
                   </label>
                   {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
                 </div>
@@ -661,8 +661,14 @@ const MembershipTypeList = () => {
                 ))}
                 <div className="mb-5">
                   <label className=" d-flex gap-2">
-                    <input type="checkbox" name="isAccountHolder" onChange={(e) => handleUpdateHolder(e)} value={values.isAccountHolder} />
-                    <span>Is account holder?</span>
+                    <input
+                      type="checkbox"
+                      name="isFussionUser"
+                      onChange={(e) => handleUpdateHolder(e)}
+                      value={updateData.isFussionUser}
+                      checked={updateData.isFussionUser}
+                    />
+                    <span>Is Fussion User?</span>
                   </label>
                 </div>
                 <Button variant="primary" type="submit" disabled={isLoading} className="btn-icon btn-icon-start w-100">
@@ -690,8 +696,8 @@ const MembershipTypeList = () => {
                       <td className=" py-2 px-1 border-bottom">{updateData.description}</td>
                     </tr>
                     <tr>
-                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Account holder</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.isAccountHolder ? 'Yes' : 'No'}</td>
+                      <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Fussion User</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.isFussionUser ? 'Yes' : 'No'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">status</td>
@@ -716,13 +722,13 @@ const MembershipTypeList = () => {
                     ))}
                   </tbody>
                 </table>
-                <div className="text-center">
+                <div className="text-right">
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editMembership(updateData)}>
                     <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisMembership(updateData.id)}>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisMembership(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
-                  </Button>
+                  </Button> */}
                 </div>
                 <hr className="my-4" />
               </div>

@@ -1017,13 +1017,13 @@ const CampaignTypeList = () => {
                     </tr>
                   </tbody>
                 </table>
-                <div className="text-center">
+                <div className="text-right">
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editCampaign(updateData)}>
                     <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisCampaign(updateData.id)}>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisCampaign(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
-                  </Button>
+                  </Button> */}
                 </div>
                 <hr className="my-4" />
               </div>

@@ -135,7 +135,7 @@ const UserManagementList = () => {
   const usersData = useSelector((state) => state.members.items);
   const total = useSelector((state) => state.members.total);
   const status = useSelector((state) => state.members.status);
-  const membershipsData = useSelector((state) => state.membership.types);
+  const membershipsData = useSelector((state) => state.membership.types.filter((item) => item.isActive));
   const branchesData = useSelector((state) => state.branches.branches).map((item) => {
     return {
       value: item.id,
@@ -935,10 +935,15 @@ const UserManagementList = () => {
                     className="rounded-circle"
                     style={{ width: '80px', height: '80px' }}
                   />
-
-                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => getMyBookings(updateData.id)}>
-                    <span className="">View bookings</span>
-                  </Button>
+                  <div className="d-flex gap-3">
+                    {' '}
+                    <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editUser(updateData)}>
+                      <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
+                    </Button>
+                    <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => getMyBookings(updateData.id)}>
+                      <span className="">View bookings</span>
+                    </Button>
+                  </div>
                 </div>
                 <table className="mb-5">
                   <tbody>
@@ -997,12 +1002,9 @@ const UserManagementList = () => {
                   </tbody>
                 </table>
                 <div className="text-center">
-                  <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editUser(updateData)}>
-                    <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
-                  </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisMember(updateData.id)}>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisMember(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
-                  </Button>
+                  </Button> */}
                 </div>
                 <hr className="my-4" />
               </div>

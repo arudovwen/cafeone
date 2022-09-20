@@ -132,14 +132,9 @@ const BookingTypeList = () => {
   const [isEvent, setIsEvent] = React.useState(false);
   const [type, setType] = useState('');
   const [eventData, setEventData] = React.useState({
-    email: '',
-    phoneNumber: '',
-    firstName: '',
-    lastName: '',
+    memberId: '',
     amountDue: '',
     branchId: '',
-    startTime: '',
-    planType: '',
     startDate: null,
     paymentStatus: '',
   });
@@ -868,7 +863,9 @@ const BookingTypeList = () => {
                       {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
                     </div>
                     <div className="mb-3">
-                      <Form.Label>Payment status</Form.Label>
+                      <Form.Label>
+                        Payment status <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Select type="text" name="paymentStatus" onChange={handleChange} value={values.paymentStatus}>
                         <option value="" disabled>
                           Select type
@@ -899,37 +896,21 @@ const BookingTypeList = () => {
               <form onSubmit={(e) => handleEventData(e)}>
                 <div className="mb-3">
                   <Form.Label>
-                    First name <span className="text-danger">*</span>
+                    Member <span className="text-danger">*</span>
                   </Form.Label>
-                  <Form.Control required type="text" name="firstName" onChange={(e) => handleEventChange(e)} value={eventData.firstName} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>
-                    Last name <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control required type="text" id="lastName" name="lastName" onChange={(e) => handleEventChange(e)} value={eventData.lastName} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>
-                    Email <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control required type="email" id="email" name="email" onChange={(e) => handleEventChange(e)} value={eventData.email} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>
-                    Phone number <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="number"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    onChange={(e) => handleEventChange(e)}
-                    value={eventData.phoneNumber}
+                  <SelectSearch
+                    filterOptions={() => fuzzySearch(membersData)}
+                    options={membersData}
+                    search
+                    name="memberId"
+                    value={eventData.memberId}
+                    onChange={(val) => {
+                      eventData.memberId = val;
+                    }}
+                    placeholder="Select  member"
                   />
                 </div>
+
                 <div className="mb-3">
                   <Form.Label>
                     Amount due <span className="text-danger">*</span>
@@ -989,9 +970,9 @@ const BookingTypeList = () => {
                   <Form.Label>
                     Payment status <span className="text-danger">*</span>
                   </Form.Label>
-                  <Form.Select required type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
+                  <Form.Select type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
                     <option value="" disabled>
-                      Select status
+                      Select type
                     </option>
                     {paymentTypes.map((item) => (
                       <option value={Number(item.id)} key={item.id}>

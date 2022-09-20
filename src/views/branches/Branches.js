@@ -537,13 +537,13 @@ const BranchesList = () => {
                     </tr>
                   </tbody>
                 </table>
-                <div className="text-center">
+                <div className="text-right">
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBranch(updateData)}>
-                    <CsLineIcons icon="edit" size="13" /> <span className="sr-only">Edit</span>
+                    <CsLineIcons icon="edit" size="11" /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBranch(updateData.id)}>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBranch(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" size="13" /> <span className="sr-only">Delete</span>
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             )}
