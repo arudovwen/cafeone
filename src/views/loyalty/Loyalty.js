@@ -91,10 +91,10 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 <div>{item.description}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{moment(item.startDate).format('llll')}</div>
+                <div className="text-alternate">{moment(item.startDate).format('l')}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{moment(item.expiryDate).format('llll')}</div>
+                <div>{moment(item.expiryDate).format('l')}</div>
               </td>
 
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -375,11 +375,11 @@ const CampaignTypeList = () => {
       return {
         cell1: item.branch ? item.branch : '-',
         cell2: item.membershipType ? item.membershipType : '-',
-        cell3: item.totalUsage,
-        cell4: item.usagePerMember,
-        cell5: item.value,
-        cell6: moment(item.startDate).format('llll'),
-        cell7: moment(item.expiryDate).format('llll'),
+        cell3: item.totalUsage || '-',
+        cell4: item.usagePerMember || '-',
+        cell5: item.value || '-',
+        cell6: moment(item.startDate).format('l'),
+        cell7: moment(item.expiryDate).format('l'),
         cell8: item.description,
         cell9: item.status,
       };
@@ -394,7 +394,7 @@ const CampaignTypeList = () => {
     },
     {
       id: 'cell2',
-      displayName: 'MEMBERSHIPT TYPE',
+      displayName: 'MEMBERSHIP TYPE',
     },
     {
       id: 'cell3',
@@ -550,17 +550,17 @@ const CampaignTypeList = () => {
       </Row>
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">BRANCH / MEMBERSHIP</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">START DATE</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">END DATE</div>
         </Col>
 
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">USAGE</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
@@ -580,22 +580,22 @@ const CampaignTypeList = () => {
         <Card key={item.id} className="mb-2">
           <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
                 <div className="text-muted text-small d-md-none">{item.branch ? 'Branch' : 'Membership type'}</div>
                 <div className="text-alternate">{item.branch ? item.branch : item.membershipType}</div>
               </Col>
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
                 <div className="text-muted text-small d-md-none">Start Date</div>
                 <div className="text-alternate">
-                  <span>{item.startDate ? moment(item.startDate).format('llll') : '-'}</span>
+                  <span>{item.startDate ? moment(item.startDate).format('l') : '-'}</span>
                 </div>
               </Col>
 
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">End date</div>
-                <div className="text-alternate">{item.expiryDate ? moment(item.expiryDate).format('llll') : '-'}</div>
+                <div className="text-alternate">{item.expiryDate ? moment(item.expiryDate).format('l') : '-'}</div>
               </Col>
-              <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
                 <div className="text-muted text-small d-md-none">Usage/Member </div>
                 <div className="text-alternate">{item.usagePerMember ? item.usagePerMember : '-'}</div>
               </Col>
@@ -999,11 +999,11 @@ const CampaignTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.startDate ? moment(updateData.startDate).format('llll') : '-'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.startDate ? moment(updateData.startDate).format('l') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Expiry date</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.expiryDate ? moment(updateData.expiryDate).format('llll') : '-'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.expiryDate ? moment(updateData.expiryDate).format('l') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">{updateData.type} Value</td>

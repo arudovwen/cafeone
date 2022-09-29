@@ -63,7 +63,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 <div>{item.isActive ? 'Active' : 'Inactive'}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{moment(item.dateCreated).format('llll')}</div>
+                <div>{moment(item.dateCreated).format('l')}</div>
               </td>
             </tr>
           ))}
@@ -239,7 +239,7 @@ const AdminManagementList = () => {
         cell2: item.email,
         cell3: item.roleName,
         cell4: item.isActive ? 'Active' : 'Inactive',
-        cell5: moment(item.dateCreated).format('llll'),
+        cell5: moment(item.dateCreated).format('l'),
       };
     });
 

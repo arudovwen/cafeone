@@ -114,6 +114,7 @@ const MembershipTypeList = () => {
     style: 'currency',
     currency: 'NGN',
     currencyDisplay: 'narrowSymbol',
+    maximumFractionDigits: 0,
   });
   const initialValues = {
     name: '',

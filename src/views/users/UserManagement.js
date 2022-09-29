@@ -408,11 +408,11 @@ const UserManagementList = () => {
         cell1: `${item.firstName} ${item.lastName}`,
         cell2: item.email,
         cell3: item.phoneNumber,
-        cell4: item.membershipType,
-        cell5: item.address || '-',
-        cell6: moment(item.birthDate).format('l'),
-        cell7: item.city || '-',
-        cell8: item.state || '-',
+        cell4: item.address1 || '-',
+        cell5: moment(item.birthDate).format('l'),
+        cell6: item.city || '-',
+        cell7: item.state || '-',
+        cell8: item.branch,
         cell9: item.membershipType,
         cell10: item.occupation || '-',
       };
@@ -1072,7 +1072,7 @@ const UserManagementList = () => {
                               <tr className="">
                                 <td className="text-muted  text-uppercase border-bottom py-2">Date :</td>
                                 <td className="text-alternate border-bottom py-2">
-                                  <span>{moment(item.startDate).format('ll')}</span>
+                                  <span>{moment(item.startDate).format('l')}</span>
                                 </td>
                               </tr>
 
