@@ -60,7 +60,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
           {transactionsData.map((item, i) => (
             <tr key={i} className="mb-2">
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate ">{moment(item.dateCreated).format('ll')}</div>
+                <div className="text-alternate ">{moment(item.dateCreated).format('l')}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
                 <div className="text-alternate">
@@ -129,6 +129,7 @@ const TransactionList = () => {
     style: 'currency',
     currency: 'NGN',
     currencyDisplay: 'narrowSymbol',
+    maximumFractionDigits: 0,
   });
   React.useEffect(() => {
     dispatch(getTransactions(page, search));
@@ -174,7 +175,7 @@ const TransactionList = () => {
   React.useEffect(() => {
     const newdata = transactionsData.map((item) => {
       return {
-        cell1: moment(item.dateCreated).format('ll'),
+        cell1: moment(item.dateCreated).format('l'),
         cell2: item.member ? item.member.name : '-',
         cell3: item.branch,
         cell4: item.campaign,

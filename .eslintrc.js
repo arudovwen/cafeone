@@ -18,14 +18,17 @@ module.exports = {
   ],
   parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 6,
+    ecmaVersion: 8,
+    requireConfigFile: false,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
       modules: true,
       experimentalObjectRestSpread: true,
     },
-    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-react'],
+    },
   },
   settings: {
     react: {
@@ -85,12 +88,8 @@ module.exports = {
     ],
     'no-console': 'off',
     'no-param-reassign': 0,
-    'no-promise-executor-return': 0,
     'import/no-unresolved': 0,
     'no-unused-vars': 'warn',
-    'react/no-unknown-property': 0,
-    'react/function-component-definition': 0,
-    'react/jsx-no-useless-fragment': 0,
   },
   globals: {
     window: true,

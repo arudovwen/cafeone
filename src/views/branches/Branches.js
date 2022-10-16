@@ -446,24 +446,24 @@ const BranchesList = () => {
             {isAdding && (
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <Form.Label>Branch name</Form.Label>
+                  <Form.Label>Branch name*</Form.Label>
                   <Form.Control type="text" name="name" onChange={handleChange} value={values.name} />
                   {errors.name && touched.name && <div className="d-block invalid-tooltip">{errors.name}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Branch location</Form.Label>
+                  <Form.Label>Branch location*</Form.Label>
                   <Form.Control type="text" name="location" onChange={handleChange} value={values.location} />
                   {errors.location && touched.location && <div className="d-block invalid-tooltip">{errors.location}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>State</Form.Label>
+                  <Form.Label>State*</Form.Label>
                   <Form.Control type="text" name="state" onChange={handleChange} value={values.state} />
                   {errors.state && touched.state && <div className="d-block invalid-tooltip">{errors.state}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Seats</Form.Label>
+                  <Form.Label>Seats*</Form.Label>
                   <Form.Control type="number" name="seats" onChange={handleChange} value={values.seats} />
                   {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
                 </div>
@@ -537,13 +537,13 @@ const BranchesList = () => {
                     </tr>
                   </tbody>
                 </table>
-                <div className="text-center">
+                <div className="text-right">
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editBranch(updateData)}>
-                    <CsLineIcons icon="edit" size="13" /> <span className="sr-only">Edit</span>
+                    <CsLineIcons icon="edit" size="11" /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBranch(updateData.id)}>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisBranch(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" size="13" /> <span className="sr-only">Delete</span>
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             )}

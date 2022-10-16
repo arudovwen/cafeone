@@ -23,6 +23,7 @@ const Dashboard = () => {
     style: 'currency',
     currency: 'NGN',
     currencyDisplay: 'narrowSymbol',
+    maximumFractionDigits: 0,
   });
   React.useEffect(() => {
     axios.get(`${SERVICE_URL}/reports`, requestConfig).then((res) => {

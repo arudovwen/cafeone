@@ -43,13 +43,18 @@ export const updateBranchStatus = (data) => async (dispatch) => {
   dispatch(updateBranchstatus(data));
 };
 export const getBranches = (page, search) => async (dispatch) => {
-  const response = await axios.get(`${SERVICE_URL}/branches?page=${page}&search=${search}&size=15`, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
-
-  if (response.status === 200) {
-    dispatch(setbranch(response.data));
-  }
+  await axios
+    .get(`${SERVICE_URL}/branches?page=${page}&search=${search}&size=15`, requestConfig)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(setbranch(response.data));
+      }
+    })
+    .catch((err) => {
+      dispatch(updatestatus('error'));
+      dispatch(resetstatus());
+      toast.error(err.response.data.message);
+    });
 };
 
 export const getBranch = (data) => async () => {

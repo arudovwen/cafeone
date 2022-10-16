@@ -83,7 +83,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 </div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{moment(item.startDate).format('ll')}</div>
+                <div className="text-alternate">{moment(item.startDate).format('xl')}</div>
               </td>
 
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -132,14 +132,9 @@ const BookingTypeList = () => {
   const [isEvent, setIsEvent] = React.useState(false);
   const [type, setType] = useState('');
   const [eventData, setEventData] = React.useState({
-    email: '',
-    phoneNumber: '',
-    firstName: '',
-    lastName: '',
+    memberId: '',
     amountDue: '',
     branchId: '',
-    startTime: '',
-    planType: '',
     startDate: null,
     paymentStatus: '',
   });
@@ -345,6 +340,7 @@ const BookingTypeList = () => {
     style: 'currency',
     currency: 'NGN',
     currencyDisplay: 'narrowSymbol',
+    maximumFractionDigits: 0,
   });
   // function afterDate(date) {
   //   const today = moment(new Date());
@@ -378,21 +374,18 @@ const BookingTypeList = () => {
   }
 
   React.useEffect(() => {
-    const newdata = bookingsData.map((item) => {
+    const newdata = bookingsData.slice().map((item) => {
       return {
-        cell1: item.id,
-        cell2: item.member.id,
-        cell3: item.member.name,
-        cell4: `${item.branch}`,
-        cell5: item.startDate,
-        cell6: item.paymentStatus,
-        cell7: formatter.format(item.amountPaid),
-        cell9: item.seatCount,
-
-        cell10: item.plan,
-        cell11: item.type,
-        cell12: item.status,
-        cell13: moment(item.dateCreated).format('llll'),
+        cell1: item.member.name,
+        cell2: item.branch,
+        cell3: moment(item.startDate).format('l'),
+        cell4: item.paymentStatus,
+        cell5: item.amountPaid,
+        cell6: item.seatCount,
+        cell7: item.plan,
+        cell8: item.type,
+        cell9: item.status,
+        cell10: moment(item.dateCreated).format('l'),
       };
     });
     setDatas(newdata);
@@ -401,51 +394,43 @@ const BookingTypeList = () => {
   const columns = [
     {
       id: 'cell1',
-      displayName: 'BOOKINGID',
-    },
-    {
-      id: 'cell2',
-      displayName: 'MEMBERID',
-    },
-    {
-      id: 'cell3',
       displayName: 'NAME',
     },
     {
-      id: 'cell4',
+      id: 'cell2',
       displayName: 'BRANCH',
     },
     {
-      id: 'cell5',
+      id: 'cell3',
       displayName: 'START-DATE',
     },
     {
-      id: 'cell6',
+      id: 'cell4',
       displayName: 'PAYMENT-STATUS',
     },
     {
-      id: 'cell7',
+      id: 'cell5',
       displayName: 'AMOUNT',
     },
 
     {
-      id: 'cell9',
+      id: 'cell6',
       displayName: 'SEATS',
     },
     {
-      id: 'cell10',
+      id: 'cell7',
       displayName: 'PLAN',
     },
     {
-      id: 'cell11',
+      id: 'cell8',
       displayName: 'TYPE',
     },
     {
-      id: 'cell12',
+      id: 'cell9',
       displayName: 'STATUS',
     },
     {
-      id: 'cell13',
+      id: 'cell10',
       displayName: 'DATE CREATED',
     },
   ];
@@ -687,7 +672,7 @@ const BookingTypeList = () => {
                     <tr className="">
                       <td className="text-muted  text-uppercase border-bottom py-2">Date :</td>
                       <td className="text-alternate border-bottom py-2">
-                        <span>{moment(item.startDate).format('ll')}</span>
+                        <span>{moment(item.startDate).format('l')}</span>
                       </td>
                     </tr>
                     <tr className="">
@@ -797,7 +782,9 @@ const BookingTypeList = () => {
                 <Row>
                   <Col md="12">
                     <div className="mb-3">
-                      <Form.Label>Start Date</Form.Label>
+                      <Form.Label>
+                        Start Date <span className="text-danger">*</span>
+                      </Form.Label>
 
                       <div className="d-flex justify-content-between align-items-center w-100">
                         <DatePicker
@@ -820,7 +807,9 @@ const BookingTypeList = () => {
                   </Col>
                 </Row>
                 <div className="mb-3">
-                  <Form.Label>Plan type</Form.Label>
+                  <Form.Label>
+                    Plan type <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select type="text" name="planType" onChange={handleChange} value={values.planType}>
                     <option value="" disabled>
                       Select plan
@@ -864,7 +853,9 @@ const BookingTypeList = () => {
                       {errors.seats && touched.seats && <div className="d-block invalid-tooltip">{errors.seats}</div>}
                     </div>
                     <div className="mb-3">
-                      <Form.Label>Payment status</Form.Label>
+                      <Form.Label>
+                        Payment status <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Select type="text" name="paymentStatus" onChange={handleChange} value={values.paymentStatus}>
                         <option value="" disabled>
                           Select type
@@ -894,37 +885,33 @@ const BookingTypeList = () => {
             {isEvent && (
               <form onSubmit={(e) => handleEventData(e)}>
                 <div className="mb-3">
-                  <Form.Label>First name</Form.Label>
-                  <Form.Control required type="text" name="firstName" onChange={(e) => handleEventChange(e)} value={eventData.firstName} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Last name</Form.Label>
-                  <Form.Control required type="text" id="lastName" name="lastName" onChange={(e) => handleEventChange(e)} value={eventData.lastName} />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control required type="email" id="email" name="email" onChange={(e) => handleEventChange(e)} value={eventData.email} />
-                </div>
-                <div className="mb-3">
-                  <Form.Label>Phone number</Form.Label>
-                  <Form.Control
-                    required
-                    type="number"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    onChange={(e) => handleEventChange(e)}
-                    value={eventData.phoneNumber}
+                  <Form.Label>
+                    Member <span className="text-danger">*</span>
+                  </Form.Label>
+                  <SelectSearch
+                    filterOptions={() => fuzzySearch(membersData)}
+                    options={membersData}
+                    search
+                    name="memberId"
+                    value={eventData.memberId}
+                    onChange={(val) => {
+                      eventData.memberId = val;
+                    }}
+                    placeholder="Select  member"
                   />
                 </div>
+
                 <div className="mb-3">
-                  <Form.Label>Amount due</Form.Label>
+                  <Form.Label>
+                    Amount due <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control required type="number" id="amountDue" name="amountDue" onChange={(e) => handleEventChange(e)} value={eventData.amountDue} />
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Branch</Form.Label>
+                  <Form.Label>
+                    Branch <span className="text-danger">*</span>
+                  </Form.Label>
                   <SelectSearch
                     required
                     filterOptions={() => fuzzySearch(branchesData)}
@@ -943,7 +930,9 @@ const BookingTypeList = () => {
                 <Row>
                   <Col md="5">
                     <div className="mb-3">
-                      <Form.Label>Start Date</Form.Label>
+                      <Form.Label>
+                        Start Date <span className="text-danger">*</span>
+                      </Form.Label>
 
                       <div className="d-flex justify-content-between align-items-center">
                         <DatePicker
@@ -968,10 +957,12 @@ const BookingTypeList = () => {
                 </Row>
 
                 <div className="mb-3">
-                  <Form.Label>Payment status</Form.Label>
-                  <Form.Select required type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
+                  <Form.Label>
+                    Payment status <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Select type="text" name="paymentStatus" onChange={(e) => handleEventChange(e)} value={eventData.paymentStatus}>
                     <option value="" disabled>
-                      Select status
+                      Select type
                     </option>
                     {paymentTypes.map((item) => (
                       <option value={Number(item.id)} key={item.id}>
@@ -1127,7 +1118,7 @@ const BookingTypeList = () => {
 
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Start date </td>
-                      <td className=" py-2 border-bottom">{moment(updateData.startDate).format('ll')}</td>
+                      <td className=" py-2 border-bottom">{moment(updateData.startDate).format('l')}</td>
                     </tr>
                     {/* <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">Start Time</td>
@@ -1135,7 +1126,7 @@ const BookingTypeList = () => {
                     </tr> */}
                     <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">End Date</td>
-                      <td className=" py-2 border-bottom">{moment(updateData.endDate).format('ll')}</td>
+                      <td className=" py-2 border-bottom">{moment(updateData.endDate).format('l')}</td>
                     </tr>
                     {/* <tr>
                       <td className="font-weight-bold  py-2 border-bottom text-uppercase text-muted">End time</td>

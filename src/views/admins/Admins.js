@@ -64,7 +64,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 <div>{item.isActive ? 'Active' : 'Inactive'}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{moment(item.dateCreated).format('llll')}</div>
+                <div>{moment(item.dateCreated).format('l')}</div>
               </td>
             </tr>
           ))}
@@ -240,7 +240,7 @@ const AdminManagementList = () => {
         cell2: item.email,
         cell3: item.roleName,
         cell4: item.isActive ? 'Active' : 'Inactive',
-        cell5: moment(item.dateCreated).format('llll'),
+        cell5: moment(item.dateCreated).format('l'),
       };
     });
 
@@ -457,23 +457,31 @@ const AdminManagementList = () => {
             {isAdding && (
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <Form.Label>First name</Form.Label>
+                  <Form.Label>
+                    First name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" name="firstName" onChange={handleChange} value={values.firstName} />
                   {errors.firstName && touched.firstName && <div className="d-block invalid-tooltip">{errors.firstName}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Last name</Form.Label>
+                  <Form.Label>
+                    Last name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" id="lastName" name="lastName" onChange={handleChange} value={values.lastName} />
                   {errors.lastName && touched.lastName && <div className="d-block invalid-tooltip">{errors.lastName}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label>
+                    Email <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="email" id="email" name="email" onChange={handleChange} value={values.email} />
                   {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Roles</Form.Label>
+                  <Form.Label>
+                    Roles <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select name="role" onChange={handleChange} value={values.role} placeholder="Select role">
                     <option value="" disabled>
                       Select role

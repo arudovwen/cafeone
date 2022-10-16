@@ -58,9 +58,16 @@ export const getRecentDashboardTransactions = () => async (dispatch) => {
   }
 };
 export const markAsPaid = (paymentId) => async () => {
-  return axios.post(`${SERVICE_URL}/payments/${paymentId}`, paymentId, requestConfig).catch((err) => {
-    toast.error(err.response.data.message);
-  });
+  return axios
+    .post(`${SERVICE_URL}/payments/${paymentId}`, paymentId, requestConfig)
+    .then((res) => {
+      if (res.status === 200) {
+        toast.success('Payment updated');
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.message);
+    });
 };
 
 const transactionReducer = transactionSlice.reducer;

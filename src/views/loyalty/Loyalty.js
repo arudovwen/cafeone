@@ -91,10 +91,10 @@ const ComponentToPrint = forwardRef((props, ref) => {
                 <div>{item.description}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div className="text-alternate">{moment(item.startDate).format('llll')}</div>
+                <div className="text-alternate">{moment(item.startDate).format('l')}</div>
               </td>
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
-                <div>{moment(item.expiryDate).format('llll')}</div>
+                <div>{moment(item.expiryDate).format('l')}</div>
               </td>
 
               <td style={{ borderBottom: '1px solid #ccc', padding: '4px 5px' }}>
@@ -375,11 +375,11 @@ const CampaignTypeList = () => {
       return {
         cell1: item.branch ? item.branch : '-',
         cell2: item.membershipType ? item.membershipType : '-',
-        cell3: item.totalUsage,
-        cell4: item.usagePerMember,
-        cell5: item.value,
-        cell6: moment(item.startDate).format('llll'),
-        cell7: moment(item.expiryDate).format('llll'),
+        cell3: item.totalUsage || '-',
+        cell4: item.usagePerMember || '-',
+        cell5: item.value || '-',
+        cell6: moment(item.startDate).format('l'),
+        cell7: moment(item.expiryDate).format('l'),
         cell8: item.description,
         cell9: item.status,
       };
@@ -394,7 +394,7 @@ const CampaignTypeList = () => {
     },
     {
       id: 'cell2',
-      displayName: 'MEMBERSHIPT TYPE',
+      displayName: 'MEMBERSHIP TYPE',
     },
     {
       id: 'cell3',
@@ -458,17 +458,6 @@ const CampaignTypeList = () => {
 
       <Row className="mb-3">
         <Col md="5" lg="7" xxl="6" className="mb-1 d-flex align-items-center ">
-          {/* Search Start */}
-          {/* <div className="d-inline-block float-md-start me-4 mb-1 search-input-container w-100 shadow bg-foreground">
-            <Form.Control type="text" placeholder="Search" onChange={(e) => handleSearch(e)} />
-            <span className="search-magnifier-icon">
-              <CsLineIcons icon="search" />
-            </span>
-            <span className="search-delete-icon d-none">
-              <CsLineIcons icon="close" />
-            </span>
-          </div> */}
-
           <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto mb-1" onClick={() => addNewCampaign()}>
             <CsLineIcons icon="plus" /> <span>Add campaign</span>
           </Button>
@@ -561,17 +550,17 @@ const CampaignTypeList = () => {
       </Row>
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 mt-5">
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">BRANCH / MEMBERSHIP</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">START DATE</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">END DATE</div>
         </Col>
 
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer ">USAGE</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
@@ -591,22 +580,22 @@ const CampaignTypeList = () => {
         <Card key={item.id} className="mb-2">
           <Card.Body className="pt-md-0 pb-md-0 sh-auto sh-md-8">
             <Row className="g-0 h-100 align-content-center cursor-default">
-              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
+              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1">
                 <div className="text-muted text-small d-md-none">{item.branch ? 'Branch' : 'Membership type'}</div>
                 <div className="text-alternate">{item.branch ? item.branch : item.membershipType}</div>
               </Col>
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-2 order-md-2">
                 <div className="text-muted text-small d-md-none">Start Date</div>
                 <div className="text-alternate">
-                  <span>{item.startDate ? moment(item.startDate).format('llll') : '-'}</span>
+                  <span>{item.startDate ? moment(item.startDate).format('l') : '-'}</span>
                 </div>
               </Col>
 
-              <Col xs="12" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-3">
                 <div className="text-muted text-small d-md-none">End date</div>
-                <div className="text-alternate">{item.expiryDate ? moment(item.expiryDate).format('llll') : '-'}</div>
+                <div className="text-alternate">{item.expiryDate ? moment(item.expiryDate).format('l') : '-'}</div>
               </Col>
-              <Col xs="12" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
+              <Col xs="12" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-4">
                 <div className="text-muted text-small d-md-none">Usage/Member </div>
                 <div className="text-alternate">{item.usagePerMember ? item.usagePerMember : '-'}</div>
               </Col>
@@ -671,7 +660,9 @@ const CampaignTypeList = () => {
             {isAdding && (
               <form onSubmit={handleSubmit} className="pb-5">
                 <div className="mb-3">
-                  <Form.Label>Discount type</Form.Label>
+                  <Form.Label>
+                    Discount type <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select type="text" name="discountType" onChange={handleChange} value={values.discountType}>
                     <option value="" disabled>
                       Select discount type
@@ -684,20 +675,26 @@ const CampaignTypeList = () => {
                   </Form.Select>
                 </div>
                 <div className="mb-3">
-                  <Form.Label>{Number(values.discountType) === 2 ? 'Percentage Value (%)' : 'Discount Value'}</Form.Label>
+                  <Form.Label>
+                    {Number(values.discountType) === 2 ? 'Percentage Value (%)' : 'Discount Value'} <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="number" name="value" onChange={handleChange} value={values.value} />
                   {errors.value && touched.value && <div className="d-block invalid-tooltip">{errors.value}</div>}
                 </div>
 
                 <div className="mb-3">
-                  <Form.Label>Description</Form.Label>
+                  <Form.Label>
+                    Description <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control type="text" name="description" as="textarea" rows={3} onChange={handleChange} value={values.description} />
                   {errors.description && touched.description && <div className="d-block invalid-tooltip">{errors.description}</div>}
                 </div>
 
                 <div>
                   <div className="mb-3">
-                    <Form.Label>Campaign type</Form.Label>
+                    <Form.Label>
+                      Campaign type <span className="text-danger">*</span>
+                    </Form.Label>
                     <div className="d-flex">
                       <Form.Check
                         type="radio"
@@ -721,7 +718,9 @@ const CampaignTypeList = () => {
 
                   {type === 'branch' ? (
                     <div className="mb-3">
-                      <Form.Label>Select branch</Form.Label>
+                      <Form.Label>
+                        Select branch <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Select type="text" name="branchId" onChange={handleChange} value={values.branchId}>
                         <option value="" disabled>
                           Select branch
@@ -736,7 +735,9 @@ const CampaignTypeList = () => {
                   ) : (
                     <>
                       <div className="mb-3">
-                        <Form.Label>Select membership</Form.Label>
+                        <Form.Label>
+                          Select membership <span className="text-danger">*</span>
+                        </Form.Label>
                         <Form.Select type="text" name="membershipTypeId" onChange={handleChange} value={values.membershipTypeId}>
                           <option value="" disabled>
                             Select membership type
@@ -749,7 +750,9 @@ const CampaignTypeList = () => {
                         </Form.Select>
                       </div>
                       <div className="mb-3">
-                        <Form.Label>Discount type</Form.Label>
+                        <Form.Label>
+                          Discount type <span className="text-danger">*</span>
+                        </Form.Label>
                         <Form.Select
                           type="select"
                           name="duration"
@@ -772,7 +775,9 @@ const CampaignTypeList = () => {
                 {duration == 1 ? (
                   <>
                     <div className="mb-3">
-                      <Form.Label>Usage per-member </Form.Label>
+                      <Form.Label>
+                        Usage per-member <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Control type="number" name="usagePerMember" onChange={handleChange} value={values.usagePerMember} />
                       {errors.usagePerMember && touched.usagePerMember && <div className="d-block invalid-tooltip">{errors.usagePerMember}</div>}
                     </div>
@@ -994,11 +999,11 @@ const CampaignTypeList = () => {
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Start date </td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.startDate ? moment(updateData.startDate).format('llll') : '-'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.startDate ? moment(updateData.startDate).format('l') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">Expiry date</td>
-                      <td className=" py-2 px-1 border-bottom">{updateData.expiryDate ? moment(updateData.expiryDate).format('llll') : '-'}</td>
+                      <td className=" py-2 px-1 border-bottom">{updateData.expiryDate ? moment(updateData.expiryDate).format('l') : '-'}</td>
                     </tr>
                     <tr>
                       <td className="font-weight-bold  py-2 px-1 border-bottom text-uppercase text-muted">{updateData.type} Value</td>
@@ -1012,13 +1017,13 @@ const CampaignTypeList = () => {
                     </tr>
                   </tbody>
                 </table>
-                <div className="text-center">
+                <div className="text-right">
                   <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-start  mb-1 me-3" onClick={() => editCampaign(updateData)}>
                     <CsLineIcons icon="edit" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisCampaign(updateData.id)}>
+                  {/* <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-start  mb-1" onClick={() => deleteThisCampaign(updateData.id)}>
                     <CsLineIcons icon="bin" className="text-small" style={{ width: '13px', height: '13px' }} /> <span className="sr-only">Delete</span>
-                  </Button>
+                  </Button> */}
                 </div>
                 <hr className="my-4" />
               </div>
